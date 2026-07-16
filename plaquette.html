@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--
+  plaquette.html : plaquette commerciale Otomata (A4 recto, charte oto.cx).
+  Rendu PDF :
+    google-chrome - -headless - -user-data-dir=/tmp/oto-plaquette-chrome \
+      - -no-pdf-header-footer - -print-to-pdf=out/plaquette-otomata.pdf plaquette.html
+  (retirer l'espace dans les "- -", échappé ici pour le commentaire HTML)
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Otomata — plaquette</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  :root{
+    --bg:#fefcf5; --surface:#ffffff; --paper2:#f4ecd2;
+    --ink:#2c2112; --ink-soft:#4a3a23; --mute:#7a6c50; --faint:#aa9f7e;
+    --hair:#e9dcb4; --hair-soft:#f0e6c8;
+    --saffron:#f0b41e; --saffron-ink:#5a3b03; --saffron-soft:#fbe7a8;
+    --terra:#d63d0a; --terra-ink:#5a1804;
+    --olive:#8aa620; --olive-ink:#3e4c0c; --olive-soft:#e6eec0;
+    --cobalt:#1f6dba; --cobalt-ink:#0b2e54;
+    --sans:"Familjen Grotesk",system-ui,-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  @page{ size:A4; margin:0; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ background:var(--bg); }
+  body{
+    width:210mm; height:296mm; overflow:hidden;
+    font-family:var(--sans); color:var(--ink);
+    display:flex; flex-direction:column;
+    padding:13mm 14mm 10mm;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .eyebrow{ font-family:var(--mono); font-size:8.5px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); }
+  .kicker{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--terra); }
+
+  /* ── header ── */
+  header{ display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:6mm; border-bottom:1.5px solid var(--ink); }
+  .wordmark{ font-size:34px; font-weight:700; letter-spacing:-0.02em; line-height:1; }
+  .wordmark .dot{ color:var(--saffron); }
+  .baseline{ margin-top:2.5mm; font-size:12.5px; color:var(--ink-soft); }
+  .coords{ text-align:right; font-family:var(--mono); font-size:9.5px; line-height:1.8; color:var(--mute); }
+  .coords strong{ color:var(--ink); font-weight:600; }
+
+  /* ── hero ── */
+  .hero{ padding:7mm 0 6mm; }
+  .hero h1{ font-size:27px; font-weight:600; letter-spacing:-0.015em; line-height:1.12; max-width:150mm; }
+  .hero h1 em{ font-style:normal; color:var(--saffron-ink); }
+  .hero p{ margin-top:3.5mm; font-size:11.5px; line-height:1.55; color:var(--ink-soft); max-width:165mm; }
+
+  /* ── offres ── */
+  .offers{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm; margin-top:2mm; }
+  .card{ background:var(--surface); border:1px solid var(--hair); border-radius:10px; padding:5mm 5mm 4.5mm; display:flex; flex-direction:column; }
+  .card .num{ font-family:var(--mono); font-size:8.5px; font-weight:700; letter-spacing:.2em; color:var(--terra); }
+  .card h2{ margin-top:2mm; font-size:14px; font-weight:600; letter-spacing:-0.01em; }
+  .card p{ margin-top:2mm; font-size:10px; line-height:1.5; color:var(--ink-soft); flex:1; }
+  .card .price{ margin-top:3mm; font-family:var(--mono); font-size:9px; color:var(--saffron-ink); background:var(--saffron-soft); border-radius:99px; padding:1.6mm 3mm; align-self:flex-start; }
+
+  /* ── grille tarifaire oto ── */
+  .pricing{ margin-top:6mm; }
+  .pricing .head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:3mm; }
+  .pricing .head h2{ font-size:15px; font-weight:600; letter-spacing:-0.01em; }
+  .table{ background:var(--surface); border:1px solid var(--hair); border-radius:10px; overflow:hidden; }
+  .trow{ display:grid; grid-template-columns:1.1fr 2fr 0.8fr; padding:2.9mm 5mm; border-bottom:1px solid var(--hair-soft); align-items:baseline; }
+  .trow:last-child{ border-bottom:0; }
+  .trow.thead{ background:var(--bg); padding:2.2mm 5mm; border-bottom:1px solid var(--hair); }
+  .trow .plan{ font-size:11.5px; font-weight:600; }
+  .trow .scope{ font-size:9.5px; color:var(--mute); }
+  .trow .price{ font-family:var(--mono); font-size:11px; font-weight:700; text-align:right; }
+  .trow .price.free{ color:var(--olive-ink); }
+  .tnote{ margin-top:2mm; font-family:var(--mono); font-size:8.5px; color:var(--faint); }
+
+  /* ── références ── */
+  .refs{ margin-top:5mm; display:flex; align-items:baseline; gap:4mm; }
+  .refs p{ font-size:10px; line-height:1.5; color:var(--ink-soft); }
+
+  /* ── footer légal ── */
+  footer{ margin-top:auto; padding-top:4mm; border-top:1px solid var(--hair); display:flex; justify-content:space-between; align-items:flex-end; }
+  footer .legal{ font-family:var(--mono); font-size:8px; line-height:1.7; color:var(--faint); }
+  footer .cta{ text-align:right; font-size:11px; font-weight:600; }
+  footer .cta a{ color:var(--saffron-ink); text-decoration:none; }
+  footer .cta .sub{ font-family:var(--mono); font-size:8.5px; font-weight:400; color:var(--mute); margin-top:1mm; }
+</style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="wordmark">otomata<span class="dot">.</span></div>
+      <div class="baseline">Conseil et ingénierie en intelligence artificielle · éditeur de la plateforme <strong>oto</strong></div>
+    </div>
+    <div class="coords">
+      <strong>alexis@otomata.tech</strong><br>
+      otomata.tech · oto.cx<br>
+      Marseille, France
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="kicker">Nos offres</div>
+    <h1 style="margin-top:3mm;">Des agents IA branchés sur vos <em>vrais outils métier</em>, du conseil à la plateforme.</h1>
+    <p>Otomata aide les entreprises à mettre l'IA au travail : conception et développement d'agents et d'automatisations,
+       formation des équipes, et la plateforme oto, qui connecte les assistants IA (Claude, ChatGPT…) aux outils
+       et données de l'entreprise, avec les secrets gardés dans un coffre côté serveur.</p>
+  </section>
+
+  <section class="offers">
+    <div class="card">
+      <div class="num">01 — CONSEIL &amp; DÉVELOPPEMENT</div>
+      <h2>Agents IA et automatisations sur mesure</h2>
+      <p>Cadrage, développement et mise en production d'agents IA, d'automatisations et d'intégrations
+         (protocole MCP, Claude, données métier). Missions au temps passé, pilotées par sprints courts.</p>
+      <div class="price">à partir de 1 000 € HT / jour · sur devis</div>
+    </div>
+    <div class="card">
+      <div class="num">02 — FORMATION</div>
+      <h2>Adoption de l'IA par vos équipes</h2>
+      <p>Ateliers pratiques et accompagnement des équipes métier et techniques : prise en main des assistants IA,
+         bonnes pratiques, cas d'usage concrets sur vos propres outils et données.</p>
+      <div class="price">sur devis</div>
+    </div>
+    <div class="card">
+      <div class="num">03 — PLATEFORME OTO</div>
+      <h2>Vos outils métier, accessibles à vos agents IA</h2>
+      <p>Abonnement SaaS par organisation : connecteurs (CRM, e-mail, LinkedIn, données entreprise France…),
+         doctrines métier et coffre à secrets. Souscription et gestion sur manage.oto.cx.</p>
+      <div class="price">abonnement mensuel · grille ci-dessous</div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <div class="head">
+      <h2>Grille tarifaire — abonnements oto</h2>
+      <span class="eyebrow">prix HT / mois / organisation</span>
+    </div>
+    <div class="table">
+      <div class="trow thead">
+        <span class="eyebrow">palier</span>
+        <span class="eyebrow">pour qui</span>
+        <span class="eyebrow" style="text-align:right;">prix</span>
+      </div>
+      <div class="trow"><span class="plan">Gratuit</span><span class="scope">découvrir oto et brancher ses premiers connecteurs</span><span class="price free">0 €</span></div>
+      <div class="trow"><span class="plan">Solo</span><span class="scope">un indépendant, un compte de messagerie connecté</span><span class="price">49 €</span></div>
+      <div class="trow"><span class="plan">Team</span><span class="scope">une équipe, jusqu'à 10 comptes de messagerie connectés</span><span class="price">250 €</span></div>
+      <div class="trow"><span class="plan">Business</span><span class="scope">une organisation, jusqu'à 50 comptes de messagerie connectés</span><span class="price">500 €</span></div>
+      <div class="trow"><span class="plan">Entreprise</span><span class="scope">périmètre dédié, volumes et intégrations spécifiques</span><span class="price">sur devis</span></div>
+    </div>
+    <div class="tnote">Prix hors taxes, TVA en sus. Détail des paliers au moment de la commande sur manage.oto.cx · CGV : oto.cx/cgv.
+      L'accompagnement (paramétrage, formation, développement) est distinct de l'abonnement et fait l'objet d'un devis propre.</div>
+  </section>
+
+  <section class="refs">
+    <span class="eyebrow" style="white-space:nowrap;">Ils nous font confiance</span>
+    <p>Groupes d'ingénierie, banque mutualiste, fintech RH, studios créatifs et PME innovantes :
+       missions de conseil, formations et déploiements d'agents IA en production.</p>
+  </section>
+
+  <footer>
+    <div class="legal">
+      Otomata, SASU au capital de 1 000 € · RCS Marseille — SIREN 106 974 637 · TVA FR05106974637<br>
+      Siège social : 55 Rue Grignan, 13006 Marseille, France · Président : Alexis Laporte<br>
+      Assurance RC professionnelle : Hiscox (police RCPH278533033)
+    </div>
+    <div class="cta">
+      <a href="mailto:alexis@otomata.tech">alexis@otomata.tech</a>
+      <div class="sub">réponse sous 24 h ouvrées</div>
+    </div>
+  </footer>
+
+</body>
+</html>

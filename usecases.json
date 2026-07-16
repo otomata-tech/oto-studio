@@ -1,0 +1,149 @@
+[
+  { "num":"01","slug":"prospection","kicker":"prospection","msg":"trouve les DAF des ETI industrielles autour de Marseille",
+    "tools":[
+      {"icon":"search","tint":"cobalt","ns":"oto","name":"fr_search","label":"entreprises FR — insee sirene","res":"42 ETI"},
+      {"icon":"mail-check","tint":"saffron","ns":"oto","name":"enrich","label":"emails pros vérifiés","res":"38 / 42"},
+      {"icon":"user-plus","tint":"olive","ns":"folk","name":"create_person","label":"ajout au CRM","res":"+42"}],
+    "final":"<b>42 contacts</b> dans Folk, enrichis, prêts pour l'outreach." },
+
+  { "num":"02","slug":"solaire","kicker":"énergie solaire","msg":"repère les toitures agro à fort potentiel solaire dans la Drôme",
+    "tools":[
+      {"icon":"map-pin","tint":"cobalt","ns":"oto","name":"foncier_geocode","label":"adresses → parcelles","res":"312 sites"},
+      {"icon":"sun","tint":"saffron","ns":"oto","name":"foncier_productible_solaire","label":"productible IGN + PVGIS","res":"38 ≥ 500 kWc"},
+      {"icon":"mail-check","tint":"olive","ns":"oto","name":"hunter_email_finder","label":"email décideur vérifié","res":"31 / 38"}],
+    "final":"<b>38 toitures agro</b> chiffrées en kWc, décideurs joignables." },
+
+  { "num":"03","slug":"restaurants","kicker":"titres-restaurant","msg":"liste les restaurants employeurs de Nantes",
+    "tools":[
+      {"icon":"map-pin","tint":"cobalt","ns":"oto","name":"serper_places","label":"restaurants — google maps","res":"180 lieux"},
+      {"icon":"building-2","tint":"saffron","ns":"oto","name":"fr_get","label":"siren & effectif","res":"112 employeurs"},
+      {"icon":"user-plus","tint":"olive","ns":"folk","name":"create_company","label":"leads dans le CRM","res":"+112"}],
+    "final":"<b>112 restaurants employeurs</b> qualifiés, dans le CRM." },
+
+  { "num":"04","slug":"accords-dormants","kicker":"santé / prévoyance","msg":"quelles entreprises n'ont pas renégocié leur mutuelle depuis 2 ans ?",
+    "tools":[
+      {"icon":"scroll-text","tint":"cobalt","ns":"oto","name":"fr_accords","label":"accords collectifs (ACCO)","res":"7 639 accords"},
+      {"icon":"scale","tint":"saffron","ns":"oto","name":"fr_ccn","label":"idcc & secteur","res":"CCN 1285"},
+      {"icon":"user-plus","tint":"olive","ns":"folk","name":"create_company","label":"contrats dormants","res":"+214"}],
+    "final":"<b>214 contrats dormants</b> détectés, prêts pour l'approche." },
+
+  { "num":"05","slug":"spectacle","kicker":"secteur culturel","msg":"source les entreprises du spectacle vivant en Occitanie",
+    "tools":[
+      {"icon":"scan-search","tint":"cobalt","ns":"oto","name":"culture_spectacle","label":"licences spectacle","res":"630 structures"},
+      {"icon":"scale","tint":"saffron","ns":"oto","name":"fr_ccn","label":"ccn × naf","res":"CCN 3090"},
+      {"icon":"user-search","tint":"olive","ns":"oto","name":"unipile_search","label":"décideur linkedin","res":"410 trouvés"}],
+    "final":"<b>410 structures</b> qualifiées CCN, décideurs identifiés." },
+
+  { "num":"06","slug":"droit-social","kicker":"droit social","msg":"quel préavis de licenciement en convention 1285 ?",
+    "tools":[
+      {"icon":"scale","tint":"cobalt","ns":"oto","name":"fr_ccn_search","label":"convention 1285","res":"art. 4.3"},
+      {"icon":"book-open","tint":"saffron","ns":"oto","name":"fr_ccn_get","label":"texte + source légifrance","res":"avenant 2024"},
+      {"icon":"file-text","tint":"olive","ns":"oto","name":"fr_loi","label":"code du travail croisé","res":"L1234-1"}],
+    "final":"Réponse <b>sourcée Légifrance</b>, lien vérifiable à l'appui." },
+
+  { "num":"07","slug":"jurisprudence","kicker":"jurisprudence","msg":"un arrêt de principe sur la rupture conventionnelle ?",
+    "tools":[
+      {"icon":"gavel","tint":"cobalt","ns":"oto","name":"fr_juris_search","label":"jurisprudence","res":"27 arrêts"},
+      {"icon":"scale","tint":"saffron","ns":"oto","name":"fr_juris_get","label":"arrêt de principe","res":"Cass. soc."},
+      {"icon":"book-open","tint":"olive","ns":"oto","name":"fr_loi","label":"article visé","res":"L1237-11"}],
+    "final":"L'<b>arrêt de principe</b> + son texte intégral, sourcé." },
+
+  { "num":"08","slug":"due-diligence-sociale","kicker":"conformité","msg":"comment se situe cette boîte sur l'égalité femmes-hommes ?",
+    "tools":[
+      {"icon":"scale","tint":"cobalt","ns":"oto","name":"fr_egapro","label":"index égalité f/h","res":"84 / 100"},
+      {"icon":"scroll-text","tint":"saffron","ns":"oto","name":"fr_accords","label":"accords en vigueur","res":"3 accords"},
+      {"icon":"chart-column","tint":"olive","ns":"oto","name":"fr_bilans","label":"santé financière","res":"CA + résultat"}],
+    "final":"<b>Fiche sociale</b> : index égalité, accords, finances." },
+
+  { "num":"09","slug":"parcelle","kicker":"immobilier","msg":"analyse le potentiel de cette parcelle à Clichy",
+    "tools":[
+      {"icon":"map-pin","tint":"cobalt","ns":"oto","name":"foncier_geocode","label":"adresse → parcelle","res":"1 parcelle"},
+      {"icon":"ruler","tint":"saffron","ns":"oto","name":"foncier_comparables","label":"ventes dvf alentour","res":"27 comps"},
+      {"icon":"layers","tint":"olive","ns":"oto","name":"urba_zonage","label":"plu & contraintes","res":"zone UAb"}],
+    "final":"<b>Note foncière</b> : prix, comparables, zonage, risques." },
+
+  { "num":"10","slug":"terrain-risque","kicker":"risques","msg":"ce terrain est-il exposé à des risques ?",
+    "tools":[
+      {"icon":"factory","tint":"cobalt","ns":"oto","name":"foncier_icpe","label":"sites pollués (icpe)","res":"2 à 300 m"},
+      {"icon":"shield-alert","tint":"saffron","ns":"oto","name":"urba_risques","label":"inondation & mvt terrain","res":"PPRI oui"},
+      {"icon":"flame","tint":"olive","ns":"oto","name":"urba_argiles","label":"retrait-gonflement argiles","res":"aléa fort"}],
+    "final":"<b>Diagnostic risques</b> : pollution, inondation, argiles." },
+
+  { "num":"11","slug":"passoires-thermiques","kicker":"dpe","msg":"sors les passoires thermiques de cet immeuble",
+    "tools":[
+      {"icon":"thermometer-sun","tint":"cobalt","ns":"oto","name":"foncier_dpe_adresse","label":"dpe par logement","res":"34 DPE"},
+      {"icon":"chart-column","tint":"saffron","ns":"oto","name":"foncier_dpe_stats","label":"répartition des classes","res":"9 en F/G"},
+      {"icon":"file-text","tint":"olive","ns":"oto","name":"foncier_bati","label":"bâti & surfaces","res":"1 970 m²"}],
+    "final":"<b>9 passoires</b> (F/G) identifiées sur l'immeuble." },
+
+  { "num":"12","slug":"permis-concurrents","kicker":"veille foncière","msg":"quels permis de construire déposés autour de ce site ?",
+    "tools":[
+      {"icon":"hard-hat","tint":"cobalt","ns":"oto","name":"foncier_permis_search","label":"permis (sit@del)","res":"18 permis"},
+      {"icon":"building-2","tint":"saffron","ns":"oto","name":"fr_get","label":"maître d'ouvrage (siren)","res":"12 promoteurs"},
+      {"icon":"map","tint":"olive","ns":"oto","name":"foncier_reverse","label":"localisation & emprise","res":"rayon 500 m"}],
+    "final":"<b>18 permis</b> concurrents cartographiés, maîtres d'ouvrage identifiés." },
+
+  { "num":"13","slug":"socio-quartier","kicker":"territoire","msg":"profil sociodémographique de ce quartier de Marseille",
+    "tools":[
+      {"icon":"users","tint":"cobalt","ns":"oto","name":"urba_socio","label":"sociodémo insee","res":"12 400 hab."},
+      {"icon":"shield","tint":"saffron","ns":"oto","name":"urba_qpv","label":"quartier prioritaire ?","res":"QPV oui"},
+      {"icon":"map-pin","tint":"olive","ns":"oto","name":"foncier_geocode","label":"périmètre iris","res":"IRIS ciblé"}],
+    "final":"<b>Profil de territoire</b> : population, revenus, QPV." },
+
+  { "num":"14","slug":"rappro","kicker":"comptabilité","msg":"rapproche mes encaissements avec les factures ouvertes",
+    "tools":[
+      {"icon":"landmark","tint":"cobalt","ns":"oto","name":"pennylane_transactions","label":"écritures bancaires du mois","res":"96 lignes"},
+      {"icon":"arrow-left-right","tint":"saffron","ns":"oto","name":"pennylane_match","label":"appariement des factures","res":"11 matchs"},
+      {"icon":"check-check","tint":"olive","ns":"oto","name":"data_write","label":"journal du run","res":"2 à valider"}],
+    "final":"Compta rapprochée : <b>11 matchs sûrs</b>, 2 à trancher, le reste filtré." },
+
+  { "num":"15","slug":"ged","kicker":"comptabilité","msg":"classe les factures fournisseurs reçues cette semaine",
+    "tools":[
+      {"icon":"mail","tint":"cobalt","ns":"oto","name":"gmail_search","label":"pièces jointes factures","res":"7 PDF"},
+      {"icon":"file-text","tint":"saffron","ns":"oto","name":"pennylane_import","label":"import fournisseurs","res":"7 importées"},
+      {"icon":"folder-check","tint":"olive","ns":"oto","name":"pennylaneged","label":"rangement dans la ged","res":"classées"}],
+    "final":"<b>7 factures</b> importées et rangées dans la GED, sans saisie." },
+
+  { "num":"16","slug":"avoir","kicker":"finance","msg":"traite ce prélèvement échoué jusqu'à l'avoir",
+    "tools":[
+      {"icon":"mail","tint":"cobalt","ns":"oto","name":"gmail_search","label":"avis de rejet bancaire","res":"1 rejet"},
+      {"icon":"receipt","tint":"saffron","ns":"oto","name":"pennylane_credit_note","label":"émission de l'avoir","res":"avoir prêt"},
+      {"icon":"send","tint":"olive","ns":"oto","name":"email_send","label":"client prévenu","res":"envoyé"},
+      {"icon":"check-check","tint":"terra","ns":"oto","name":"data_write","label":"reprise back-office","res":"à valider"}],
+    "final":"<b>Avoir</b> émis, client prévenu, reprise journalisée — sous ta validation." },
+
+  { "num":"17","slug":"veille","kicker":"veille","msg":"fais-moi la veille IA de la semaine",
+    "tools":[
+      {"icon":"newspaper","tint":"cobalt","ns":"oto","name":"serper_news","label":"actu ia — 7 jours","res":"34 articles"},
+      {"icon":"globe","tint":"saffron","ns":"oto","name":"serper_scrape","label":"lecture des sources","res":"12 lues"},
+      {"icon":"brain","tint":"olive","ns":"oto","name":"memento","label":"synthèse mémorisée","res":"1 digest"}],
+    "final":"Digest de veille prêt, <b>sourcé et archivé</b> dans la base." },
+
+  { "num":"18","slug":"marches-publics","kicker":"appels d'offres","msg":"trouve les marchés publics IA ouverts en ce moment",
+    "tools":[
+      {"icon":"gavel","tint":"cobalt","ns":"oto","name":"fr_tenders_search","label":"marchés publics (boamp)","res":"63 avis"},
+      {"icon":"scan-search","tint":"saffron","ns":"oto","name":"fr_tenders_get","label":"objet & montant","res":"18 pertinents"},
+      {"icon":"calendar-check","tint":"olive","ns":"oto","name":"data_write","label":"échéances suivies","res":"dates limites"}],
+    "final":"<b>18 appels d'offres IA</b> pertinents, échéances trackées." },
+
+  { "num":"19","slug":"french-tech","kicker":"financements","msg":"quelles startups IA viennent de lever en région Sud ?",
+    "tools":[
+      {"icon":"rocket","tint":"cobalt","ns":"oto","name":"frenchtech_financements","label":"levées de fonds","res":"24 levées"},
+      {"icon":"banknote","tint":"saffron","ns":"oto","name":"frenchtech_appels","label":"aides & appels ouverts","res":"9 ouverts"},
+      {"icon":"building-2","tint":"olive","ns":"oto","name":"frenchtech_annuaire","label":"annuaire écosystème","res":"310 acteurs"}],
+    "final":"<b>24 levées</b> récentes + aides ouvertes, cartographiées." },
+
+  { "num":"20","slug":"osint","kicker":"cybersécurité","msg":"audite la surface d'attaque de ce domaine",
+    "tools":[
+      {"icon":"radar","tint":"cobalt","ns":"oto","name":"infosec_subdomains","label":"sous-domaines exposés","res":"47 hôtes"},
+      {"icon":"lock","tint":"saffron","ns":"oto","name":"infosec_tls","label":"certificats & tls","res":"3 faibles"},
+      {"icon":"shield-alert","tint":"olive","ns":"oto","name":"infosec_email_security","label":"spf / dkim / dmarc","res":"DMARC absent"}],
+    "final":"<b>Surface d'attaque</b> cartographiée : exposition, TLS, email." },
+
+  { "num":"21","slug":"salles-implantation","kicker":"implantation commerce","msg":"où ouvrir une salle de sport à Lyon ?",
+    "tools":[
+      {"icon":"map-pin","tint":"cobalt","ns":"oto","name":"fr_stock_search","label":"clubs — sirene naf 93.13Z","res":"91 clubs"},
+      {"icon":"users","tint":"saffron","ns":"oto","name":"urba_socio","label":"population par arrondissement","res":"9 arrdts"},
+      {"icon":"heart-pulse","tint":"olive","ns":"oto","name":"urba_iris","label":"actifs 20-64 ans","res":"52 652 (8e)"}],
+    "final":"<b>Le 8e</b> : 85 943 habitants pour 7 clubs." }
+]

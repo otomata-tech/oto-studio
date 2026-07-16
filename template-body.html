@@ -1,0 +1,198 @@
+<!--__DATA__-->
+<style>
+/* __FONTS__ */
+:root{
+  --bg:#fefcf5; --surface:#ffffff; --paper2:#f4ecd2;
+  --hair:#e9dcb4; --hair-soft:#f0e6c8;
+  --ink:#2c2112; --ink-soft:#4a3a23; --mute:#7a6c50; --faint:#aa9f7e;
+  --saffron:#f0b41e; --saffron-ink:#5a3b03; --saffron-soft:#fbe7a8;
+  --terra:#d63d0a; --terra-ink:#5a1804; --terra-soft:#f7cdbb;
+  --olive:#8aa620; --olive-ink:#3e4c0c; --olive-soft:#e6eec0;
+  --cobalt:#1f6dba; --cobalt-ink:#0b2e54; --cobalt-soft:#c4dcf0;
+  --sans:"Familjen Grotesk",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+body.live{background:#d8cfba;padding:0;overflow:hidden}
+body.live .stage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(calc(0.94 * min(100vw / 1080px, 100vh / 1080px)))}
+.stage{width:1080px;height:1080px;transform-origin:center center}
+
+.card{width:1080px;height:1080px;
+  background:radial-gradient(120% 90% at 100% 0%, #fffdf7 0%, var(--bg) 60%);
+  color:var(--ink);padding:56px 62px 46px;display:flex;flex-direction:column;position:relative}
+body.live .card{box-shadow:0 40px 120px rgba(44,33,18,.28)}
+.card::after{content:"";position:absolute;inset:24px;border:1px solid var(--hair);pointer-events:none}
+
+.head{display:flex;align-items:baseline;justify-content:space-between;position:relative;z-index:1}
+.wordmark{font-weight:700;font-size:36px;letter-spacing:-.04em;text-transform:lowercase;line-height:1}
+.wordmark .dot{color:var(--terra)}
+.eyebrow{font-family:var(--mono);font-size:18px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.eyebrow .num{color:var(--terra)}
+.rule{margin-top:18px;height:1px;position:relative;z-index:1;
+  background-image:radial-gradient(circle,var(--hair) 1.4px,transparent 1.4px);
+  background-size:14px 1px;background-repeat:repeat-x;background-position:0 50%}
+
+.tabs{display:flex;align-items:center;gap:6px;margin-top:22px;position:relative;z-index:1;border-bottom:1px solid var(--hair)}
+.tab{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px 12px 0 0;
+  font-weight:600;font-size:19px;color:var(--faint);border:1px solid transparent;border-bottom:none;position:relative;top:1px}
+.tab svg{width:22px;height:22px;fill:currentColor}
+.tab.active{color:var(--ink);background:var(--surface);border-color:var(--hair)}
+.tab.active::before{content:"";position:absolute;left:-1px;right:-1px;top:0;height:3px;background:var(--terra);border-radius:3px 3px 0 0}
+.tab .live{width:8px;height:8px;border-radius:50%;background:var(--olive);margin-left:1px}
+.tabs .more{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--mute);letter-spacing:.03em;padding-right:6px}
+
+.flow{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:10px 0 6px}
+.kicker{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--terra)}
+
+.bubble{align-self:flex-start;max-width:88%;background:var(--surface);border:1px solid var(--hair);
+  border-radius:18px 18px 18px 4px;padding:20px 24px;opacity:0;transform:translateY(8px);box-shadow:0 10px 30px rgba(44,33,18,.06)}
+.bubble.show{opacity:1;transform:none}
+.bubble .who{font-family:var(--mono);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.bubble .msg{font-size:29px;line-height:1.32;color:var(--ink);font-weight:500}
+.bcaret{display:inline-block;width:2px;height:1.05em;translate:0 .18em;background:var(--terra);margin-left:2px}
+.bcaret.off{opacity:0}
+
+.working{font-family:var(--mono);font-size:15px;letter-spacing:.06em;color:var(--mute);display:flex;align-items:center;gap:10px;opacity:0;padding-left:4px}
+.working.show{opacity:1}
+.working b{color:var(--terra-ink);font-weight:700}
+
+.rows{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;gap:18px;background:var(--surface);border:1px solid var(--hair);
+  border-radius:16px;padding:18px 22px;opacity:0;transform:translateY(10px);box-shadow:0 8px 24px rgba(44,33,18,.05)}
+.row.show{opacity:1;transform:none}
+.row.done{border-color:var(--olive-soft)}
+.ricon{width:56px;height:56px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center}
+.ricon svg{width:27px;height:27px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.i-cobalt{background:var(--cobalt-soft)} .i-cobalt svg{stroke:var(--cobalt-ink)}
+.i-saffron{background:var(--saffron-soft)} .i-saffron svg{stroke:var(--saffron-ink)}
+.i-olive{background:var(--olive-soft)} .i-olive svg{stroke:var(--olive-ink)}
+.i-terra{background:var(--terra-soft)} .i-terra svg{stroke:var(--terra-ink)}
+.rmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rtool{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+.rtool .ns{color:var(--faint)}
+.rlabel{font-size:19px;color:var(--mute)}
+.rright{flex:none;display:flex;align-items:center;gap:12px;min-width:150px;justify-content:flex-end}
+.rres{font-family:var(--mono);font-size:21px;font-weight:700;color:var(--olive-ink);opacity:0}
+.rres.show{opacity:1}
+.spin{width:26px;height:26px;flex:none}
+.spin circle{fill:none;stroke:var(--cobalt-soft);stroke-width:3}
+.spin path{fill:none;stroke:var(--cobalt);stroke-width:3;stroke-linecap:round}
+.check{width:30px;height:30px;flex:none;border-radius:50%;background:var(--olive);display:none;align-items:center;justify-content:center}
+.check svg{width:17px;height:17px;stroke:#fff;stroke-width:3.2;fill:none}
+.row.done .spin{display:none}
+.row.done .check{display:flex}
+
+.final{display:flex;align-items:center;gap:14px;background:var(--saffron-soft);border:1px solid var(--saffron);
+  border-radius:16px;padding:20px 24px;opacity:0;transform:translateY(10px)}
+.final.show{opacity:1;transform:none}
+.final .fa{color:var(--terra);font-family:var(--mono);font-weight:700;font-size:26px}
+.final .ft{font-size:23px;color:var(--ink);font-weight:600}
+.final .ft b{color:var(--terra-ink)}
+
+.foot{margin-top:6px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.foot .url{font-family:var(--mono);font-size:20px;color:var(--ink)}
+.foot .url b{color:var(--terra)}
+.foot .tagline{font-size:20px;font-style:italic;color:var(--mute)}
+</style>
+
+<div class="stage">
+  <div class="card">
+    <div class="head">
+      <div class="wordmark">oto<span class="dot">.</span></div>
+      <div class="eyebrow">cas d'usage · <span class="num" id="num">nº 01</span></div>
+    </div>
+    <div class="rule"></div>
+
+    <div class="tabs">
+      <div class="tab active"><svg viewBox="0 0 24 24"><path d="__CLAUDE__"/></svg>Claude<span class="live"></span></div>
+      <div class="tab"><svg viewBox="0 0 24 24"><path d="__MISTRAL__"/></svg>Le Chat</div>
+      <div class="tab"><svg viewBox="0 0 24 24"><path d="__OPENAI__"/></svg>ChatGPT</div>
+      <span class="more">+ tout client MCP</span>
+    </div>
+
+    <div class="flow">
+      <span class="kicker" id="kicker"></span>
+      <div class="bubble" id="bubble">
+        <div class="who">toi</div>
+        <div class="msg"><span id="msg"></span><span class="bcaret" id="bcaret"></span></div>
+      </div>
+      <div class="working" id="working"><b>oto</b> orchestre les outils…</div>
+      <div class="rows" id="rows"></div>
+      <div class="final" id="final"><span class="fa">→</span><span class="ft" id="finaltext"></span></div>
+    </div>
+
+    <div class="foot">
+      <span class="url">oto<b>.</b>cx</span>
+      <span class="tagline">le harnais IA d'Otomata</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICONS = window.__ICONS || {};
+const SPIN = '<svg class="spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 a9 9 0 0 1 9 9"/></svg>';
+const CHECK = '<span class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6" fill="none"/></svg></span>';
+const esc = s => String(s==null?'':s);
+let rafId = null;
+function boot(UC){
+  if(!UC || !Array.isArray(UC.tools)) return;
+  if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  document.getElementById('num').textContent = 'nº ' + esc(UC.num);
+  document.getElementById('kicker').textContent = esc(UC.kicker);
+  document.getElementById('finaltext').innerHTML = esc(UC.final);
+  const rowsEl = document.getElementById('rows'); rowsEl.innerHTML = '';
+  UC.tools.forEach(t=>{
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML =
+      '<div class="ricon i-'+esc(t.tint)+'"><svg viewBox="0 0 24 24">'+(ICONS[t.icon]||'')+'</svg></div>'+
+      '<div class="rmid"><div class="rtool"><span class="ns">'+esc(t.ns)+' · </span>'+esc(t.name)+'</div><div class="rlabel">'+esc(t.label)+'</div></div>'+
+      '<div class="rright"><span class="rres">'+esc(t.res)+'</span>'+SPIN+CHECK+'</div>';
+    rowsEl.appendChild(row);
+  });
+  const rowEls = [...rowsEl.children];
+  const resEls = rowEls.map(r=>r.querySelector('.rres'));
+  const spinEls = rowEls.map(r=>r.querySelector('.spin'));
+
+  const MSG = esc(UC.msg), N = UC.tools.length;
+  const STEP = 900, DUR = 780;
+  const T = { bubble:200, typeStart:450, typeEnd:1750, working:1900, first:2150 };
+  const appear = i => T.first + i*STEP;
+  const done   = i => appear(i) + DUR;
+  const finalT = done(Math.max(0,N-1)) + 300;
+  const LOOP = finalT + 1700;
+  window.__DURATION = LOOP;
+
+  const el = {
+    bubble:document.getElementById('bubble'), msg:document.getElementById('msg'),
+    bcaret:document.getElementById('bcaret'), working:document.getElementById('working'),
+    final:document.getElementById('final')
+  };
+  function render(t){
+    t = t % LOOP;
+    el.bubble.classList.toggle('show', t>=T.bubble);
+    const n = t<T.typeStart?0 : t>=T.typeEnd?MSG.length : Math.round(MSG.length*(t-T.typeStart)/(T.typeEnd-T.typeStart));
+    el.msg.textContent = MSG.slice(0,n);
+    const blink = (Math.floor(t/530)%2)===0;
+    el.bcaret.classList.toggle('off', !((t<T.typeEnd) || (t<T.working && blink)));
+    el.working.classList.toggle('show', t>=T.working && t<finalT);
+    rowEls.forEach((row,i)=>{
+      const show = t>=appear(i), dn = t>=done(i);
+      row.classList.toggle('show', show);
+      row.classList.toggle('done', dn);
+      resEls[i].classList.toggle('show', dn);
+      if(show && !dn){ spinEls[i].style.transform = 'rotate('+((t*0.72)%360)+'deg)'; }
+    });
+    el.final.classList.toggle('show', t>=finalT);
+  }
+  window.__seek = render; render(0);
+  const params = new URLSearchParams(location.search);
+  if(params.get('capture')!=='1'){
+    document.body.classList.add('live');
+    let s=null; function fr(now){ if(s===null)s=now; render(now-s); rafId=requestAnimationFrame(fr);} rafId=requestAnimationFrame(fr);
+  }
+}
+boot(window.__UC);
+window.addEventListener('message', e=>{ if(e && e.data && e.data.uc) boot(e.data.uc); });
+</script>

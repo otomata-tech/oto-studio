@@ -1,0 +1,21 @@
+# artefacts regénérables
+out/
+.gen/
+frames/
+node_modules/
+
+# exports générés (régénérables via build-all.mjs / server.mjs)
+anim-*.html
+build-summary.json
+post-*.png
+
+# scratch de rendu / debug
+*.log
+debug.log
+preview*.png
+chk-*.png
+anim.html
+gallery.html
+
+# profils chrome de rendu
+/tmp/oto-build-chrome/

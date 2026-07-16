@@ -1,0 +1,152 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>oto — studio de cartes</title>
+<style>
+:root{--bg:#fefcf5;--surface:#fff;--hair:#e9dcb4;--ink:#2c2112;--soft:#4a3a23;--mute:#7a6c50;--faint:#aa9f7e;
+  --terra:#d63d0a;--terra-ink:#5a1804;--saffron:#f0b41e;--olive:#8aa620;--cobalt:#1f6dba;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#efe7d3;color:var(--ink);height:100vh;display:flex}
+.panel{width:46%;max-width:640px;height:100vh;overflow:auto;background:var(--bg);border-right:1px solid var(--hair);padding:26px 28px}
+.stage{flex:1;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:28px}
+h1{font-size:23px;font-weight:800;letter-spacing:-.02em}
+h1 .d{color:var(--terra)}
+.sub{color:var(--mute);font-size:13px;margin:2px 0 20px}
+label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:14px 0 6px}
+input,select,textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--hair);border-radius:9px;padding:10px 12px;outline:none}
+input:focus,select,textarea:focus{border-color:var(--terra)}
+textarea{resize:vertical;min-height:52px}
+.mono{font-family:var(--mono)}
+.row2{display:grid;grid-template-columns:80px 1fr;gap:10px}
+.tools{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.tool{border:1px solid var(--hair);border-radius:12px;padding:12px;background:#fffdf7;position:relative}
+.tool .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool label{margin:8px 0 4px}
+.tool .x{position:absolute;top:8px;right:8px;border:1px solid var(--hair);background:var(--surface);border-radius:7px;
+  width:26px;height:26px;font-size:15px;line-height:1;color:var(--mute);cursor:pointer}
+.tool .x:hover{color:var(--terra);border-color:var(--terra)}
+.addbtn{margin-top:10px;background:transparent;border:1px dashed var(--faint);color:var(--soft);border-radius:9px;padding:9px;width:100%;font-weight:600;cursor:pointer}
+.addbtn:hover{border-color:var(--terra);color:var(--terra)}
+.tint{display:inline-flex;align-items:center;gap:6px}
+.export{display:flex;gap:10px;align-items:center}
+.btn{background:var(--ink);color:var(--bg);border:none;border-radius:999px;padding:13px 24px;font-size:15px;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.frame{width:min(74vh,620px);aspect-ratio:1;border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(44,33,18,.22);background:var(--bg)}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.result{display:flex;flex-direction:column;gap:8px;align-items:center;font-size:13px;color:var(--soft)}
+.result a{color:var(--terra-ink);font-weight:700}
+.status{font-size:13px;color:var(--mute);min-height:18px}
+hr{border:none;border-top:1px solid var(--hair);margin:20px 0}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.presets button{font-size:12px;border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:6px 11px;cursor:pointer;color:var(--soft)}
+.presets button:hover{border-color:var(--terra);color:var(--terra)}
+</style></head>
+<body>
+<div class="panel">
+  <h1>oto <span class="d">·</span> studio de cartes</h1>
+  <div class="sub">remplis, regarde la preview à droite, exporte le MP4/GIF.</div>
+
+  <div class="presets" id="presets"></div>
+
+  <div class="row2">
+    <div><label>nº</label><input id="f-num" class="mono"></div>
+    <div><label>catégorie (kicker)</label><input id="f-kicker"></div>
+  </div>
+  <label>la demande (phrase utilisateur)</label>
+  <textarea id="f-msg"></textarea>
+
+  <label>appels d'outils</label>
+  <div class="tools" id="tools"></div>
+  <button class="addbtn" id="add">+ ajouter un outil</button>
+
+  <label>bandeau final (résultat) — &lt;b&gt;gras&lt;/b&gt; autorisé</label>
+  <input id="f-final">
+
+  <hr>
+  <div class="export">
+    <button class="btn" id="gen">Exporter MP4 + GIF</button>
+    <span class="status" id="status"></span>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="frame"><iframe id="prev" src="/preview"></iframe></div>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+const ICON_OPTIONS = `__ICON_OPTIONS__`;
+const TINTS = ["cobalt","saffron","olive","terra"];
+const DEFAULT = __DEFAULT_UC__;
+const ALL = __ALL_UC__;
+
+const $ = s => document.querySelector(s);
+const toolsEl = $('#tools');
+
+function toolRow(t={icon:'search',tint:'cobalt',ns:'oto',name:'',label:'',res:''}){
+  const d = document.createElement('div'); d.className='tool';
+  d.innerHTML = `
+    <button class="x" title="retirer">×</button>
+    <div class="grid">
+      <div><label>icône</label><select class="t-icon">${ICON_OPTIONS}</select></div>
+      <div><label>couleur</label><select class="t-tint">${TINTS.map(x=>`<option>${x}</option>`).join('')}</select></div>
+    </div>
+    <div class="grid">
+      <div><label>espace</label><input class="t-ns mono" placeholder="oto / folk"></div>
+      <div><label>tool</label><input class="t-name mono" placeholder="fr_search"></div>
+    </div>
+    <label>libellé</label><input class="t-label" placeholder="entreprises FR — insee sirene">
+    <label>résultat</label><input class="t-res mono" placeholder="42 ETI">`;
+  d.querySelector('.t-icon').value=t.icon; d.querySelector('.t-tint').value=t.tint;
+  d.querySelector('.t-ns').value=t.ns; d.querySelector('.t-name').value=t.name;
+  d.querySelector('.t-label').value=t.label; d.querySelector('.t-res').value=t.res;
+  d.querySelector('.x').onclick=()=>{ d.remove(); schedule(); };
+  d.querySelectorAll('input,select').forEach(i=>i.addEventListener('input',schedule));
+  return d;
+}
+function load(uc){
+  $('#f-num').value=uc.num; $('#f-kicker').value=uc.kicker; $('#f-msg').value=uc.msg; $('#f-final').value=uc.final;
+  toolsEl.innerHTML=''; uc.tools.forEach(t=>toolsEl.appendChild(toolRow(t)));
+}
+function collect(){
+  return {
+    num:$('#f-num').value, kicker:$('#f-kicker').value, msg:$('#f-msg').value, final:$('#f-final').value,
+    tools:[...toolsEl.children].map(d=>({
+      icon:d.querySelector('.t-icon').value, tint:d.querySelector('.t-tint').value,
+      ns:d.querySelector('.t-ns').value, name:d.querySelector('.t-name').value,
+      label:d.querySelector('.t-label').value, res:d.querySelector('.t-res').value
+    }))
+  };
+}
+let tmo=null;
+function schedule(){ clearTimeout(tmo); tmo=setTimeout(sendPreview, 250); }
+function sendPreview(){ const uc=collect(); $('#prev').contentWindow.postMessage({uc}, '*'); }
+
+$('#add').onclick=()=>{ toolsEl.appendChild(toolRow()); schedule(); };
+[...document.querySelectorAll('#f-num,#f-kicker,#f-msg,#f-final')].forEach(i=>i.addEventListener('input',schedule));
+$('#prev').addEventListener('load', sendPreview);
+
+$('#gen').onclick=async()=>{
+  const btn=$('#gen'); btn.disabled=true; $('#status').textContent='rendu en cours…'; $('#result').innerHTML='';
+  try{
+    const r=await fetch('/render',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(collect())});
+    const j=await r.json();
+    if(j.error) throw new Error(j.error);
+    $('#status').textContent='prêt ✓';
+    $('#result').innerHTML=`<video src="${j.mp4}" autoplay loop muted playsinline style="width:280px;border-radius:12px"></video>
+      <div><a href="${j.mp4}" download>⬇ MP4</a> &nbsp;·&nbsp; <a href="${j.gif}" download>⬇ GIF</a></div>`;
+  }catch(e){ $('#status').textContent='erreur : '+e.message; }
+  btn.disabled=false;
+};
+
+// presets = les 10 use cases de départ
+const presetsEl = $('#presets');
+ALL.forEach(uc=>{
+  const b=document.createElement('button'); b.textContent='nº'+uc.num+' '+uc.slug;
+  b.onclick=()=>{ load(uc); schedule(); }; presetsEl.appendChild(b);
+});
+load(DEFAULT);
+</script>
+</body></html>
