@@ -1,0 +1,65 @@
+/* ════════════════════════════════════════════════════════════════════
+ * Colors — palette « Manuscrit chaud » (warm manuscript)
+ * Cream-paper + warm-brown-ink neutrals, four strict semantic accents.
+ * Direction 2a: high contrast via a DARK ink sidebar over light content;
+ * cards are separated by a soft warm hairline + shadow, never a black border.
+ * ════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── neutrals : one light, one warm-brown ink ── */
+  --color-bg:         #fefcf5;   /* app background — warm cream paper */
+  --color-paper:      #fefcf5;
+  --color-paper-2:    #f4ecd2;   /* hover / muted / sunken surface */
+  --color-paper-3:    #ebe1ba;   /* deeper paper */
+  --color-surface:    #ffffff;   /* cards, inputs */
+
+  --color-ink:        #2c2112;   /* primary text — warm dark brown / sidebar bg */
+  --color-ink-soft:   #4a3a23;   /* body text */
+  --color-mute:       #675a3c;   /* secondary text (darkened for label contrast) */
+  --color-faint:      #6d603f;   /* tertiary / mono labels — WCAG-legible on cream */
+  --color-hair:       #e9dcb4;   /* borders — hairline */
+  --color-hair-soft:  #f0e6c8;   /* softer hairline / row divider */
+  --color-card-bd:    #ede1bd;   /* card border — soft warm, detaches on cream */
+  --color-hair-classic:      #dccfa8;
+  --color-hair-classic-soft: #ece1bd;
+
+  /* ── accents (confetti — strict, semantic) ── */
+  --color-saffron:     #f0b41e;  /* brand / warning-partial / focus / active */
+  --color-saffron-ink: #5a3b03;
+  --color-saffron-soft:#fbe7a8;
+
+  --color-terra:       #d63d0a;  /* danger / error / failures */
+  --color-terra-ink:   #5a1804;
+  --color-terra-soft:  #f7cdbb;
+
+  --color-olive:       #8aa620;  /* success / healthy / connected */
+  --color-olive-ink:   #3e4c0c;
+  --color-olive-soft:  #e6eec0;
+
+  --color-cobalt:      #1f6dba;  /* info / personal */
+  --color-cobalt-ink:  #0b2e54;
+  --color-cobalt-soft: #c4dcf0;
+
+  /* ── dark sidebar surface (the high-contrast anchor of 2a) ── */
+  --sidebar-bg:         #2c2112;              /* ink */
+  --sidebar-fg:         #e4d7ba;              /* nav item resting text */
+  --sidebar-fg-strong:  #fefcf5;              /* brand / user name */
+  --sidebar-fg-mute:    #a99a75;              /* group labels, icons, counts */
+  --sidebar-hair:       rgba(255,255,255,.10);/* internal dividers */
+  --sidebar-active-bg:  #f0b41e;              /* active item — solid saffron */
+  --sidebar-active-fg:  #2c2112;              /* active item text/icon */
+  --sidebar-hover-bg:   rgba(255,255,255,.06);/* item hover */
+
+  /* ── semantic aliases (use these in components) ── */
+  --text-strong:   var(--color-ink);
+  --text-body:     var(--color-ink-soft);
+  --text-muted:    var(--color-mute);
+  --text-faint:    var(--color-faint);
+  --surface-app:   var(--color-bg);
+  --surface-card:  var(--color-surface);
+  --surface-muted: var(--color-paper-2);
+  --surface-sunken:var(--color-paper-2);   /* wells: copyfield, endpoint */
+  --border-card:   var(--color-card-bd);
+  --border-hair:   var(--color-hair);
+  --border-soft:   var(--color-hair-soft);
+  --focus-ring:    var(--color-saffron);
+}

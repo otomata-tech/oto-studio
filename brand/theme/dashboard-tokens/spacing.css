@@ -1,0 +1,40 @@
+/* ════════════════════════════════════════════════════════════════════
+ * Spacing, radii, elevation, motion — the tooled console rhythm.
+ *
+ * RADII — TWO values only: one container radius + pill. Nothing else.
+ *   8px  (--radius-md)   inputs · CARDS · stats · menus · dialogs · wells ·
+ *                        kbd · chips · segmented (track + tabs) · dropzone
+ *   pill (--radius-pill) ALL buttons (incl. mini & oauth) · tags · dots ·
+ *                        avatars · org-pill · switch
+ * A single container radius keeps every surface homogeneous next to the pills.
+ * ════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── layout ── */
+  --sb-w:      232px;  /* sidebar width */
+  --pad-card:  18px;   /* card interior padding (dense mode: 13px) */
+  --row-py:    9px;    /* table/row vertical padding (dense: 6px) */
+  --gap-stack: 16px;   /* vertical gap between cards */
+  --content-max:    1440px;
+  --content-narrow: 680px;
+
+  /* ── radii (STRICT: 8px + pill) ── */
+  --radius-md:   8px;    /* the one container radius */
+  --radius-pill: 999px;  /* all buttons, tags, dots, avatars */
+
+  /* Back-compat aliases → all collapse onto the single container radius. */
+  --radius-xs:   var(--radius-md);
+  --radius-sm:   var(--radius-md);
+  --radius-lg:   var(--radius-md);
+  --radius-xl:   var(--radius-md);
+
+  /* ── elevation (warm, minimal — cards float on a hairline + soft shadow) ── */
+  --shadow-xs:     0 1px 2px rgba(44,33,18,.05);
+  --shadow-card:   0 4px 18px -12px rgba(44,33,18,.42);   /* resting card lift */
+  --shadow-pop:    0 12px 32px -12px rgba(44,33,18,.30);  /* menus, dialogs, dropdowns */
+  --shadow-drawer: 6px 0 28px rgba(44,33,18,.16);         /* mobile sidebar */
+
+  /* ── motion ── */
+  --t-fast: 180ms; /* @kind other */
+  --t-med:  240ms; /* @kind other */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+}

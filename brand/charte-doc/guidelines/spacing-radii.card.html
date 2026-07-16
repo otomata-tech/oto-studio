@@ -1,0 +1,22 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Radii — 8 + pill (strict)" subtitle="One container radius + pill; nothing in between" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-sans); color: var(--color-ink); }
+  .row { display: flex; gap: 30px; padding: 24px 26px; align-items: flex-end; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .box { width: 104px; height: 60px; background: var(--color-surface); border: 1px solid var(--color-card-bd); box-shadow: var(--shadow-card); }
+  .n { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; color: var(--color-ink-soft); letter-spacing: 0.04em; }
+  .v { font-family: var(--font-mono); font-size: 9px; color: var(--color-faint); }
+  .u { font-size: 12.5px; color: var(--color-ink-soft); max-width: 280px; line-height: 1.5; }
+  .u b { font-weight: 600; }
+</style></head>
+<body>
+<div class="row">
+  <div class="item"><div class="box" style="border-radius:8px"></div><div class="n">8px</div><div class="v">inputs · cards · menus · kbd · chips</div></div>
+  <div class="item"><div class="box" style="border-radius:999px;width:120px"></div><div class="n">pill · 999px</div><div class="v">all buttons · tags · dots</div></div>
+  <div class="item" style="align-self:center"><p class="u">Deux valeurs, point. Tout conteneur en <b>8px</b> ; tout bouton, tag et dot en <b>pill</b>. Aucun entre-deux — c'est ce qui rend le système homogène.</p></div>
+</div>
+</body></html>

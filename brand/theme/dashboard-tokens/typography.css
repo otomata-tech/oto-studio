@@ -1,0 +1,36 @@
+/* ════════════════════════════════════════════════════════════════════
+ * Typography — Familjen Grotesk (sans) + Spline Sans Mono (mono)
+ * Sans carries all reading + UI. Mono is the "technical voice": eyebrows,
+ * group labels, table headers, codes, counts — uppercase + tracked. Spline
+ * Sans Mono is humanist and friendly (warmer than a terminal mono).
+ *
+ * LEGIBILITY: mono labels run small, so they use weight 600 and a DARKER
+ * color (--text-muted / --text-faint were darkened for contrast) — never a
+ * thin 400 weight on a light gray.
+ * ════════════════════════════════════════════════════════════════════ */
+:root {
+  --font-sans: "Familjen Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, Menlo, monospace;
+
+  /* Type scale — the console runs small & dense (13.5px body). */
+  --fs-display:  25px;  /* empty-state / hero titles, weight 700, -0.02em */
+  --fs-h1:       16px;  /* topbar page title, weight 700 */
+  --fs-stat:     26px;  /* KPI value, weight 700, -0.03em */
+  --fs-card-t:   14px;  /* card head title, weight 700 */
+  --fs-body:     13.5px;
+  --fs-small:    12.5px;
+  --fs-mono:     11.5px; /* table cells, codes */
+  --fs-eyebrow:  10px;   /* mono uppercase eyebrow */
+  --fs-label:    9.5px;  /* mono group label / stat label */
+
+  /* Labels/eyebrows: weight 600 for legibility at small sizes. */
+  --fw-label: 600; /* @kind other */
+
+  /* Tracking used with mono uppercase text. */
+  --track-mono:  0.16em;
+  --track-label: 0.18em;
+
+  --lh-tight: 1.1;  /* @kind other */
+  --lh-body:  1.5;  /* @kind other */
+  --lh-prose: 1.65; /* @kind other */
+}

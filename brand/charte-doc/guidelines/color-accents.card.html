@@ -1,0 +1,24 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Accents — the four confetti" subtitle="Saffron, terra, olive, cobalt — each a fixed meaning" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-sans); color: var(--color-ink); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 18px 20px; }
+  .acc { display: flex; flex-direction: column; gap: 6px; }
+  .core { height: 46px; border-radius: 8px; }
+  .pair { display: flex; gap: 6px; }
+  .mini { flex: 1; height: 20px; border-radius: 5px; }
+  .name { font-weight: 700; font-size: 13px; letter-spacing: -0.01em; }
+  .use { font-size: 11px; color: var(--color-mute); line-height: 1.4; }
+  .hex { font-family: var(--font-mono); font-size: 8.5px; color: var(--color-faint); }
+</style></head>
+<body>
+<div class="grid">
+  <div class="acc"><div class="core" style="background:#f0b41e"></div><div class="pair"><div class="mini" style="background:#fbe7a8"></div><div class="mini" style="background:#5a3b03"></div></div><div class="name">saffron</div><div class="use">brand · warning/partial · focus</div><div class="hex">#f0b41e</div></div>
+  <div class="acc"><div class="core" style="background:#d63d0a"></div><div class="pair"><div class="mini" style="background:#f7cdbb"></div><div class="mini" style="background:#5a1804"></div></div><div class="name">terra</div><div class="use">danger · error · failures</div><div class="hex">#d63d0a</div></div>
+  <div class="acc"><div class="core" style="background:#8aa620"></div><div class="pair"><div class="mini" style="background:#e6eec0"></div><div class="mini" style="background:#3e4c0c"></div></div><div class="name">olive</div><div class="use">success · healthy · connected</div><div class="hex">#8aa620</div></div>
+  <div class="acc"><div class="core" style="background:#1f6dba"></div><div class="pair"><div class="mini" style="background:#c4dcf0"></div><div class="mini" style="background:#0b2e54"></div></div><div class="name">cobalt</div><div class="use">info · personal</div><div class="hex">#1f6dba</div></div>
+</div>
+</body></html>

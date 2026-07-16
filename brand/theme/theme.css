@@ -1,0 +1,54 @@
+/**
+ * Otomata theme — design tokens partagés.
+ * Doc de référence : THEME.md
+ * Importer dans le main.ts du projet AVANT le style.css local :
+ *
+ *   import "@otomata/ui/src/theme.css";
+ *
+ * Suppose un style.css local qui fait `@import "tailwindcss";`.
+ */
+
+@theme {
+  /* Neutres */
+  --color-bg: #fefcf5;
+  --color-paper: #fefcf5;
+  --color-paper-2: #f4ecd2;
+  --color-paper-3: #ebe1ba;
+  --color-surface: #ffffff;
+
+  --color-ink: #2c2112;
+  --color-ink-soft: #4a3a23;
+  --color-mute: #6c5e44;
+  --color-faint: #a89a78;
+  --color-hair: #dccfa8;
+  --color-hair-soft: #ece1bd;
+
+  /* Primary Otomata — saffran jaune-orangé */
+  --color-primary: #f0b41e;
+  --color-primary-soft: #fbe7a8;
+  --color-primary-ink: #5a3b03;
+
+  /* Sémantique vert — success / strong */
+  --color-strong-bg: #e6eec0;
+  --color-strong-mid: #a8c926;
+  --color-strong-ink: #3e4c0c;
+
+  /* Sémantique partial — alias primary (jaune-orangé) */
+  --color-partial-bg: #fbe7a8;
+  --color-partial-mid: #f0b41e;
+  --color-partial-ink: #5a3b03;
+
+  /* Sémantique rouge — alerte / weak */
+  --color-weak-bg: #f7cdbb;
+  --color-weak-mid: #e84b16;
+  --color-weak-ink: #621b04;
+
+  /* Signal info — bleu cobalt vif */
+  --color-accent: #2a87d8;
+  --color-accent-soft: #c4dcf0;
+
+  /* Fonts */
+  --font-sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Menlo", monospace;
+}

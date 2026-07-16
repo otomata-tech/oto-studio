@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oto — marque « o » v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fefcf5; font-family: "Familjen Grotesk", sans-serif; color: #2c2112; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 44px 40px 80px; }
+  .ey { font-family: "Spline Sans Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #877a58; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; margin: 10px 0 8px; }
+  .lead { font-size: 15px; line-height: 1.6; color: #4a3a23; max-width: 820px; }
+  .lead b { color: #2c2112; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 28px; }
+  .card { border: 1px solid #ede1bd; border-radius: 8px; background: #fff; box-shadow: 0 4px 18px -12px rgba(44,33,18,.42); overflow: hidden; }
+  .card.reco { border-color: #f0b41e; box-shadow: 0 6px 22px -12px rgba(240,180,30,.5); }
+  .ch { display: flex; align-items: baseline; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid #f0e6c8; }
+  .ch .nm { font-weight: 700; font-size: 15px; }
+  .ch .note { font-size: 11.5px; color: #675a3c; max-width: 220px; text-align: right; }
+  .ch .badge { font-family: "Spline Sans Mono"; font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; background: #8aa620; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+  .body { padding: 22px 18px; display: flex; align-items: center; gap: 18px; }
+  .tile { display: flex; align-items: center; justify-content: center; width: 104px; height: 104px; border-radius: 8px; flex-shrink: 0; }
+  .tile.cream { background: #f4ecd2; }
+  .tile.ink { background: #2c2112; }
+  .favs { display: flex; align-items: flex-end; gap: 14px; margin-left: 4px; }
+  .fav { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .fav .s { font-family: "Spline Sans Mono"; font-size: 8.5px; color: #877a58; }
+  svg { display: block; overflow: visible; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="gS" cx="38%" cy="30%" r="82%"><stop offset="0%" stop-color="#ffdb5c"/><stop offset="52%" stop-color="#f0b41e"/><stop offset="100%" stop-color="#cf8f10"/></radialGradient>
+  <radialGradient id="gSb" cx="38%" cy="30%" r="82%"><stop offset="0%" stop-color="#ffe07a"/><stop offset="52%" stop-color="#f3bb2c"/><stop offset="100%" stop-color="#e0a015"/></radialGradient>
+  <linearGradient id="gSweep" x1="0" y1="-1" x2="0" y2="1"><stop offset="0%" stop-color="#ffd863"/><stop offset="100%" stop-color="#e5a017"/></linearGradient>
+  <!-- shared ring path: outer r58 + inner ellipse rx27 ry33, evenodd hole -->
+  <path id="rp" fill-rule="evenodd" d="M-58 0a58 58 0 1 0 116 0a58 58 0 1 0-116 0Z M-27 0a27 33 0 1 0 54 0a27 33 0 1 0-54 0Z"/>
+</defs></svg>
+
+<div class="page">
+  <div class="ey">oto · marque « o » — plus de matière</div>
+  <h1>L'« o », mais travaillé</h1>
+  <p class="lead">On garde l'idée : l'« o » d'<b>oto</b> comme un <b>anneau</b> (trou transparent, plus de point blanc). Mais on lui donne du <b>corps</b> — relief, orbite, superposition, dégradé. Une seule marque, ses variantes clair/encre. Choisis la direction, j'affine ensuite (proportions, favicon 16px, état think).</p>
+
+  <div class="grid">
+
+    <!-- 1 · Relief -->
+    <div class="card reco">
+      <div class="ch"><div class="nm">1 · Relief</div><div class="badge">reco</div></div>
+      <div class="body">
+        <div class="tile cream">
+          <svg width="72" height="72" viewBox="-66 -66 132 132">
+            <use href="#rp" fill="#b9820e" transform="translate(0,3.5)"/>
+            <use href="#rp" fill="url(#gS)"/>
+            <path d="M-39 -30 A58 58 0 0 1 39 -30" fill="none" stroke="#fff3cf" stroke-opacity="0.55" stroke-width="5.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="tile ink">
+          <svg width="72" height="72" viewBox="-66 -66 132 132">
+            <use href="#rp" fill="#8a5e08" transform="translate(0,3.5)"/>
+            <use href="#rp" fill="url(#gSb)"/>
+            <path d="M-39 -30 A58 58 0 0 1 39 -30" fill="none" stroke="#fff3cf" stroke-opacity="0.5" stroke-width="5.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="favs">
+          <div class="fav"><svg width="32" height="32" viewBox="-66 -66 132 132"><use href="#rp" fill="#b9820e" transform="translate(0,3.5)"/><use href="#rp" fill="url(#gS)"/></svg><span class="s">32</span></div>
+          <div class="fav"><svg width="16" height="16" viewBox="-66 -66 132 132"><use href="#rp" fill="#b9820e" transform="translate(0,3.5)"/><use href="#rp" fill="url(#gS)"/></svg><span class="s">16</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 · Orbite -->
+    <div class="card">
+      <div class="ch"><div class="nm">2 · Orbite</div><div class="note">rappel de l'état « think » — l'agent qui tourne</div></div>
+      <div class="body">
+        <div class="tile cream">
+          <svg width="74" height="74" viewBox="-70 -70 140 140">
+            <circle r="70" fill="none" stroke="#e2d3a4" stroke-width="1.4" stroke-dasharray="1.5 7" stroke-linecap="round"/>
+            <use href="#rp" fill="url(#gS)"/>
+            <circle cx="49.5" cy="-49.5" r="10" fill="#d63d0a"/>
+          </svg>
+        </div>
+        <div class="tile ink">
+          <svg width="74" height="74" viewBox="-70 -70 140 140">
+            <circle r="70" fill="none" stroke="#5a4a2b" stroke-width="1.4" stroke-dasharray="1.5 7" stroke-linecap="round"/>
+            <use href="#rp" fill="url(#gSb)"/>
+            <circle cx="49.5" cy="-49.5" r="10" fill="#f0672c"/>
+          </svg>
+        </div>
+        <div class="favs">
+          <div class="fav"><svg width="32" height="32" viewBox="-70 -70 140 140"><use href="#rp" fill="url(#gS)"/><circle cx="49.5" cy="-49.5" r="12" fill="#d63d0a"/></svg><span class="s">32</span></div>
+          <div class="fav"><svg width="16" height="16" viewBox="-70 -70 140 140"><use href="#rp" fill="url(#gS)"/><circle cx="49.5" cy="-49.5" r="14" fill="#d63d0a"/></svg><span class="s">16</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · Duotone décalé -->
+    <div class="card">
+      <div class="ch"><div class="nm">3 · Duotone décalé</div><div class="note">superposition « impression », clin d'œil éditorial</div></div>
+      <div class="body">
+        <div class="tile cream">
+          <svg width="72" height="72" viewBox="-68 -66 136 132">
+            <use href="#rp" fill="#2c2112" transform="translate(6,5)"/>
+            <use href="#rp" fill="url(#gS)"/>
+          </svg>
+        </div>
+        <div class="tile ink">
+          <svg width="72" height="72" viewBox="-68 -66 136 132">
+            <use href="#rp" fill="#d63d0a" transform="translate(6,5)"/>
+            <use href="#rp" fill="url(#gSb)"/>
+          </svg>
+        </div>
+        <div class="favs">
+          <div class="fav"><svg width="32" height="32" viewBox="-68 -66 136 132"><use href="#rp" fill="#2c2112" transform="translate(6,5)"/><use href="#rp" fill="url(#gS)"/></svg><span class="s">32</span></div>
+          <div class="fav"><svg width="16" height="16" viewBox="-68 -66 136 132"><use href="#rp" fill="#2c2112" transform="translate(6,5)"/><use href="#rp" fill="url(#gS)"/></svg><span class="s">16</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 · Anneau modulé -->
+    <div class="card">
+      <div class="ch"><div class="nm">4 · Anneau modulé</div><div class="note">« o » typographique, dégradé vertical, sobre</div></div>
+      <div class="body">
+        <div class="tile cream">
+          <svg width="72" height="72" viewBox="-62 -62 124 124">
+            <use href="#rp" fill="url(#gSweep)"/>
+          </svg>
+        </div>
+        <div class="tile ink">
+          <svg width="72" height="72" viewBox="-62 -62 124 124">
+            <use href="#rp" fill="url(#gSweep)"/>
+          </svg>
+        </div>
+        <div class="favs">
+          <div class="fav"><svg width="32" height="32" viewBox="-62 -62 124 124"><use href="#rp" fill="url(#gSweep)"/></svg><span class="s">32</span></div>
+          <div class="fav"><svg width="16" height="16" viewBox="-62 -62 124 124"><use href="#rp" fill="url(#gSweep)"/></svg><span class="s">16</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

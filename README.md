@@ -14,6 +14,7 @@ Puis ouvrir http://localhost:7842
 - `template-body.html` — le gabarit animé de la carte (le design, figé)
 - `usecases.json`    — les 20 cas d'usage (presets, chiffres = placeholders à remplacer par un vrai run oto)
 - `icons.json`, `logo_*.svg`, `fonts.css` — assets embarqués
+- `brand/`           — logos & charte Otomata/Oto (cache local ; voir `brand/README.md`)
 - `build-all.mjs`    — régénère les MP4+GIF en batch (`node build-all.mjs [start count]`)
 - `publer_schedule.py` — programme un post LinkedIn via l'API Publer (upload média → post scheduled)
 

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oto — logo & favicon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fefcf5; font-family: "Familjen Grotesk", sans-serif; color: #2c2112; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 44px 40px 80px; }
+  .ey { font-family: "Spline Sans Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #877a58; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; margin: 10px 0 8px; }
+  .lead { font-size: 15px; line-height: 1.6; color: #4a3a23; max-width: 800px; }
+  .lead b { color: #2c2112; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 28px; }
+  .card { border: 1px solid #ede1bd; border-radius: 8px; background: #fff; box-shadow: 0 4px 18px -12px rgba(44,33,18,.42); overflow: hidden; }
+  .card.reco { border-color: #f0b41e; box-shadow: 0 6px 22px -12px rgba(240,180,30,.5); }
+  .ch { display: flex; align-items: baseline; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid #f0e6c8; }
+  .ch .nm { font-weight: 700; font-size: 15px; }
+  .ch .note { font-size: 11.5px; color: #675a3c; }
+  .ch .badge { font-family: "Spline Sans Mono"; font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; background: #8aa620; padding: 3px 8px; border-radius: 999px; }
+  .body { padding: 22px 18px; display: flex; align-items: center; gap: 26px; }
+  .hero { display: flex; align-items: center; justify-content: center; width: 120px; height: 120px; border-radius: 8px; flex-shrink: 0; }
+  .hero.dark { background: #2c2112; }
+  .hero.cream { background: #f4ecd2; }
+  .col { display: flex; flex-direction: column; gap: 16px; }
+  .favs { display: flex; align-items: flex-end; gap: 14px; }
+  .fav { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .fav .s { font-family: "Spline Sans Mono"; font-size: 8.5px; color: #877a58; }
+  .lock { display: flex; align-items: center; gap: 11px; }
+  .lock .wm { font-size: 26px; font-weight: 700; letter-spacing: -0.04em; }
+  .lock .wm.cream { color: #fefcf5; }
+  .cap { font-family: "Spline Sans Mono"; font-size: 10px; color: #675a3c; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="saff" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#ffd24a"/><stop offset="55%" stop-color="#f0b41e"/><stop offset="100%" stop-color="#c4870c"/></radialGradient>
+  <radialGradient id="terr" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#f56a2d"/><stop offset="55%" stop-color="#d63d0a"/><stop offset="100%" stop-color="#9c2c06"/></radialGradient>
+  <radialGradient id="oliv" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#c0db4e"/><stop offset="55%" stop-color="#8aa620"/><stop offset="100%" stop-color="#5c7212"/></radialGradient>
+  <radialGradient id="cob" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#4f9be0"/><stop offset="55%" stop-color="#1f6dba"/><stop offset="100%" stop-color="#124a80"/></radialGradient>
+  <clipPath id="cq"><circle r="58"/></clipPath>
+  <g id="quad"><g clip-path="url(#cq)"><rect x="-58" y="-58" width="58" height="58" fill="url(#saff)"/><rect x="0" y="-58" width="58" height="58" fill="url(#terr)"/><rect x="-58" y="0" width="58" height="58" fill="url(#cob)"/><rect x="0" y="0" width="58" height="58" fill="url(#oliv)"/></g><circle r="26" fill="#fefcf5"/></g>
+  <g id="mono"><circle r="58" fill="#f0b41e"/><circle r="26" fill="#fefcf5"/></g>
+  <g id="monod"><circle r="58" fill="#f0b41e"/><circle r="26" fill="#2c2112"/></g>
+  <g id="ink"><circle r="58" fill="#2c2112"/><circle r="26" fill="#f0b41e"/></g>
+  <g id="wide"><circle r="58" fill="#f0b41e"/><circle r="33" fill="#fefcf5"/></g>
+</defs></svg>
+
+<div class="page">
+  <div class="ey">oto · logo & favicon</div>
+  <h1>La marque « o » — disque percé</h1>
+  <p class="lead">Le « o » d'<b>oto</b> est un <b>disque percé</b> (un trou, pas une lettre) — c'est déjà ton favicon et l'<b>OtoMark</b> que tu aimes (mono + état think conservés). Je repars de là, en corrigeant le médaillon (plus de lettre centrée) et en déclinant proprement pour toutes les surfaces. Choisis la variante du médaillon/app-icon.</p>
+
+  <div class="grid">
+    <!-- 1 — mono saffron (reco) -->
+    <div class="card reco">
+      <div class="ch"><div class="nm">Disque mono · saffron</div><div class="badge">reco médaillon</div></div>
+      <div class="body">
+        <div class="hero cream"><svg width="80" height="80" viewBox="-64 -64 128 128"><use href="#mono"/></svg></div>
+        <div class="col">
+          <div class="favs">
+            <div class="fav"><svg width="32" height="32" viewBox="-64 -64 128 128"><use href="#mono"/></svg><span class="s">32</span></div>
+            <div class="fav"><svg width="24" height="24" viewBox="-64 -64 128 128"><use href="#mono"/></svg><span class="s">24</span></div>
+            <div class="fav"><svg width="16" height="16" viewBox="-64 -64 128 128"><use href="#mono"/></svg><span class="s">16</span></div>
+          </div>
+          <div class="lock"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#mono"/></svg><span class="wm">oto</span></div>
+          <div class="cap">sidebar, avatar fallback, écran login</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 — quad (favicon) -->
+    <div class="card">
+      <div class="ch"><div class="nm">Disque quad · favicon</div><div class="note">l'icône d'app, affinée</div></div>
+      <div class="body">
+        <div class="hero cream"><svg width="80" height="80" viewBox="-64 -64 128 128"><use href="#quad"/></svg></div>
+        <div class="col">
+          <div class="favs">
+            <div class="fav"><svg width="32" height="32" viewBox="-64 -64 128 128"><use href="#quad"/></svg><span class="s">32</span></div>
+            <div class="fav"><svg width="24" height="24" viewBox="-64 -64 128 128"><use href="#quad"/></svg><span class="s">24</span></div>
+            <div class="fav"><svg width="16" height="16" viewBox="-64 -64 128 128"><use href="#quad"/></svg><span class="s">16</span></div>
+          </div>
+          <div class="lock"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#quad"/></svg><span class="wm">oto</span></div>
+          <div class="cap">favicon navigateur, PWA, store icon</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 — mono on dark -->
+    <div class="card">
+      <div class="ch"><div class="nm">Sur fond encre</div><div class="note">sidebar sombre, dark mode</div></div>
+      <div class="body">
+        <div class="hero dark"><svg width="80" height="80" viewBox="-64 -64 128 128"><use href="#monod"/></svg></div>
+        <div class="col">
+          <div class="favs">
+            <div class="fav"><div class="hero dark" style="width:44px;height:44px"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#monod"/></svg></div><span class="s">disc</span></div>
+            <div class="fav"><div class="hero dark" style="width:44px;height:44px"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#ink"/></svg></div><span class="s">inverse</span></div>
+          </div>
+          <div class="lock"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#monod"/></svg><span class="wm" style="color:#2c2112">oto</span></div>
+          <div class="cap">le trou prend la couleur du fond (encre)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 — wide hole -->
+    <div class="card">
+      <div class="ch"><div class="nm">Variante trou large</div><div class="note">plus « o », plus léger</div></div>
+      <div class="body">
+        <div class="hero cream"><svg width="80" height="80" viewBox="-64 -64 128 128"><use href="#wide"/></svg></div>
+        <div class="col">
+          <div class="favs">
+            <div class="fav"><svg width="32" height="32" viewBox="-64 -64 128 128"><use href="#wide"/></svg><span class="s">32</span></div>
+            <div class="fav"><svg width="16" height="16" viewBox="-64 -64 128 128"><use href="#wide"/></svg><span class="s">16</span></div>
+          </div>
+          <div class="lock"><svg width="30" height="30" viewBox="-64 -64 128 128"><use href="#wide"/></svg><span class="wm">oto</span></div>
+          <div class="cap">anneau plus fin — attention à 16px (trou trop grand ?)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

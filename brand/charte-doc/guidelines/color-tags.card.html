@@ -1,0 +1,32 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Accent tags in use" subtitle="Soft fills carry semantic status — one meaning per color" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-sans); color: var(--color-ink); }
+  .wrap { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+  .tags { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; }
+  .dot { width: 7px; height: 7px; border-radius: 999px; }
+  .olive { background: #e6eec0; color: #3e4c0c; }
+  .terra { background: #f7cdbb; color: #5a1804; }
+  .saffron { background: #fbe7a8; color: #5a3b03; }
+  .cobalt { background: #c4dcf0; color: #0b2e54; }
+  .ink { background: #2c2112; color: #fefcf5; }
+  .neutral { border: 1px solid #e9dcb4; color: #7a6c50; }
+  .note { font-size: 12px; color: var(--color-mute); line-height: 1.5; max-width: 560px; }
+</style></head>
+<body>
+<div class="wrap">
+  <div class="tags">
+    <span class="tag olive"><span class="dot" style="background:#8aa620"></span>connected</span>
+    <span class="tag saffron">partial</span>
+    <span class="tag terra">error</span>
+    <span class="tag cobalt">personal</span>
+    <span class="tag ink">org</span>
+    <span class="tag neutral">neutral</span>
+  </div>
+  <p class="note">Accents are confetti — used strictly, never decoratively. A tag's soft fill (–soft) with its ink (–ink) text always encodes the same meaning: olive = success, terra = danger, saffron = attention, cobalt = info.</p>
+</div>
+</body></html>

@@ -1,0 +1,5 @@
+/* Webfonts — served from Google Fonts (same source the product loads).
+ * Familjen Grotesk = brand sans (editorial, humanist grotesque).
+ * Spline Sans Mono = technical voice (humanist, friendly mono — labels, codes).
+ * Inter            = shadcn-vue primitive fallback (rarely surfaced). */
+@import url("https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");

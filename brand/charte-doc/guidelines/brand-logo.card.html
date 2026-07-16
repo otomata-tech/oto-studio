@@ -1,0 +1,37 @@
+<!-- @dsCard group="Brand" viewport="700x180" name="Logo & favicon" subtitle="The open O — an aperture mark, saffron on light & ink" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=Spline+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-sans); color: var(--color-ink); }
+  .wrap { padding: 22px; display: flex; align-items: center; gap: 30px; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .tile { width: 92px; height: 92px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .tile.cream { background: var(--color-paper-2); }
+  .tile.ink { background: var(--color-ink); }
+  .favs { display: flex; align-items: flex-end; gap: 12px; }
+  .lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-faint); }
+  .note { font-size: 12px; color: var(--color-mute); line-height: 1.55; max-width: 250px; }
+  .note b { color: var(--color-ink); font-weight: 600; }
+</style></head>
+<body>
+<div class="wrap">
+  <div class="col">
+    <div class="tile cream"><svg width="60" height="60" viewBox="-64 -64 128 128"><circle r="44" fill="none" stroke="#f0b41e" stroke-width="28" stroke-linecap="round" stroke-dasharray="230 46" transform="rotate(-8)"/></svg></div>
+    <span class="lbl">mark · saffron</span>
+  </div>
+  <div class="col">
+    <div class="tile ink"><svg width="60" height="60" viewBox="-64 -64 128 128"><circle r="44" fill="none" stroke="#f0b41e" stroke-width="28" stroke-linecap="round" stroke-dasharray="230 46" transform="rotate(-8)"/></svg></div>
+    <span class="lbl">on ink</span>
+  </div>
+  <div class="col">
+    <div class="favs">
+      <svg width="32" height="32" viewBox="-64 -64 128 128"><circle r="44" fill="none" stroke="#f0b41e" stroke-width="28" stroke-linecap="round" stroke-dasharray="230 46" transform="rotate(-8)"/></svg>
+      <svg width="16" height="16" viewBox="-64 -64 128 128"><circle r="44" fill="none" stroke="#f0b41e" stroke-width="28" stroke-linecap="round" stroke-dasharray="230 46" transform="rotate(-8)"/></svg>
+    </div>
+    <span class="lbl">favicon · 32 / 16</span>
+  </div>
+  <p class="note">The mark is an <b>open O</b> — an aperture ring with the opening at top-right and rounded caps that echo the pill buttons. The living <b>OtoMark</b> adds motion states (breathe · think · talk).</p>
+</div>
+</body></html>
