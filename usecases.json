@@ -116,7 +116,7 @@
     "tools":[
       {"icon":"newspaper","tint":"cobalt","ns":"oto","name":"serper_news","label":"actu ia — 7 jours","res":"34 articles"},
       {"icon":"globe","tint":"saffron","ns":"oto","name":"serper_scrape","label":"lecture des sources","res":"12 lues"},
-      {"icon":"brain","tint":"olive","ns":"oto","name":"memento","label":"synthèse mémorisée","res":"1 digest"}],
+      {"icon":"brain","tint":"olive","ns":"oto","name":"doc","label":"synthèse mémorisée","res":"1 page"}],
     "final":"Digest de veille prêt, <b>sourcé et archivé</b> dans la base." },
 
   { "num":"18","slug":"marches-publics","kicker":"appels d'offres","msg":"trouve les marchés publics IA ouverts en ce moment",
