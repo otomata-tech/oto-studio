@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 28px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  .scene { position: relative; width: 1024px; height: 900px; z-index: 1; }
+
+  /* ---- acte 1 : tuiles logos (2×2 → bandeau) ---- */
+  .tile {
+    position: absolute;
+    width: 496px; height: 148px;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 7px 7px 0 var(--ink);
+    display: flex; align-items: center; gap: 22px;
+    padding: 0 26px;
+    transform-origin: top left;
+  }
+  .tile .lg { width: 104px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .tile .lg img { display: block; }
+  .tile .name { font-size: 30px; line-height: 1.05; }
+  .tile .desc { font-size: 16px; color: var(--mute); margin-top: 6px; }
+
+  /* ---- acte 2 : carte conversation ---- */
+  .chat {
+    position: absolute;
+    left: 0; top: 120px;
+    width: 1024px; height: 775px;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: 34px 42px;
+  }
+  .chat .head {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--mute);
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 26px;
+  }
+  .chat .head .dot { width: 11px; height: 11px; background: var(--primary); border: 1.5px solid var(--ink); }
+  .bubble {
+    display: inline-block;
+    background: var(--primary-soft);
+    border: 1.5px solid var(--ink);
+    padding: 16px 22px;
+    font-size: 25px;
+    margin-bottom: 28px;
+    min-height: 62px;
+    min-width: 40px;
+  }
+  .bubble .caret { display: inline-block; width: 3px; height: 26px; background: var(--ink); vertical-align: -4px; margin-left: 2px; }
+  .rows { display: flex; flex-direction: column; }
+  .row {
+    display: flex; align-items: center; gap: 22px;
+    padding: 13px 0;
+    border-top: 1px solid var(--hair);
+  }
+  .row .rlg { width: 116px; display: flex; align-items: center; justify-content: flex-start; flex: none; }
+  .row .otag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary);
+    border: 1.5px solid var(--ink);
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85);
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+  .row .rlabel code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 17px;
+    background: var(--primary-soft);
+    padding: 2px 7px;
+  }
+  .row .rlg img { display: block; }
+  .row .rlabel { font-size: 19.5px; flex: 1; }
+  .row .rres { font-size: 17px; color: var(--mute); margin-right: 6px; }
+  .row .spin {
+    width: 22px; height: 22px; flex: none;
+    border: 3px solid rgba(44,33,18,0.18);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+  }
+  .row .check {
+    width: 30px; height: 30px; flex: none;
+    background: var(--primary);
+    border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 19px;
+  }
+  .final {
+    margin-top: 24px;
+    font-size: 23px;
+    font-weight: 700;
+  }
+  .final .hl { background: linear-gradient(transparent 55%, var(--primary-soft) 55%); }
+
+  /* ---- chute ---- */
+  .phrase {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding-bottom: 36px; z-index: 1;
+  }
+  .phrase p { font-size: 92px; line-height: 1.07; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Nouveaux connecteurs · 08/2026</div>
+  </header>
+
+  <div class="scene">
+    <div class="chat" id="chat">
+      <div class="head">
+        <div class="dot"></div>
+        <div class="mono">votre agent · claude, mistral, chatgpt…</div>
+      </div>
+      <div class="bubble"><span id="msg"></span><span class="caret" id="caret"></span></div>
+      <div class="rows">
+        <div class="row" id="r0">
+          <div class="rlg"><span class="otag">procédure</span></div>
+          <div class="rlabel"><code>comité-client</code> — vos étapes, suivies à la lettre</div>
+          <div class="rres">6 étapes</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+        <div class="row" id="r1">
+          <div class="rlg"><img src="logo_salesforce.svg" style="height:40px"></div>
+          <div class="rlabel">pipeline &amp; contacts du compte</div>
+          <div class="rres">3 opportunités en cours</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+        <div class="row" id="r2">
+          <div class="rlg"><img src="logo_zoho.svg" style="width:72px;height:auto"></div>
+          <div class="rlabel">tickets support ouverts</div>
+          <div class="rres">2 escalades à traiter</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+        <div class="row" id="r3">
+          <div class="rlg"><img src="logo_lighton.svg" style="height:22px"></div>
+          <div class="rlabel">vos documents, en souverain</div>
+          <div class="rres">le contrat, retrouvé</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+        <div class="row" id="r4">
+          <div class="rlg"><img src="logo_reddit.svg" style="height:38px"></div>
+          <div class="rlabel">ce que le marché en dit</div>
+          <div class="rres">5 threads pertinents</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+        <div class="row" id="r5">
+          <div class="rlg"><span class="otag">tableau</span></div>
+          <div class="rlabel"><code>compte-acme</code> — chiffres consolidés</div>
+          <div class="rres">27 lignes à jour</div>
+          <div class="spin"></div><div class="check" style="display:none">✓</div>
+        </div>
+      </div>
+      <div class="final" id="final">→ <span class="hl">brief posé dans le projet <b>Acme</b>, prêt pour jeudi.</span></div>
+    </div>
+
+    <div class="tile" id="t0">
+      <div class="lg"><img src="logo_salesforce.svg" style="height:66px"></div>
+      <div class="txt"><div class="name display">Salesforce</div><div class="desc">contacts, comptes, opportunités</div></div>
+    </div>
+    <div class="tile" id="t1">
+      <div class="lg"><img src="logo_lighton.svg" style="height:32px"></div>
+      <div class="txt"><div class="name display">LightOn Paradigm</div><div class="desc">GenAI souveraine · RAG</div></div>
+    </div>
+    <div class="tile" id="t2">
+      <div class="lg"><img src="logo_reddit.svg" style="height:58px"></div>
+      <div class="txt"><div class="name display">Reddit</div><div class="desc">veille &amp; études de marché</div></div>
+    </div>
+    <div class="tile" id="t3">
+      <div class="lg"><img src="logo_zoho.svg" style="width:100px;height:auto"></div>
+      <div class="txt"><div class="name display">Zoho CRM &amp; Desk</div><div class="desc">tickets, help center</div></div>
+    </div>
+  </div>
+
+  <div class="phrase">
+    <p class="display" id="ph">4 outils de plus.<br>Un seul branchement.</p>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata × Tiple</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  // acte 1 : positions grille (2×2, centrée) puis bandeau compact (scale .45)
+  const GRID  = [[0, 170], [528, 170], [0, 350], [528, 350]];
+  const STRIP = [[0, 0], [258, 0], [516, 0], [774, 0]];
+  const S = 0.5;
+
+  const MSG = 'Prépare mon comité client Acme de jeudi';
+  const T = {
+    tile: i => 250 + i * 240, tileDur: 380,
+    morph: 2450, morphDur: 550,
+    chat: 3100,
+    typeStart: 3400, typeEnd: 4550,
+    row: i => 4850 + i * 620, rowSpin: 560,
+    final: 8700,
+    phrase: 9250,
+    fadeOut: 11050
+  };
+  const LOOP = 11600;
+  window.__DURATION = LOOP;
+
+  const tiles = [0,1,2,3].map(i => $('t'+i));
+  const names = tiles.map(el => el.querySelector('.desc'));
+  const rows = [0,1,2,3,4,5].map(i => $('r'+i));
+  const spins = rows.map(r => r.querySelector('.spin'));
+  const checks = rows.map(r => r.querySelector('.check'));
+  const resEls = rows.map(r => r.querySelector('.rres'));
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    // tuiles : entrée (stamp) puis morph vers le bandeau
+    const pm = eoc(io(T.morph, T.morphDur, t));
+    tiles.forEach((el, i) => {
+      const [gx, gy] = GRID[i], [sx, sy] = STRIP[i];
+      el.style.left = gx + 'px';
+      el.style.top = gy + 'px';
+      const pe = io(T.tile(i), T.tileDur, t);
+      const ee = eob(pe);
+      el.style.opacity = clamp(pe * 3);
+      const dx = (sx - gx) * pm, dy = (sy - gy) * pm;
+      const sc = (1.22 - 0.22 * ee) * (1 - (1 - S) * pm);
+      el.style.transform = `translate(${dx}px, ${dy + 18 * (1 - ee)}px) scale(${sc})`;
+      names[i].style.opacity = 1 - clamp(pm * 1.8);
+    });
+
+    // carte conversation
+    const pc = eoc(io(T.chat, 550, t));
+    const chat = $('chat');
+    chat.style.opacity = pc;
+    chat.style.transform = `translateY(${30 * (1 - pc)}px)`;
+
+    // frappe du prompt
+    const n = t < T.typeStart ? 0 : t >= T.typeEnd ? MSG.length
+      : Math.round(MSG.length * (t - T.typeStart) / (T.typeEnd - T.typeStart));
+    $('msg').textContent = MSG.slice(0, n);
+    const blink = Math.floor(t / 530) % 2 === 0;
+    $('caret').style.opacity = (t >= T.chat && t < T.row(0) && (t < T.typeEnd || blink)) ? 1 : 0;
+
+    // lignes connecteurs : apparition, spinner, check
+    rows.forEach((row, i) => {
+      const t0 = T.row(i);
+      const p = io(t0, 380, t);
+      row.style.opacity = clamp(p * 3) * pc;
+      row.style.transform = `translateY(${14 * (1 - eoc(p))}px)`;
+      const done = t >= t0 + T.rowSpin;
+      spins[i].style.display = (p > 0 && !done) ? 'block' : 'none';
+      if (!done) spins[i].style.transform = `rotate(${(t * 0.55) % 360}deg)`;
+      checks[i].style.display = done ? 'flex' : 'none';
+      const pd = io(t0 + T.rowSpin, 260, t);
+      checks[i].style.transform = `scale(${0.5 + 0.5 * eob(pd)})`;
+      resEls[i].style.opacity = pd;
+    });
+
+    // ligne de résultat
+    const pf = eoc(io(T.final, 450, t));
+    $('final').style.opacity = pf;
+    $('final').style.transform = `translateY(${12 * (1 - pf)}px)`;
+
+    // chute riso
+    const pp = eoc(io(T.phrase, 600, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>

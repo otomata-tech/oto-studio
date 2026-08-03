@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 88px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade {
+    position: absolute; inset: 0; z-index: 30; pointer-events: none;
+    background: var(--bg); opacity: 0;
+  }
+
+  .mono {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .scene { position: relative; width: 1024px; height: 880px; z-index: 1; }
+  .mark {
+    position: absolute;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    color: rgba(44,33,18,0.35);
+    line-height: 1;
+  }
+
+  .box {
+    position: absolute;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: 30px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+  .box .eyebrow { font-size: 12px; color: var(--mute); margin-bottom: 8px; }
+  .box .big { font-size: 56px; line-height: 1; }
+  .box .small { font-size: 19px; color: var(--mute); }
+
+  .vous  { left: 0; top: 80px;  width: 384px; height: 208px; }
+  .agent { left: 0; top: 570px; width: 384px; height: 208px; }
+
+  .oto {
+    position: absolute;
+    left: 600px; top: 40px;
+    width: 424px; height: 800px;
+    background: var(--primary);
+    border: 2px solid var(--ink);
+    box-shadow: 12px 12px 0 var(--ink);
+    padding: 38px 34px;
+    display: flex;
+    flex-direction: column;
+  }
+  .oto .eyebrow { font-size: 12px; color: rgba(44,33,18,0.75); margin-bottom: 12px; }
+  .oto .big { font-size: 92px; line-height: 1; margin-bottom: 30px; }
+  .tools { display: flex; flex-wrap: wrap; gap: 12px 10px; align-content: flex-start; }
+  .tools span {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16.5px;
+    letter-spacing: 0.02em;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+    padding: 9px 13px;
+    white-space: nowrap;
+    box-shadow: 3px 3px 0 rgba(44,33,18,0.85);
+  }
+  .tools span.more { background: transparent; border: none; box-shadow: none; font-weight: 700; padding-left: 0; }
+
+  svg.links { position: absolute; inset: 0; overflow: visible; z-index: 2; }
+
+  .mcp {
+    position: absolute;
+    left: 356px; top: 402px;
+    z-index: 3;
+    background: var(--primary);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 12px 18px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .phrase {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 44px;
+    z-index: 1;
+  }
+  .phrase p { font-size: 96px; line-height: 1.06; }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 28px;
+    font-size: 14px;
+    color: var(--mute);
+    z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <div class="scene">
+    <div class="mark" style="left:-14px; top:-14px;">+</div>
+    <div class="mark" style="left:-14px; bottom:-14px;">+</div>
+    <div class="mark" style="left:520px; top:-14px;">+</div>
+    <div class="mark" style="left:520px; bottom:-14px;">+</div>
+
+    <svg class="links" width="1024" height="880" viewBox="0 0 1024 880" fill="none">
+      <g transform="translate(4,4)" opacity="0.9">
+        <path id="ay1" d="M 396 184 C 505 184, 480 360, 590 360" stroke="#f0b41e" stroke-width="4"/>
+        <path id="ay2" d="M 396 674 C 505 674, 480 500, 590 500" stroke="#f0b41e" stroke-width="4"/>
+      </g>
+      <path id="ai1" d="M 396 184 C 505 184, 480 360, 590 360" stroke="#2c2112" stroke-width="4"/>
+      <path id="ai2" d="M 396 674 C 505 674, 480 500, 590 500" stroke="#2c2112" stroke-width="4"/>
+      <path id="ah1" d="M 588 352 L 602 360 L 588 368 Z" fill="#2c2112"/>
+      <path id="ah2" d="M 588 492 L 602 500 L 588 508 Z" fill="#2c2112"/>
+    </svg>
+
+    <div class="mcp mono" id="mcp">+ connecteur mcp</div>
+
+    <div class="box vous" id="bx1">
+      <div class="eyebrow mono">01</div>
+      <div class="big display">Vous</div>
+      <div class="small">et vos équipes</div>
+    </div>
+
+    <div class="box agent" id="bx2">
+      <div class="eyebrow mono">02</div>
+      <div class="big display">Votre agent</div>
+      <div class="small">Claude, Mistral, ChatGPT…</div>
+    </div>
+
+    <div class="oto" id="oto">
+      <div class="eyebrow mono">03 · un univers d’outils</div>
+      <div class="big display">oto.</div>
+      <div class="tools" id="tools">
+        <span>crm</span><span>email</span><span>agenda</span><span>drive</span><span>tableaux</span><span>slack</span><span>whatsapp</span><span>linkedin</span><span>recherche web</span><span>presse</span><span>scraping</span><span>données fr</span><span>sirene</span><span>bilans</span><span>marchés publics</span><span>foncier</span><span>dpe</span><span>enrichissement</span><span>téléphones</span><span>factures</span><span>base de connaissance</span><span>procédures</span><span>projets</span><span class="more">+ des dizaines d’autres…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="phrase">
+    <p class="display" id="ph">L’OS pour vous<br>et votre agent.</p>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata × Tiple</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const ai1 = $('ai1'), ai2 = $('ai2'), ay1 = $('ay1'), ay2 = $('ay2');
+  const L1 = ai1.getTotalLength(), L2 = ai2.getTotalLength();
+  [ [ai1,L1], [ay1,L1], [ai2,L2], [ay2,L2] ].forEach(([p,L]) => {
+    p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+  });
+
+  const chips = [...document.querySelectorAll('#tools span')];
+  // mêmes inclinaisons que le visuel fixe (nth-child 3n/4n/7n)
+  const rot = chips.map((c, idx) => {
+    const i = idx + 1;
+    if (c.classList.contains('more')) return 0;
+    let r = 0;
+    if (i % 3 === 0) r = -1.3;
+    if (i % 4 === 0) r = 1.5;
+    if (i % 7 === 0) r = -0.7;
+    return r;
+  });
+
+  const T = {
+    bx1: 150, bx2: 350, oto: 500,
+    arrow1: 850, arrow2: 1000, arrowDur: 550,
+    mcp: 1600,
+    chips: 2050, chipStep: 60, chipDur: 400,
+    phrase: 4400,
+    fadeOut: 7050
+  };
+  const N = chips.length;
+  const LOOP = 7600;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+
+    // souffle du halo
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    // boîtes + monolithe
+    [['bx1', T.bx1], ['bx2', T.bx2], ['oto', T.oto]].forEach(([id, t0]) => {
+      const p = eoc(io(t0, 550, t));
+      const el = $(id);
+      el.style.opacity = p;
+      el.style.transform = `translateY(${28 * (1 - p)}px)`;
+    });
+
+    // flèches : tracé encre + couche saffran légèrement en retard
+    const p1 = eoc(io(T.arrow1, T.arrowDur, t)), p1y = eoc(io(T.arrow1 + 70, T.arrowDur, t));
+    const p2 = eoc(io(T.arrow2, T.arrowDur, t)), p2y = eoc(io(T.arrow2 + 70, T.arrowDur, t));
+    ai1.style.strokeDashoffset = L1 * (1 - p1);
+    ay1.style.strokeDashoffset = L1 * (1 - p1y);
+    ai2.style.strokeDashoffset = L2 * (1 - p2);
+    ay2.style.strokeDashoffset = L2 * (1 - p2y);
+    $('ah1').style.opacity = p1 > 0.96 ? 1 : 0;
+    $('ah2').style.opacity = p2 > 0.96 ? 1 : 0;
+
+    // tampon mcp
+    const pm = io(T.mcp, 380, t);
+    const em = eob(pm);
+    const mcp = $('mcp');
+    mcp.style.opacity = clamp(pm * 3);
+    mcp.style.transform = `rotate(${-2 - 5 * (1 - em)}deg) scale(${1.55 - 0.55 * em})`;
+
+    // myriade d'outils
+    chips.forEach((c, i) => {
+      const p = io(T.chips + i * T.chipStep, T.chipDur, t);
+      const e = eob(p);
+      c.style.opacity = clamp(p * 2.5);
+      c.style.transform = `rotate(${rot[i]}deg) scale(${0.5 + 0.5 * e})`;
+    });
+
+    // phrase riso : le texte monte, puis l'ombre saffran se décale
+    const pp = eoc(io(T.phrase, 600, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    // fondu de bouclage
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>
