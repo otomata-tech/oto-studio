@@ -1,20 +1,29 @@
-// Carte animée oto.cx « L'OS pour vous et votre agent » : capture CDP -> mp4 + gif.
+// Rend une affiche animée « post produit » : posts/<slug>.html -> out/<slug>.mp4 + .gif.
+// Usage : node posts/build-post.mjs <slug>   (ex. : node posts/build-post.mjs connectors)
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIR = process.cwd();
-const FILE = `file://${DIR}/anim-connectors.html?capture=1`;
+const DIR = dirname(fileURLToPath(import.meta.url));   // posts/
+const ROOT = join(DIR, '..');
+const SLUG = process.argv[2];
+if (!SLUG || !existsSync(`${DIR}/${SLUG}.html`)) {
+  console.error(`usage: node posts/build-post.mjs <slug>  (posts/<slug>.html doit exister)`);
+  process.exit(1);
+}
+const FILE = `file://${DIR}/${SLUG}.html?capture=1`;
 const W = 1200, H = 1500, FPS = 25;
-const FDIR = `${DIR}/frames-connectors`;
+const FDIR = `${ROOT}/.gen/frames-${SLUG}`;
 rmSync(FDIR, { recursive: true, force: true });
 mkdirSync(FDIR, { recursive: true });
-mkdirSync(`${DIR}/out`, { recursive: true });
+mkdirSync(`${ROOT}/out`, { recursive: true });
 
-const PORT = 9335;
+const PORT = 9334;
 const chrome = spawn('google-chrome', [
   '--headless=new','--disable-gpu','--hide-scrollbars','--no-first-run','--no-default-browser-check',
-  '--user-data-dir=/tmp/oto-build-chrome-connectors',
+  `--user-data-dir=/tmp/oto-build-chrome-${SLUG}`,
   `--remote-debugging-port=${PORT}`,'--force-device-scale-factor=1','about:blank'
 ], { stdio: 'ignore' });
 
@@ -62,7 +71,7 @@ for(let f=0; f<FRAMES; f++){
 process.stderr.write(`capture done: ${FRAMES} frames\n`);
 chrome.kill('SIGKILL');
 
-const mp4 = `${DIR}/out/otocx-connectors.mp4`, gif = `${DIR}/out/otocx-connectors.gif`, pal = `${FDIR}/pal.png`;
+const mp4 = `${ROOT}/out/${SLUG}.mp4`, gif = `${ROOT}/out/${SLUG}.gif`, pal = `${FDIR}/pal.png`;
 spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${FDIR}/frame_%04d.png`,'-c:v','libx264','-pix_fmt','yuv420p','-crf','18','-movflags','+faststart',mp4],{stdio:'ignore'});
 const gifArgs = 'fps=18,scale=720:-1:flags=lanczos';
 spawnSync('ffmpeg',['-y','-i',mp4,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});

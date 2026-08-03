@@ -2,20 +2,24 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIR = process.cwd();
+const DIR = dirname(fileURLToPath(import.meta.url));   // cards/
+const ROOT = join(DIR, '..');
 const FPS = 18, W = 1080, H = 1080;
-const fonts   = readFileSync(`${DIR}/fonts.css`,'utf8');
-const icons   = readFileSync(`${DIR}/icons.json`,'utf8');            // already JSON text
+const fonts   = readFileSync(`${ROOT}/assets/fonts.css`,'utf8');
+const icons   = readFileSync(`${ROOT}/assets/icons.json`,'utf8');            // already JSON text
 const tpl     = readFileSync(`${DIR}/template-body.html`,'utf8');
 const cases   = JSON.parse(readFileSync(`${DIR}/usecases.json`,'utf8'));
 const START = Number(process.argv[2] ?? 0);
 const COUNT = Number(process.argv[3] ?? cases.length);
 const slice = cases.slice(START, START + COUNT);
-const rePath  = f => (readFileSync(`${DIR}/${f}`,'utf8').match(/<path[^>]*\sd="([^"]+)"/)||[])[1];
+const rePath  = f => (readFileSync(`${ROOT}/assets/logos/${f}`,'utf8').match(/<path[^>]*\sd="([^"]+)"/)||[])[1];
 const LOGO = { claude:rePath('logo_claude.svg'), mistral:rePath('logo_mistralai.svg'), openai:rePath('logo_openai.svg') };
 
-mkdirSync(`${DIR}/out`, { recursive:true });
+mkdirSync(`${ROOT}/out`, { recursive:true });
+mkdirSync(`${ROOT}/.gen`, { recursive:true });
 
 // build the 10 HTML files
 for(const uc of slice){
@@ -24,7 +28,7 @@ for(const uc of slice){
     .replace('/* __FONTS__ */', fonts)
     .replace('__CLAUDE__', LOGO.claude).replace('__MISTRAL__', LOGO.mistral).replace('__OPENAI__', LOGO.openai);
   const html = `<!doctype html>\n<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>oto — ${uc.slug} (nº${uc.num})</title></head><body>\n${body}\n</body></html>`;
-  writeFileSync(`${DIR}/anim-${uc.slug}.html`, html);
+  writeFileSync(`${ROOT}/.gen/anim-${uc.slug}.html`, html);
 }
 console.error(`HTML générés: ${cases.length}`);
 
@@ -53,8 +57,8 @@ await ss('Emulation.setDeviceMetricsOverride',{ width:W, height:H, deviceScaleFa
 
 const summary = [];
 for(const uc of slice){
-  const fdir = `${DIR}/frames/${uc.slug}`; rmSync(fdir,{recursive:true,force:true}); mkdirSync(fdir,{recursive:true});
-  await ss('Page.navigate',{ url:`file://${DIR}/anim-${uc.slug}.html?capture=1` });
+  const fdir = `${ROOT}/.gen/frames/${uc.slug}`; rmSync(fdir,{recursive:true,force:true}); mkdirSync(fdir,{recursive:true});
+  await ss('Page.navigate',{ url:`file://${ROOT}/.gen/anim-${uc.slug}.html?capture=1` });
   await sleep(900);
   await evalJs('document.fonts.ready.then(()=>1)', true);
   const duration = await evalJs('window.__DURATION') || 6800;
@@ -66,7 +70,7 @@ for(const uc of slice){
     writeFileSync(`${fdir}/frame_${String(f).padStart(4,'0')}.png`, Buffer.from(data,'base64'));
   }
   // encode
-  const gif = `${DIR}/out/${uc.num}-${uc.slug}.gif`, pal = `${fdir}/pal.png`;
+  const gif = `${ROOT}/out/${uc.num}-${uc.slug}.gif`, pal = `${fdir}/pal.png`;
   const gifArgs = 'fps=18,scale=720:-1:flags=lanczos';
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-i',pal,'-lavfi',`${gifArgs} [x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3`,gif],{stdio:'ignore'});
@@ -75,6 +79,6 @@ for(const uc of slice){
   console.error(`[${uc.num}] ${uc.slug}: ${frames} frames, mp4 ${ok?'ok':'FAIL'}`);
 }
 chrome.kill('SIGKILL');
-writeFileSync(`${DIR}/build-summary.json`, JSON.stringify(summary,null,2));
+writeFileSync(`${ROOT}/.gen/build-summary.json`, JSON.stringify(summary,null,2));
 console.error('DONE');
 process.exit(0);

@@ -1,15 +1,12 @@
 # artefacts regénérables
 out/
 .gen/
-frames/
 node_modules/
 
-# exports générés (régénérables via build-all.mjs / server.mjs)
-anim-*.html
-# …sauf les anims de posts produit, main-écrites (sources, pas des exports)
-!anim-otocx.html
-!anim-connectors.html
+# vestiges d'anciens emplacements de rendu (avant le rangement cards/posts)
+frames/
 frames-*/
+anim-*.html
 build-summary.json
 post-*.png
 
@@ -18,7 +15,6 @@ post-*.png
 debug.log
 preview*.png
 chk-*.png
-anim.html
 gallery.html
 
 # profils chrome de rendu

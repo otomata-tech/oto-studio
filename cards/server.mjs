@@ -3,18 +3,21 @@ import http from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIR = process.cwd();
+const DIR = dirname(fileURLToPath(import.meta.url));   // cards/
+const ROOT = join(DIR, '..');
 const PORT = 7842, W = 1080, H = 1080, FPS = 25;
-const fonts = readFileSync(`${DIR}/fonts.css`,'utf8');
-const icons = readFileSync(`${DIR}/icons.json`,'utf8');           // JSON text
+const fonts = readFileSync(`${ROOT}/assets/fonts.css`,'utf8');
+const icons = readFileSync(`${ROOT}/assets/icons.json`,'utf8');           // JSON text
 const iconKeys = Object.keys(JSON.parse(icons));
 const tpl   = readFileSync(`${DIR}/template-body.html`,'utf8');
 const cases = JSON.parse(readFileSync(`${DIR}/usecases.json`,'utf8'));
-const rePath = f => (readFileSync(`${DIR}/${f}`,'utf8').match(/<path[^>]*\sd="([^"]+)"/)||[])[1];
+const rePath = f => (readFileSync(`${ROOT}/assets/logos/${f}`,'utf8').match(/<path[^>]*\sd="([^"]+)"/)||[])[1];
 const LOGO = { claude:rePath('logo_claude.svg'), mistral:rePath('logo_mistralai.svg'), openai:rePath('logo_openai.svg') };
-mkdirSync(`${DIR}/out`, { recursive:true });
-mkdirSync(`${DIR}/.gen`, { recursive:true });
+mkdirSync(`${ROOT}/out`, { recursive:true });
+mkdirSync(`${ROOT}/.gen`, { recursive:true });
 
 function buildHtml(uc){
   const data = `<script>window.__ICONS=${icons};window.__UC=${JSON.stringify(uc)};</script>`;
@@ -45,8 +48,8 @@ let renderChain = Promise.resolve();
 function renderUc(uc){ renderChain = renderChain.then(()=>doRender(uc), ()=>doRender(uc)); return renderChain; }
 async function doRender(uc){
   const base = 'gen-'+Date.now();
-  const htmlPath = `${DIR}/.gen/${base}.html`;
-  const fdir = `${DIR}/.gen/${base}`;
+  const htmlPath = `${ROOT}/.gen/${base}.html`;
+  const fdir = `${ROOT}/.gen/${base}`;
   writeFileSync(htmlPath, buildHtml(uc));
   rmSync(fdir,{recursive:true,force:true}); mkdirSync(fdir,{recursive:true});
   await ss('Page.navigate',{ url:`file://${htmlPath}?capture=1` });
@@ -60,7 +63,7 @@ async function doRender(uc){
     const { data } = await ss('Page.captureScreenshot',{ format:'png', clip:{x:0,y:0,width:W,height:H,scale:1}, captureBeyondViewport:true });
     writeFileSync(`${fdir}/frame_${String(f).padStart(4,'0')}.png`, Buffer.from(data,'base64'));
   }
-  const mp4 = `${DIR}/out/${base}.mp4`, gif = `${DIR}/out/${base}.gif`;
+  const mp4 = `${ROOT}/out/${base}.mp4`, gif = `${ROOT}/out/${base}.gif`;
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-c:v','libx264','-pix_fmt','yuv420p','-crf','18','-movflags','+faststart',mp4],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-i',mp4,'-vf','fps=18,scale=640:-1:flags=lanczos,palettegen=stats_mode=diff',`${fdir}/pal.png`],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-i',mp4,'-i',`${fdir}/pal.png`,'-lavfi','fps=18,scale=640:-1:flags=lanczos,paletteuse=dither=bayer:bayer_scale=3',gif],{stdio:'ignore'});
@@ -89,7 +92,7 @@ const server = http.createServer(async (req,res)=>{
       }); return;
     }
     if(req.method==='GET' && u.pathname.startsWith('/out/')){
-      const p = DIR + u.pathname; if(!existsSync(p)){ res.writeHead(404); return res.end('nope'); }
+      const p = ROOT + u.pathname; if(!existsSync(p)){ res.writeHead(404); return res.end('nope'); }
       const ext = p.slice(p.lastIndexOf('.')); res.writeHead(200,{'Content-Type':CT[ext]||'application/octet-stream'});
       return res.end(readFileSync(p));
     }
