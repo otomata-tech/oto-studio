@@ -9,6 +9,7 @@ cards/        # générateur de cartes cas d'usage (studio + batch)
 posts/        # affiches riso animées, une par post produit
 plaquettes/   # one-pagers imprimables (plaquette commerciale)
 assets/       # fonts.css, icons.json, logos/ (marques tierces)
+tools/        # publication (publer_schedule.py)
 brand/        # logos & charte Otomata/Oto (cache local ; voir brand/README.md)
 out/          # exports MP4/GIF (ignoré)
 .gen/         # HTML générés + frames intermédiaires (ignoré)
@@ -56,7 +57,7 @@ Les MP4+GIF sortent dans `out/`. LinkedIn : préférer le **MP4** (le GIF natif 
 - Le sandbox de l'agent **tue les serveurs/process de fond longs** (exit 144). Lancer `server.mjs` soi-même dans un terminal ; les batchs finis (`build-all.mjs`, `build-post.mjs`) passent en tâche de fond OK.
 
 ## Publication
-Publer (SaaS) — voir `publer_schedule.py`. Connecteur oto à venir : `otomata-tech/otomata-private#60`.
+Publer (SaaS) — voir `tools/publer_schedule.py`. Connecteur oto à venir : `otomata-tech/otomata-private#60`.
 Gotcha : le plan Publer **trial refuse la publication** (job `complete` mais `payload.failures`) → plan payant requis.
 
 ## Licence & marques

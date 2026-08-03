@@ -6,7 +6,7 @@ KEY = sec["PUBLER_API_KEY"]; WS = "6a48458a07c8e53058570764"
 ACCOUNT = "6a4845f3bd0b150260cddfe6"   # profil LinkedIn Alexis
 B = "https://app.publer.com/api/v1"
 H = {"Authorization": f"Bearer-API {KEY}", "Publer-Workspace-Id": WS}
-VIDEO = os.path.join(os.path.dirname(__file__), "out", "01-prospection.mp4")
+VIDEO = os.path.join(os.path.dirname(__file__), "..", "out", "01-prospection.mp4")
 SCHED = "2026-07-05T09:00:00+02:00"
 TEXT = """L'IA agentique cowork-style à la portée de n'importe quel abonnement IA avec le MCP oto. Et tous les avantages que le harnais-as-a-service apporte en terme de sécurité, de collaboration, et de performance.
 
