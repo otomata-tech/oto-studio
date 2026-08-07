@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 40px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  /* ---- héros : le compteur ---- */
+  .hero { z-index: 1; padding: 30px 0 46px; }
+  .hero .num {
+    font-size: 262px;
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+  .hero .sub {
+    font-size: 27px;
+    color: var(--mute);
+    margin-top: 18px;
+  }
+  .hero .sub b { color: var(--ink); }
+
+  /* ---- les tampons ---- */
+  .stamps {
+    z-index: 1;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 40px;
+    display: flex; flex-wrap: wrap; gap: 18px 16px;
+    align-content: flex-start;
+  }
+  .stamps span {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 rgba(44,33,18,0.85);
+    padding: 16px 22px;
+    white-space: nowrap;
+  }
+  .stamps span.new { background: var(--primary); font-weight: 700; }
+
+  /* ---- chute ---- */
+  .phrase {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding-bottom: 36px; z-index: 1;
+  }
+  .phrase p { font-size: 84px; line-height: 1.07; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">La semaine d’oto · 03–07 août 2026</div>
+  </header>
+
+  <div class="hero" id="hero">
+    <div class="num display" id="num">0</div>
+    <div class="sub">appels d’outils servis à vos agents <b>cette semaine</b></div>
+  </div>
+
+  <div class="stamps">
+    <span class="new" id="s0">+ sellsy</span>
+    <span class="new" id="s1">+ lusha</span>
+    <span class="new" id="s2">+ firecrawl</span>
+    <span class="new" id="s3">+ apify</span>
+    <span id="s4">salesforce → bulk</span>
+    <span id="s5">webhooks folk</span>
+    <span id="s6">zoho en 1 clic</span>
+    <span id="s7">supervision d’org</span>
+    <span id="s8">équipes autonomes</span>
+    <span id="s9">tableaux : annuler un changement</span>
+  </div>
+
+  <div class="phrase">
+    <p class="display" id="ph">Et toujours<br>un seul branchement.</p>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata × Tiple</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const TOTAL = 12672;
+  const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
+  const N = 10;
+  const stamps = Array.from({ length: N }, (_, i) => $('s' + i));
+  const rot = [-1.5, 1.2, -0.8, 1.6, -1.1, 0.9, -1.4, 1.1, -0.7, 1.3];
+
+  const T = {
+    hero: 250,
+    count: 550, countDur: 1500,
+    shadow: 2150,
+    stamp: i => 2550 + i * 330, stampDur: 380,
+    phrase: 6450,
+    fadeOut: 8650
+  };
+  const LOOP = 9200;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    const phz = eoc(io(T.hero, 500, t));
+    const hero = $('hero');
+    hero.style.opacity = phz;
+    hero.style.transform = `translateY(${24 * (1 - phz)}px)`;
+
+    // compteur : monte en décélérant, l'ombre riso se pose à l'arrivée
+    const pc = eoc(io(T.count, T.countDur, t));
+    $('num').textContent = fmt(Math.round(TOTAL * pc));
+    const psh = eoc(io(T.shadow, 400, t));
+    $('num').style.textShadow = `${7 * psh}px ${7 * psh}px 0 #f0b41e`;
+
+    stamps.forEach((el, i) => {
+      const p = io(T.stamp(i), T.stampDur, t);
+      const e = eob(p);
+      el.style.opacity = clamp(p * 3);
+      el.style.transform = `rotate(${rot[i] * (2 - e)}deg) scale(${1.45 - 0.45 * e})`;
+    });
+
+    const pp = eoc(io(T.phrase, 600, t));
+    const ps2 = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps2}px ${5 * ps2}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>
