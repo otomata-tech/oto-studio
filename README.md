@@ -11,7 +11,8 @@ plaquettes/   # one-pagers imprimables (plaquette commerciale)
 assets/       # fonts.css, icons.json, logos/ (marques tierces)
 tools/        # publication (publer_schedule.py)
 brand/        # logos & charte Otomata/Oto (cache local ; voir brand/README.md)
-out/          # exports MP4/GIF (ignoré)
+out/          # exports (ignoré), en miroir des sources :
+              #   cards/ · posts/ · plaquettes/ · articles/<slug>/
 .gen/         # HTML générés + frames intermédiaires (ignoré)
 ```
 
@@ -49,7 +50,7 @@ node posts/build-post.mjs <slug>   # rend posts/<slug>.html → out/<slug>.mp4 +
 `google-chrome` + `ffmpeg` (déjà présents sur ce poste).
 
 ## Exports
-Les MP4+GIF sortent dans `out/`. LinkedIn : préférer le **MP4** (le GIF natif y est souvent rendu statique).
+Les exports sortent dans `out/<famille>/` — `out/cards/`, `out/posts/`, `out/plaquettes/`, `out/articles/<slug>/` (illustrations statiques d'articles, sources dans `article-<slug>/`). Les scripts créent leur sous-dossier eux-mêmes. LinkedIn : préférer le **MP4** (le GIF natif y est souvent rendu statique).
 
 ## Gotchas (rendu Chrome headless, cet environnement)
 - **Toujours** lancer Chrome avec un `--user-data-dir` **isolé** (ex. `/tmp/oto-build-chrome`). Sans ça, il partage le profil par défaut du navigateur GUI → ferme les fenêtres de l'utilisateur **et** fait échouer le rendu.

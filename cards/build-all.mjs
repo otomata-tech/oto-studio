@@ -70,7 +70,8 @@ for(const uc of slice){
     writeFileSync(`${fdir}/frame_${String(f).padStart(4,'0')}.png`, Buffer.from(data,'base64'));
   }
   // encode
-  const gif = `${ROOT}/out/${uc.num}-${uc.slug}.gif`, pal = `${fdir}/pal.png`;
+  const odir = `${ROOT}/out/cards`; mkdirSync(odir,{recursive:true});
+  const gif = `${odir}/${uc.num}-${uc.slug}.gif`, pal = `${fdir}/pal.png`;
   const gifArgs = 'fps=18,scale=720:-1:flags=lanczos';
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-i',pal,'-lavfi',`${gifArgs} [x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3`,gif],{stdio:'ignore'});

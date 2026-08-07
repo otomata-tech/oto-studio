@@ -1,4 +1,4 @@
-// Rend une affiche animée « post produit » : posts/<slug>.html -> out/<slug>.mp4 + .gif.
+// Rend une affiche animée « post produit » : posts/<slug>.html -> out/posts/<slug>.mp4 + .gif.
 // Usage : node posts/build-post.mjs <slug>   (ex. : node posts/build-post.mjs connectors)
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
@@ -71,7 +71,8 @@ for(let f=0; f<FRAMES; f++){
 process.stderr.write(`capture done: ${FRAMES} frames\n`);
 chrome.kill('SIGKILL');
 
-const mp4 = `${ROOT}/out/${SLUG}.mp4`, gif = `${ROOT}/out/${SLUG}.gif`, pal = `${FDIR}/pal.png`;
+const ODIR = `${ROOT}/out/posts`; mkdirSync(ODIR,{recursive:true});
+const mp4 = `${ODIR}/${SLUG}.mp4`, gif = `${ODIR}/${SLUG}.gif`, pal = `${FDIR}/pal.png`;
 spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${FDIR}/frame_%04d.png`,'-c:v','libx264','-pix_fmt','yuv420p','-crf','18','-movflags','+faststart',mp4],{stdio:'ignore'});
 const gifArgs = 'fps=18,scale=720:-1:flags=lanczos';
 spawnSync('ffmpeg',['-y','-i',mp4,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});

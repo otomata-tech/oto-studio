@@ -63,12 +63,13 @@ async function doRender(uc){
     const { data } = await ss('Page.captureScreenshot',{ format:'png', clip:{x:0,y:0,width:W,height:H,scale:1}, captureBeyondViewport:true });
     writeFileSync(`${fdir}/frame_${String(f).padStart(4,'0')}.png`, Buffer.from(data,'base64'));
   }
-  const mp4 = `${ROOT}/out/${base}.mp4`, gif = `${ROOT}/out/${base}.gif`;
+  const odir = `${ROOT}/out/cards`; mkdirSync(odir,{recursive:true});
+  const mp4 = `${odir}/${base}.mp4`, gif = `${odir}/${base}.gif`;
   spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-c:v','libx264','-pix_fmt','yuv420p','-crf','18','-movflags','+faststart',mp4],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-i',mp4,'-vf','fps=18,scale=640:-1:flags=lanczos,palettegen=stats_mode=diff',`${fdir}/pal.png`],{stdio:'ignore'});
   spawnSync('ffmpeg',['-y','-i',mp4,'-i',`${fdir}/pal.png`,'-lavfi','fps=18,scale=640:-1:flags=lanczos,paletteuse=dither=bayer:bayer_scale=3',gif],{stdio:'ignore'});
   rmSync(fdir,{recursive:true,force:true}); rmSync(htmlPath,{force:true});
-  return { mp4:`/out/${base}.mp4`, gif:`/out/${base}.gif`, base };
+  return { mp4:`/out/cards/${base}.mp4`, gif:`/out/cards/${base}.gif`, base };
 }
 
 /* ---------- HTTP ---------- */
