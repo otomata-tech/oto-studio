@@ -76,10 +76,11 @@ Ces emplacements **implémentent** la charte définie ici. Une évolution part d
 | `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
 | `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
 
-Vérifier la dérive (au 2026-08-12 : aucune) :
+Vérifier la dérive — **sur les valeurs**, au 2026-08-12 : aucune.
 
 ```bash
-diff -q  brand/theme/THEME.md   /data/oto/oto-websites/packages/ui/THEME.md
 diff -q  brand/theme/theme.css  /data/oto/oto-websites/packages/ui/src/theme.css
 diff -rq brand/theme/dashboard-tokens/ /data/oto/oto-dashboard/design-system/tokens/
 ```
+
+⚠️ **Ne pas comparer les `THEME.md`** : la copie d'`oto-websites` porte en tête un encart « source de vérité = oto-studio/brand » que l'original n'a pas — ils divergent donc d'un bloc, volontairement. Ce sont `theme.css` et les tokens qui portent les valeurs, et eux doivent rester strictement identiques.
