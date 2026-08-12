@@ -1,6 +1,8 @@
 # oto-studio — visuels de communication oto (LinkedIn)
 
-Studio local de création de visuels dans la charte oto.cx : cartes « cas d'usage » animées, affiches « posts produit », plaquettes. Export MP4/GIF via Chrome headless + ffmpeg.
+Studio local de création de visuels dans la charte oto.cx : cartes « cas d'usage » animées, affiches « posts produit », plaquettes, bannières. Export MP4/GIF via Chrome headless + ffmpeg.
+
+> **📍 Ce repo est la source de vérité du design Otomata.** Palette, typo, logos, tokens, charte formelle : tout est dans [`brand/`](brand/README.md), et c'est là qu'on met à jour. Les autres emplacements (`oto-websites/packages/ui`, `oto-dashboard/design-system`, le Drive `identite/`) sont des **consommateurs** — ils appliquent la charte, ils ne la définissent pas. En cas de divergence, `brand/` a raison.
 
 ## Structure
 

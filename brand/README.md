@@ -1,7 +1,15 @@
 # brand — logos & charte Otomata / Oto
 
-Assets de marque rapatriés ici pour le studio de com (cartes cas d'usage LinkedIn).
-**Source de vérité = les repos d'origine** (listés ci-dessous) ; cette copie est un cache pratique, à re-synchroniser si la charte évolue.
+## 📍 Ce dossier est la source de vérité du design Otomata
+
+**Pour toute question de charte — palette, typo, logos, tokens — c'est ici qu'on regarde, et ici qu'on met à jour.** Les autres emplacements (le monorepo `oto-websites`, le design-system du dashboard, le Drive `identite/`) en sont des **consommateurs** : ils appliquent la charte, ils ne la définissent pas.
+
+Concrètement :
+- une évolution de charte se fait **d'abord ici**, puis se propage aux consommateurs ;
+- en cas de divergence entre ce dossier et un autre emplacement, **c'est ce dossier qui a raison** ;
+- avant de recopier une charte trouvée ailleurs sur le disque ou sur le Drive, vérifier ici — plusieurs copies périmées circulent (voir l'avertissement sur le README du Drive, plus bas).
+
+*(Historiquement l'inverse : ce dossier était un cache des repos d'origine. Inversé le 2026-08-12 — trop de copies divergentes, aucune ne faisant autorité.)*
 
 ## Deux marques distinctes
 
@@ -56,13 +64,22 @@ Assets de marque rapatriés ici pour le studio de com (cartes cas d'usage Linked
 
 Esthétique : moderne analytique, chaud, solaire. Voile jaune léger sur le fond = signature de l'écosystème.
 
-## Provenance (pour re-sync)
+## Consommateurs (où la charte est appliquée)
 
-| Ici | Origine |
-|---|---|
-| `charte/` | Drive `otomata-shared/identite/` (`charte-graphique.*`, `colors/palette.svg`) |
-| `theme/THEME.md`, `theme.css` | `oto-websites/packages/ui/` |
-| `theme/dashboard-tokens/` | `oto-dashboard/design-system/tokens/` |
-| `charte-doc/` | `oto-dashboard/design-system/{guidelines,components/brand,marques-*.html,screenshots}` |
-| `logos/otomata/` | `oto-websites/sites/otomata.tech/public/`, `otomata-deck/assets/` |
-| `logos/oto/` | `oto-websites/{web,sites/oto.zone}/public/`, `oto-dashboard/design-system/assets/`, `oto-cli/logo.svg` |
+Ces emplacements **implémentent** la charte définie ici. Une évolution part d'ici et se propage vers eux ; l'inverse — recopier depuis un consommateur — est ce qui a produit les divergences constatées.
+
+| Consommateur | Ce qu'il applique | Correspond ici à |
+|---|---|---|
+| `oto-websites/packages/ui/` | tokens `@otomata/ui` (`THEME.md`, `src/theme.css`), consommés en `"*"` local par `web/`, `extension/` et les `sites/*` | `theme/` |
+| `oto-dashboard/design-system/` | tokens dashboard, guidelines, composants de marque | `theme/dashboard-tokens/`, `charte-doc/` |
+| Drive `otomata-shared/identite/` | la charte formelle diffusée aux tiers | `charte/` |
+| `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
+| `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
+
+Vérifier la dérive (au 2026-08-12 : aucune) :
+
+```bash
+diff -q  brand/theme/THEME.md   /data/oto/oto-websites/packages/ui/THEME.md
+diff -q  brand/theme/theme.css  /data/oto/oto-websites/packages/ui/src/theme.css
+diff -rq brand/theme/dashboard-tokens/ /data/oto/oto-dashboard/design-system/tokens/
+```
