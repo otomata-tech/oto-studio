@@ -65,9 +65,15 @@
   }
   .context b { color: var(--ink); font-weight: 700; }
 
-  /* ---- la scène : trois sessions reliées ---- */
-  .scene { position: relative; width: 1024px; height: 924px; z-index: 1; }
-  .wires { position: absolute; inset: 0; width: 1024px; height: 924px; z-index: 0; overflow: visible; }
+  /* la scène occupe toute la hauteur pendant l'animation, puis recule
+     pour laisser monter la chute — pas de zone morte en bas */
+  .stage { position: relative; width: 1024px; height: 1180px; z-index: 1; }
+  .scene {
+    position: absolute; inset: 0;
+    width: 1024px; height: 1180px;
+    transform-origin: 50% 0%;
+  }
+  .wires { position: absolute; inset: 0; width: 1024px; height: 1180px; z-index: 0; overflow: visible; }
 
   .term {
     position: absolute; z-index: 1;
@@ -79,7 +85,7 @@
     overflow: hidden;
   }
   .term .bar {
-    height: 44px; flex: none;
+    height: 46px; flex: none;
     background: var(--ink);
     border-bottom: 2px solid var(--ink);
     display: flex; align-items: center; gap: 10px;
@@ -90,7 +96,7 @@
   .term.lead .dot { background: rgba(44,33,18,0.40); }
   .term .name {
     font-family: "JetBrains Mono", monospace;
-    font-size: 16px; letter-spacing: 0.10em;
+    font-size: 17px; letter-spacing: 0.10em;
     color: var(--bg); margin-left: 6px; white-space: nowrap;
   }
   .term.lead .name { color: var(--ink); font-weight: 700; }
@@ -105,16 +111,15 @@
   .term .body { flex: 1; padding: 22px 22px; }
   .ln {
     font-family: "JetBrains Mono", monospace;
-    font-size: 21px; line-height: 34px;
+    font-size: 22px; line-height: 36px;
     white-space: pre; letter-spacing: -0.01em;
     margin: 0 -8px; padding: 0 8px;
   }
   .ln.cmd  { color: var(--ink); font-weight: 700; }
-  .ln.own  { color: var(--mute); }                /* travail autonome */
-  .ln.msg  { color: #b87d05; font-weight: 700; }  /* échange entre sessions */
+  .ln.own  { color: var(--mute); }
+  .ln.msg  { color: #b87d05; font-weight: 700; }
   .ln.done { color: var(--ink); font-weight: 700; }
 
-  /* le message en vol, dans le couloir entre les colonnes */
   .packet {
     position: absolute;
     font-family: "JetBrains Mono", monospace;
@@ -128,10 +133,10 @@
     transform-origin: 50% 50%;
   }
 
-  /* ---- chute ---- */
+  /* la chute, révélée par le recul de la scène */
   .phrase {
-    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
-    padding-bottom: 26px; z-index: 2;
+    position: absolute; left: 0; right: 0; bottom: 0;
+    z-index: 2;
   }
   .phrase p { font-size: 78px; line-height: 1.06; }
   .phrase .kick { display: inline-block; }
@@ -139,7 +144,8 @@
   footer {
     display: flex; justify-content: space-between; align-items: baseline;
     border-top: 1.5px solid var(--ink);
-    padding-top: 22px; font-size: 14px; color: var(--mute); z-index: 1;
+    padding-top: 22px; font-size: 14px; color: var(--mute);
+    margin-top: auto; z-index: 1;
   }
   footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
 </style>
@@ -155,43 +161,42 @@
 
   <div class="context" id="ctx"><b>11 sessions ouvertes</b> — trois avancent en parallèle.</div>
 
-  <div class="scene" id="scene">
-    <!-- les fils : la relation existe en permanence, pas seulement quand ça circule -->
-    <svg class="wires" viewBox="0 0 1024 924">
-      <g transform="translate(4,5)">
-        <path class="w" d="M 400 462 L 584 220" stroke="#f0b41e" stroke-width="4" fill="none"/>
-        <path class="w" d="M 400 462 L 584 704" stroke="#f0b41e" stroke-width="4" fill="none"/>
-      </g>
-      <path class="w" d="M 400 462 L 584 220" stroke="#2c2112" stroke-width="4" fill="none"/>
-      <path class="w" d="M 400 462 L 584 704" stroke="#2c2112" stroke-width="4" fill="none"/>
-      <circle id="hub" cx="400" cy="462" r="10" fill="#f0b41e" stroke="#2c2112" stroke-width="4"/>
-    </svg>
+  <div class="stage">
+    <div class="scene" id="scene">
+      <svg class="wires" viewBox="0 0 1024 1180">
+        <g transform="translate(4,5)">
+          <path class="w" d="M 420 590 L 560 270" stroke="#f0b41e" stroke-width="4" fill="none"/>
+          <path class="w" d="M 420 590 L 560 910" stroke="#f0b41e" stroke-width="4" fill="none"/>
+        </g>
+        <path class="w" d="M 420 590 L 560 270" stroke="#2c2112" stroke-width="4" fill="none"/>
+        <path class="w" d="M 420 590 L 560 910" stroke="#2c2112" stroke-width="4" fill="none"/>
+        <circle id="hub" cx="420" cy="590" r="10" fill="#f0b41e" stroke="#2c2112" stroke-width="4"/>
+      </svg>
 
-    <!-- le chef : colonne de gauche -->
-    <div class="term lead" id="t0" style="left:0px; top:182px; width:400px; height:560px;">
-      <div class="bar"><span class="dot"></span><span class="name">refonte</span><span class="tag">chef</span></div>
-      <div class="body" id="b0"></div>
+      <div class="term lead" id="t0" style="left:0px; top:270px; width:420px; height:640px;">
+        <div class="bar"><span class="dot"></span><span class="name">refonte</span><span class="tag">chef</span></div>
+        <div class="body" id="b0"></div>
+      </div>
+
+      <div class="term" id="t1" style="left:560px; top:0px; width:464px; height:540px;">
+        <div class="bar"><span class="dot"></span><span class="name">prospection</span><span class="tag">session 2</span></div>
+        <div class="body" id="b1"></div>
+      </div>
+
+      <div class="term" id="t2" style="left:560px; top:640px; width:464px; height:540px;">
+        <div class="bar"><span class="dot"></span><span class="name">mission</span><span class="tag">session 3</span></div>
+        <div class="body" id="b2"></div>
+      </div>
+
+      <div class="packet" id="pk0">point ?</div>
+      <div class="packet" id="pk1">point ?</div>
+      <div class="packet" id="pk2">audit ok</div>
+      <div class="packet" id="pk3">conflit !</div>
     </div>
 
-    <!-- les deux autres : colonne de droite -->
-    <div class="term" id="t1" style="left:584px; top:0px; width:440px; height:440px;">
-      <div class="bar"><span class="dot"></span><span class="name">prospection</span><span class="tag">session 2</span></div>
-      <div class="body" id="b1"></div>
+    <div class="phrase">
+      <p class="display" id="ph">Ce n’est plus une session.<br><span class="kick" id="kick">C’est une équipe.</span></p>
     </div>
-
-    <div class="term" id="t2" style="left:584px; top:484px; width:440px; height:440px;">
-      <div class="bar"><span class="dot"></span><span class="name">mission</span><span class="tag">session 3</span></div>
-      <div class="body" id="b2"></div>
-    </div>
-
-    <div class="packet" id="pk0">point ?</div>
-    <div class="packet" id="pk1">point ?</div>
-    <div class="packet" id="pk2">audit ok</div>
-    <div class="packet" id="pk3">conflit !</div>
-  </div>
-
-  <div class="phrase">
-    <p class="display" id="ph">Ce n’est plus une session.<br><span class="kick" id="kick">C’est une équipe.</span></p>
   </div>
 
   <footer>
@@ -210,13 +215,10 @@
   const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
   const lerp = (a, b, p) => a + (b - a) * p;
 
-  const CPS = 20;   // ms par caractère
+  const CPS = 20;
 
-  // --- ce que font vraiment les trois sessions --------------------------
-  // cls : cmd = commande | own = travail propre (gris) | msg = échange (saffran)
-  // fl  : la ligne s'allume à l'arrivée du message
   const SCRIPTS = [
-    // 0 — le chef : il avance sur son propre chantier ET coordonne
+    // 0 — le chef : son propre chantier, et la coordination
     [
       { t:  900, cls: 'cmd',  txt: '$ claude --model fable-5' },
       { t: 1700, cls: 'own',  txt: '● 746 contenus migrés' },
@@ -230,38 +232,42 @@
       { t: 8900, cls: 'msg',  txt: '← prospection : audit ok', fl: 1 },
       { t:10300, cls: 'msg',  txt: '← mission : conflit', fl: 1 },
       { t:11000, cls: 'own',  txt: '● je corrige avant demain' },
-      { t:11600, cls: 'done', txt: '✓ personne n’avait vu ça' },
+      { t:11700, cls: 'done', txt: '✓ conflit évité' },
+      { t:12300, cls: 'done', txt: '✓ personne n’avait vu ça' },
     ],
-    // 1 — prospection : travaillait déjà avant qu'on l'appelle
+    // 1 — prospection : travaillait déjà, continue après
     [
       { t: 1300, cls: 'cmd',  txt: '$ claude --model opus-5' },
       { t: 2100, cls: 'own',  txt: '● 501 fiches qualifiées' },
       { t: 3000, cls: 'own',  txt: '● 107 dirigeants corrigés' },
       { t: 3900, cls: 'own',  txt: '● doublons écartés' },
+      { t: 4700, cls: 'own',  txt: '● 3 sources croisées' },
       { t: 5700, cls: 'msg',  txt: '← chef : point d’étape ?', fl: 1 },
       { t: 6500, cls: 'own',  txt: '● audit qualité en cours' },
-      { t: 7300, cls: 'own',  txt: '● 3 sources croisées' },
-      { t: 8100, cls: 'msg',  txt: '→ chef : audit en cours' },
+      { t: 7200, cls: 'own',  txt: '● 12 anomalies relevées' },
+      { t: 7800, cls: 'own',  txt: '● correctifs appliqués' },
+      { t: 8300, cls: 'msg',  txt: '→ chef : audit ok' },
     ],
-    // 2 — mission : son propre rythme, répond plus tard
+    // 2 — mission : son rythme, et c'est elle qui voit le problème
     [
       { t: 1550, cls: 'cmd',  txt: '$ claude --model opus-5' },
       { t: 2400, cls: 'own',  txt: '● écran reporting livré' },
       { t: 3300, cls: 'own',  txt: '● export client maîtrisé' },
       { t: 4200, cls: 'own',  txt: '● retours client intégrés' },
+      { t: 5100, cls: 'own',  txt: '● 4 évolutions validées' },
       { t: 6300, cls: 'msg',  txt: '← chef : point d’étape ?', fl: 1 },
-      { t: 7200, cls: 'own',  txt: '● 4 évolutions validées' },
-      { t: 8300, cls: 'own',  txt: '● ton export fausse mes totaux' },
+      { t: 7200, cls: 'own',  txt: '● recette planifiée' },
+      { t: 8000, cls: 'own',  txt: '● ton export fausse mes totaux' },
+      { t: 9000, cls: 'own',  txt: '● je vérifie deux fois' },
       { t: 9500, cls: 'msg',  txt: '→ chef : conflit détecté' },
     ],
   ];
 
-  // --- les messages, qui glissent le long des fils -----------------------
   const PACKETS = [
-    { el: 'pk0', t: 5000, d: 640, ax: 468, ay: 430, bx: 516, by: 258, rot: -4 },
-    { el: 'pk1', t: 5600, d: 640, ax: 468, ay: 496, bx: 516, by: 666, rot:  4 },
-    { el: 'pk2', t: 8350, d: 520, ax: 516, ay: 258, bx: 468, by: 430, rot:  3 },
-    { el: 'pk3', t: 9750, d: 520, ax: 516, ay: 666, bx: 468, by: 496, rot: -3 },
+    { el: 'pk0', t: 5000, d: 660, ax: 472, ay: 560, bx: 508, by: 340, rot: -4 },
+    { el: 'pk1', t: 5600, d: 660, ax: 472, ay: 620, bx: 508, by: 840, rot:  4 },
+    { el: 'pk2', t: 8550, d: 540, ax: 508, ay: 340, bx: 472, by: 560, rot:  3 },
+    { el: 'pk3', t: 9750, d: 540, ax: 508, ay: 840, bx: 472, by: 620, rot: -3 },
   ];
 
   const LINES = SCRIPTS.map((script, i) => {
@@ -280,10 +286,12 @@
   const T = {
     term: [200, 450, 700],
     wire: 1150,
-    phrase: 12400,
-    fadeOut: 15200,
+    zoomOut: 13000,   // la scène recule
+    phrase: 13600,    // la chute monte dans la place libérée
+    fadeOut: 16400,
   };
-  const LOOP = 15900;
+  const LOOP = 17100;
+  const ZOOM = 0.76;  // échelle finale : laisse 283px pour la chute
   window.__DURATION = LOOP;
 
   function typeTerm(script, els, t) {
@@ -299,7 +307,6 @@
         else if (Math.floor(t / 460) % 2 === 0) s += '█';
       }
       el.textContent = s;
-      // une ligne reçue s'allume, puis retombe : l'arrivée se voit
       if (L.fl) {
         const f = 1 - clamp((t - L.t) / 1400);
         el.style.background = `rgba(240,180,30,${0.5 * f})`;
@@ -312,7 +319,10 @@
     $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
     $('ctx').style.opacity = eoc(io(0, 500, t));
 
-    // les fils se tendent une fois les fenêtres posées
+    // le recul de la scène ouvre la place à la chute
+    const dz = eoc(io(T.zoomOut, 950, t));
+    $('scene').style.transform = `scale(${1 - (1 - ZOOM) * dz})`;
+
     const pw = eoc(io(T.wire, 700, t));
     WIRES.forEach((w, i) => {
       w.style.strokeDasharray = WLEN[i];
@@ -343,7 +353,7 @@
     const ps2 = eoc(io(T.phrase + 400, 400, t));
     const ph = $('ph');
     ph.style.opacity = pp;
-    ph.style.transform = `translateY(${38 * (1 - pp)}px)`;
+    ph.style.transform = `translateY(${34 * (1 - pp)}px)`;
     ph.style.textShadow = `${5 * ps2}px ${5 * ps2}px 0 #f0b41e`;
 
     const pk = eoc(io(T.phrase + 900, 550, t));
