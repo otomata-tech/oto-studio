@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5; --surface: #ffffff; --ink: #2c2112; --mute: #6c5e44;
+    --hair: #dccfa8; --primary: #f0b41e; --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body {
+    position: relative; background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink); font-family: "Hanken Grotesk", sans-serif;
+    padding: 64px 88px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07; mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0; right: -180px; top: -260px;
+    width: 860px; height: 860px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.36), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif; font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90; font-weight: 600; letter-spacing: -0.02em;
+  }
+  header { display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; position: relative; }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  h1.display {
+    position: relative; z-index: 1;
+    font-size: 64px; line-height: 1.02; margin-top: 26px; width: 900px;
+    text-shadow: 3px 3px 0 var(--primary-soft);
+  }
+
+  .scene { position: absolute; left: 88px; right: 88px; top: 300px; height: 420px; z-index: 1; }
+
+  .card {
+    position: absolute; background: var(--surface);
+    border: 2px solid var(--ink); box-shadow: 8px 8px 0 var(--ink);
+    padding: 24px 28px;
+  }
+  .card .eyebrow { font-size: 12px; color: var(--mute); margin-bottom: 12px; }
+  .instruction { left: 0; top: 110px; width: 356px; }
+  .instruction .txt { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; font-size: 25px; line-height: 1.15; }
+
+  .hop {
+    position: absolute; width: 172px;
+    background: var(--surface); border: 2px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); padding: 16px 18px;
+  }
+  .hop .n { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
+    color: var(--ink); background: var(--primary); border: 1.5px solid var(--ink);
+    display: inline-block; padding: 2px 8px; margin-bottom: 10px;
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85); }
+  .hop .verb { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; }
+  .hop .what { font-size: 14px; color: var(--mute); margin-top: 6px; }
+  .h1 { left: 430px; top: 24px; transform: rotate(-1.2deg); }
+  .h2 { left: 660px; top: 190px; transform: rotate(0.8deg); }
+  .h3 { left: 890px; top: 60px; transform: rotate(-0.6deg); }
+
+  .ctx { right: 0; top: 130px; width: 300px; background: var(--primary); }
+  .ctx .eyebrow { color: rgba(44,33,18,0.72); }
+  .ctx .txt { font-family: "Bricolage Grotesque", sans-serif; font-weight: 600; font-size: 26px; }
+  .ctx .sub { font-size: 14px; margin-top: 8px; color: rgba(44,33,18,0.8); }
+
+  svg.cables { position: absolute; inset: 0; overflow: visible; z-index: -1; }
+  svg.cables path { fill: none; stroke-width: 2.5px; }
+  svg.cables path.saf { stroke: var(--primary); transform: translate(3px, 3px); }
+  svg.cables path.ink { stroke: var(--ink); stroke-dasharray: 7 7; }
+
+  .tag {
+    position: absolute; right: 88px; top: 178px; z-index: 4;
+    background: var(--primary); border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 10px 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; transform: rotate(3deg);
+  }
+
+  footer {
+    position: absolute; left: 88px; right: 88px; bottom: 56px; z-index: 1;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink); padding-top: 20px;
+  }
+  footer .phrase { font-size: 21px; font-weight: 600; }
+  footer .mono { font-size: 12px; color: var(--mute); }
+</style>
+</head>
+<body>
+  <div class="sun"></div>
+  <header>
+    <span class="brand">oto</span>
+    <span class="mono">path to context</span>
+  </header>
+
+  <h1 class="display">L'instruction est le premier domino.</h1>
+  <div class="tag">3 sauts, l'agent sait</div>
+
+  <div class="scene">
+    <svg class="cables" viewBox="0 0 1424 420">
+      <path class="saf" d="M 330 210 C 380 205, 395 105, 430 95"/>
+      <path class="ink" d="M 330 210 C 380 205, 395 105, 430 95"/>
+      <path class="saf" d="M 602 110 C 636 130, 630 240, 660 252"/>
+      <path class="ink" d="M 602 110 C 636 130, 630 240, 660 252"/>
+      <path class="saf" d="M 832 250 C 866 235, 860 140, 890 128"/>
+      <path class="ink" d="M 832 250 C 866 235, 860 140, 890 128"/>
+      <path class="saf" d="M 1062 130 C 1096 145, 1090 195, 1124 205"/>
+      <path class="ink" d="M 1062 130 C 1096 145, 1090 195, 1124 205"/>
+      <path d="M 1118 198 L 1134 206 L 1118 214 Z" fill="#2c2112"/>
+    </svg>
+
+    <div class="card instruction">
+      <div class="eyebrow mono">instruction</div>
+      <div class="txt">«&nbsp;Suis la procédure&nbsp;A&nbsp;»</div>
+    </div>
+
+    <div class="hop h1">
+      <div class="n">saut 1</div>
+      <div class="verb">chercher</div>
+      <div class="what">« procédure A » → 1 résultat</div>
+    </div>
+    <div class="hop h2">
+      <div class="n">saut 2</div>
+      <div class="verb">lire</div>
+      <div class="what">la procédure, ses prérequis</div>
+    </div>
+    <div class="hop h3">
+      <div class="n">saut 3</div>
+      <div class="verb">charger</div>
+      <div class="what">le tableau qu'elle référence</div>
+    </div>
+
+    <div class="card ctx">
+      <div class="eyebrow mono">contexte</div>
+      <div class="txt">Le travail commence.</div>
+      <div class="sub">procédure + données + règles</div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="phrase">La distance entre l'instruction et le contexte se compte en sauts.</span>
+    <span class="mono">oto.cx</span>
+  </footer>
+
+  <div class="grain"></div>
+</body>
+</html>

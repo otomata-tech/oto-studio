@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 30px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  .scene { position: relative; width: 1024px; height: 930px; z-index: 1; }
+
+  /* ---- avant : la stack sur mesure, barrée ---- */
+  .avant {
+    position: absolute;
+    left: 0; top: 0;
+    width: 1024px; height: 210px;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: 28px 34px;
+  }
+  .avant .eyebrow { font-size: 12px; color: var(--mute); margin-bottom: 16px; }
+  .stack { display: flex; flex-wrap: wrap; gap: 12px; }
+  .stack span {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    color: var(--mute);
+    border: 1.5px solid var(--hair);
+    padding: 9px 14px;
+    white-space: nowrap;
+  }
+  .stack .dur { color: var(--ink); border-color: var(--ink); }
+  svg.cross { position: absolute; inset: 0; overflow: visible; z-index: 3; }
+  .tagplus {
+    position: absolute;
+    right: -18px; top: -20px;
+    z-index: 4;
+    background: var(--primary);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 10px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(3deg);
+  }
+
+  /* ---- après : un tableau + une procédure ---- */
+  .table {
+    position: absolute;
+    left: 0; top: 280px;
+    width: 1024px; height: 650px;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: 30px 38px;
+  }
+  .thead {
+    display: flex; align-items: center; gap: 16px;
+    padding-bottom: 22px;
+    border-bottom: 1.5px solid var(--ink);
+    margin-bottom: 4px;
+  }
+  .otag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary);
+    border: 1.5px solid var(--ink);
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85);
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+  .thead code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    background: var(--primary-soft);
+    padding: 3px 9px;
+  }
+  .thead .count { font-size: 15px; color: var(--mute); flex: 1; }
+  .proc { display: flex; align-items: center; gap: 12px; }
+  .proc code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    background: var(--primary-soft);
+    padding: 3px 9px;
+  }
+
+  .cols, .trow { display: flex; align-items: center; gap: 20px; }
+  .cols {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 14px 10px 10px;
+  }
+  .trow {
+    padding: 12px 10px;
+    border-top: 1px solid var(--hair);
+    position: relative;
+  }
+  .c1 { flex: 1; font-size: 19px; }
+  .c2 { width: 170px; font-size: 16.5px; color: var(--mute); }
+  .c3 { width: 170px; display: flex; justify-content: flex-start; position: relative; height: 36px; }
+  .c3 .todo, .c3 .done {
+    position: absolute; left: 0; top: 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13.5px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+  .c3 .todo { background: var(--bg); border: 1.5px solid var(--hair); color: var(--mute); }
+  .c3 .done { background: var(--primary); border: 1.5px solid var(--ink); font-weight: 700; }
+
+  /* ---- phrase ---- */
+  .phrase {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding-bottom: 36px; z-index: 1;
+  }
+  .phrase p { font-size: 88px; line-height: 1.07; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Tableaux &amp; procédures</div>
+  </header>
+
+  <div class="scene">
+    <div class="avant" id="avant">
+      <div class="eyebrow mono">Une plateforme métier sur mesure, d’habitude :</div>
+      <div class="stack">
+        <span>backend</span><span>frontend</span><span>base de données</span><span>auth</span><span>hébergement</span><span>maintenance</span><span class="dur">6 mois</span>
+      </div>
+      <svg class="cross" width="1024" height="210" viewBox="0 0 1024 210" fill="none">
+        <g transform="translate(3,3)" opacity="0.9">
+          <path id="xy1" d="M 40 26 L 984 184" stroke="#f0b41e" stroke-width="7"/>
+          <path id="xy2" d="M 984 26 L 40 184" stroke="#f0b41e" stroke-width="7"/>
+        </g>
+        <path id="xi1" d="M 40 26 L 984 184" stroke="#2c2112" stroke-width="7"/>
+        <path id="xi2" d="M 984 26 L 40 184" stroke="#2c2112" stroke-width="7"/>
+      </svg>
+      <div class="tagplus" id="tagplus">plus besoin</div>
+    </div>
+
+    <div class="table" id="table">
+      <div class="thead">
+        <span class="otag">tableau</span><code>prospects-solaire</code>
+        <span class="count">1 240 lignes · typées, partagées</span>
+        <span class="proc" id="proc"><span class="otag">procédure</span><code>qualification</code></span>
+      </div>
+      <div class="cols"><span class="c1">entreprise</span><span class="c2">dépt</span><span class="c3" style="height:auto">statut</span></div>
+      <div class="trow" id="tr0"><span class="c1">Ferme du Grand Clos</span><span class="c2">Loiret</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+      <div class="trow" id="tr1"><span class="c1">SCEA des Trois Chênes</span><span class="c2">Vendée</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+      <div class="trow" id="tr2"><span class="c1">Toitures Morel</span><span class="c2">Ain</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+      <div class="trow" id="tr3"><span class="c1">Coop Vents d’Ouest</span><span class="c2">Finistère</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+      <div class="trow" id="tr4"><span class="c1">Domaine de la Brie</span><span class="c2">Gers</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+      <div class="trow" id="tr5"><span class="c1">Hangars Bertin</span><span class="c2">Somme</span><span class="c3"><span class="todo">à traiter</span><span class="done">✓ qualifié</span></span></div>
+    </div>
+  </div>
+
+  <div class="phrase">
+    <p class="display" id="ph">Un tableau, une procédure.<br>Voilà la plateforme.</p>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata × Tiple</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const xs = ['xi1','xi2','xy1','xy2'].map($);
+  const XL = xs[0].getTotalLength();
+  xs.forEach(p => { p.style.strokeDasharray = XL; p.style.strokeDashoffset = XL; });
+
+  const rows = [0,1,2,3,4,5].map(i => $('tr'+i));
+
+  const T = {
+    avant: 250,
+    x1: 1150, x2: 1400, xDur: 320,
+    tag: 1850,
+    table: 2250,
+    row: i => 2650 + i * 200,
+    proc: 4100,
+    claim: i => 4600 + i * 450, claimDur: 300,
+    phrase: 7900,
+    fadeOut: 9600
+  };
+  const LOOP = 10200;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    const pa = eoc(io(T.avant, 500, t));
+    $('avant').style.opacity = pa;
+    $('avant').style.transform = `translateY(${26 * (1 - pa)}px)`;
+
+    xs[0].style.strokeDashoffset = XL * (1 - eoc(io(T.x1, T.xDur, t)));
+    xs[2].style.strokeDashoffset = XL * (1 - eoc(io(T.x1 + 60, T.xDur, t)));
+    xs[1].style.strokeDashoffset = XL * (1 - eoc(io(T.x2, T.xDur, t)));
+    xs[3].style.strokeDashoffset = XL * (1 - eoc(io(T.x2 + 60, T.xDur, t)));
+
+    const pt = io(T.tag, 380, t), et = eob(pt);
+    const tag = $('tagplus');
+    tag.style.opacity = clamp(pt * 3);
+    tag.style.transform = `rotate(${3 + 6 * (1 - et)}deg) scale(${1.5 - 0.5 * et})`;
+
+    const pb = eoc(io(T.table, 550, t));
+    $('table').style.opacity = pb;
+    $('table').style.transform = `translateY(${28 * (1 - pb)}px)`;
+
+    const pp2 = io(T.proc, 380, t), ep2 = eob(pp2);
+    const proc = $('proc');
+    proc.style.opacity = clamp(pp2 * 3);
+    proc.style.transform = `scale(${1.35 - 0.35 * ep2})`;
+
+    rows.forEach((row, i) => {
+      const p = io(T.row(i), 320, t);
+      row.style.opacity = clamp(p * 3);
+      row.style.transform = `translateY(${12 * (1 - eoc(p))}px)`;
+
+      const tc = T.claim(i);
+      const pc = io(tc, T.claimDur, t), ec = eob(pc);
+      const todo = row.querySelector('.todo'), done = row.querySelector('.done');
+      todo.style.opacity = 1 - clamp(pc * 2);
+      done.style.opacity = clamp(pc * 2.5);
+      done.style.transform = `scale(${0.6 + 0.4 * ec}) rotate(${(i % 2 ? 1 : -1) * 1.2 * (1 - ec)}deg)`;
+      // flash « claim » : la ligne s’allume brièvement quand la procédure la prend
+      const flash = clamp(io(tc - 250, 250, t)) * (1 - clamp(io(tc + 100, 450, t)));
+      row.style.background = `rgba(251, 231, 168, ${0.85 * flash})`;
+    });
+
+    const pp = eoc(io(T.phrase, 600, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>

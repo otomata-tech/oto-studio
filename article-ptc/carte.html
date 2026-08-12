@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5; --surface: #ffffff; --ink: #2c2112; --mute: #6c5e44;
+    --hair: #dccfa8; --primary: #f0b41e; --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body {
+    position: relative; background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink); font-family: "Hanken Grotesk", sans-serif;
+    padding: 64px 88px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07; mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0; left: -220px; bottom: -300px;
+    width: 820px; height: 820px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.32), rgba(240,180,30,0.09) 55%, transparent 72%);
+  }
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif; font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90; font-weight: 600; letter-spacing: -0.02em;
+  }
+  header { display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); position: relative; z-index: 1; }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  h1.display {
+    position: relative; z-index: 1;
+    font-size: 60px; line-height: 1.04; margin-top: 24px;
+    text-shadow: 3px 3px 0 var(--primary-soft);
+  }
+
+  .scene { position: absolute; left: 88px; right: 88px; top: 250px; height: 470px; z-index: 1; }
+
+  .panel {
+    position: absolute; top: 0; width: 664px; height: 440px;
+    background: var(--surface); border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink); padding: 30px 36px;
+  }
+  .panel .eyebrow { font-size: 12.5px; color: var(--mute); margin-bottom: 20px; }
+  .territoire { left: 0; }
+  .carte { right: 0; }
+
+  /* territoire : la masse de texte */
+  .blob { display: flex; flex-direction: column; gap: 11px; max-height: 344px; overflow: hidden; }
+  .blob i {
+    display: block; height: 13px; background: var(--hair); opacity: 0.9;
+  }
+  .blob i:nth-child(3n)   { width: 96%; }
+  .blob i:nth-child(3n+1) { width: 88%; }
+  .blob i:nth-child(3n+2) { width: 99%; }
+  .blob i:nth-child(7)    { width: 58%; margin-bottom: 8px; }
+  .blob i:nth-child(14)   { width: 44%; margin-bottom: 8px; }
+
+  svg.cross { position: absolute; inset: -14px; overflow: visible; z-index: 3; }
+  svg.cross path { stroke: var(--ink); stroke-width: 5px; fill: none; stroke-linecap: round; }
+
+  .tagcost {
+    position: absolute; left: -20px; bottom: -22px; z-index: 4;
+    background: var(--surface); border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 10px 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 13.5px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; transform: rotate(-2.4deg);
+  }
+  .tagmap {
+    position: absolute; right: -20px; top: -22px; z-index: 4;
+    background: var(--primary); border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); padding: 10px 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 13.5px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; transform: rotate(2.2deg);
+  }
+
+  /* carte : des pointeurs */
+  .rows { display: flex; flex-direction: column; }
+  .row {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 15px 2px; border-bottom: 1.5px solid var(--hair);
+  }
+  .row:last-child { border-bottom: none; }
+  .row .k { font-weight: 700; font-size: 19px; width: 210px; }
+  .row .arrow { font-family: "JetBrains Mono", monospace; color: var(--ink); font-weight: 700; }
+  .row .v { font-family: "JetBrains Mono", monospace; font-size: 15px; color: var(--mute); }
+  .row.hot .v::after {
+    content: "fréquent"; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink);
+    background: var(--primary-soft); border: 1.5px solid var(--ink);
+    padding: 2px 7px; margin-left: 12px; vertical-align: 2px;
+  }
+
+  footer {
+    position: absolute; left: 88px; right: 88px; bottom: 56px; z-index: 1;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink); padding-top: 20px;
+  }
+  footer .phrase { font-size: 21px; font-weight: 600; max-width: 1150px; }
+  footer .mono { font-size: 12px; color: var(--mute); }
+</style>
+</head>
+<body>
+  <div class="sun"></div>
+  <header>
+    <span class="brand">oto</span>
+    <span class="mono">path to context · la pré-injection</span>
+  </header>
+
+  <h1 class="display">La carte, pas le territoire.</h1>
+
+  <div class="scene">
+    <div class="panel territoire">
+      <div class="tagcost">coût fixe à chaque ouverture</div>
+      <div class="eyebrow mono">tout écrire</div>
+      <div class="blob">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <svg class="cross" viewBox="0 0 692 468">
+        <path d="M 30 40 L 662 430"/>
+        <path d="M 662 40 L 30 430"/>
+      </svg>
+    </div>
+
+    <div class="panel carte">
+      <div class="tagmap">pointeurs, pas contenus</div>
+      <div class="eyebrow mono">où chercher</div>
+      <div class="rows">
+        <div class="row hot"><span class="k">procédures</span><span class="arrow">→</span><span class="v">rechercher(«&nbsp;…&nbsp;»)</span></div>
+        <div class="row"><span class="k">clients</span><span class="arrow">→</span><span class="v">tableau crm</span></div>
+        <div class="row hot"><span class="k">conventions</span><span class="arrow">→</span><span class="v">docs/equipe</span></div>
+        <div class="row"><span class="k">historique</span><span class="arrow">→</span><span class="v">journal des runs</span></div>
+        <div class="row"><span class="k">comptes</span><span class="arrow">→</span><span class="v">connecteurs actifs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="phrase">Écrire <em>où vivent</em> les procédures raccourcit le chemin pour toutes — y compris celles qui n'existent pas encore.</span>
+    <span class="mono">oto.cx</span>
+  </footer>
+
+  <div class="grain"></div>
+</body>
+</html>
