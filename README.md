@@ -8,11 +8,12 @@ Studio local de création de visuels dans la charte oto.cx : cartes « cas d'usa
 cards/        # générateur de cartes cas d'usage (studio + batch)
 posts/        # affiches riso animées, une par post produit
 plaquettes/   # one-pagers imprimables (plaquette commerciale)
+banners/      # bannières statiques (couvertures de profil / page)
 assets/       # fonts.css, icons.json, logos/ (marques tierces)
 tools/        # publication (publer_schedule.py)
 brand/        # logos & charte Otomata/Oto (cache local ; voir brand/README.md)
 out/          # exports (ignoré), en miroir des sources :
-              #   cards/ · posts/ · plaquettes/ · articles/<slug>/
+              #   cards/ · posts/ · plaquettes/ · banners/ · articles/<slug>/
 .gen/         # HTML générés + frames intermédiaires (ignoré)
 ```
 
@@ -41,6 +42,21 @@ node posts/build-post.mjs <slug>   # rend posts/<slug>.html → out/<slug>.mp4 +
 - Même pattern que les cartes : `window.__seek(t)` déterministe (styles calculés depuis t, pas de transitions CSS) + capture CDP + ffmpeg
 - Affiche statique one-shot : `google-chrome-stable --headless=new --screenshot --window-size=1200,1500 --force-device-scale-factor=2`
 - Direction éditoriale (validée) : une seule idée et une phrase clé par visuel ; pas de « slide de deck » ; les illustrations d'usage mobilisent procédures/tableaux/projets
+
+## Bannières (`banners/`) — couvertures statiques
+
+Images fixes dans la même charte riso, pour les couvertures de profil et de page.
+
+```bash
+google-chrome-stable --headless=new --disable-gpu --hide-scrollbars --no-first-run \
+  --user-data-dir=/tmp/oto-build-chrome-banner --virtual-time-budget=8000 \
+  --force-device-scale-factor=2 --window-size=<W>,<H> \
+  --screenshot=out/banners/<slug>.png "file://$PWD/banners/<slug>.html"
+```
+
+- `banners/linkedin.html` — couverture de profil LinkedIn, 1584×396 (rendu 2× → 3168×792)
+- `--virtual-time-budget` est nécessaire : sans lui le screenshot part avant le chargement des fonts
+- Zones à respecter sur LinkedIn : la photo de profil recouvre le bas-gauche (rien d'important avant x≈300), et le rognage mobile mange les côtés — garder le texte porteur au centre
 
 ### Logos de marques (`assets/logos/`)
 - `cdn.simpleicons.org/<slug>` : reddit (`#FF4500`), zoho (`#E42527`) — **salesforce absent** → SVG Wikimedia Commons ; LightOn → SVG du CDN de lighton.ai, livré `fill="white"` → recolorer en encre `#2c2112`
