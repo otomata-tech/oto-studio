@@ -39,9 +39,20 @@ node posts/build-post.mjs <slug>   # rend posts/<slug>.html → out/<slug>.mp4 +
 
 - `posts/otocx.html` — post lancement oto.cx (« L'OS pour vous et votre agent »)
 - `posts/connectors.html` — post nouveaux connecteurs, en 2 actes : tuiles logos (grille→bandeau par morph) puis carte conversation façon cas d'usage ; les concepts oto (chips PROCÉDURE/TABLEAU, projet en ligne finale) encadrent les connecteurs — montrer l'apport d'oto, pas des connecteurs MCP « natifs »
+- `posts/cross-session.html` — post cross-session messaging : trois fenêtres de terminal reliées par des fils, contenu métier réel (sessions interrogées via SendMessage puis anonymisées)
 - Même pattern que les cartes : `window.__seek(t)` déterministe (styles calculés depuis t, pas de transitions CSS) + capture CDP + ffmpeg
 - Affiche statique one-shot : `google-chrome-stable --headless=new --screenshot --window-size=1200,1500 --force-device-scale-factor=2`
 - Direction éditoriale (validée) : une seule idée et une phrase clé par visuel ; pas de « slide de deck » ; les illustrations d'usage mobilisent procédures/tableaux/projets
+
+### La scène occupe tout, puis recule (pattern validé)
+
+Sur une affiche animée qui finit par une phrase clé, réserver dès le départ la place de cette phrase laisse une **zone morte visible pendant toute l'animation**. Faire l'inverse :
+
+1. la scène occupe **toute** la hauteur disponible (scène + zone de chute) pendant l'animation ;
+2. juste avant la fin, elle **recule** — `transform: scale(k)` avec `transform-origin: 50% 0%`, k ≈ 0.76 ;
+3. la chute monte dans la place ainsi libérée, positionnée en `absolute bottom` d'un `.stage` commun.
+
+`transform` n'affecte pas le layout, donc la chute doit être en position absolue dans le conteneur, pas dans le flux. Deux bénéfices : plus de zone morte, et **les contenus sont plus gros pendant l'animation** — décisif quand le visuel est lu au pouce sur un fil LinkedIn. Voir `posts/cross-session.html` (`T.zoomOut`, `ZOOM`).
 
 ## Bannières (`banners/`) — couvertures statiques
 

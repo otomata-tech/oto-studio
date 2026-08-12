@@ -15,6 +15,12 @@ Assets de marque rapatriés ici pour le studio de com (cartes cas d'usage Linked
 
 ## Arborescence
 
+### `charte/` — la charte formelle (document présentable)
+- `charte-graphique.pdf` / `.html` — **charte graphique Otomata**, le document à envoyer à un tiers (presta, imprimeur, client). Aligné sur la palette `@otomata/ui`. Source : Drive `identite/`.
+- `palette.svg` — planche de la palette
+
+⚠️ **Le `README.md` qui accompagne la charte sur le Drive est périmé** : il décrit l'ancienne palette (orange `#E67E22`, bleu `#3498DB`, vert `#27AE60`, anthracite `#2C3E50`), abandonnée depuis. C'est `charte-graphique.html` (mai 2026) qui fait foi, et il utilise bien saffran/crème/encre. Ne pas appliquer le README du Drive.
+
 ### `theme/` — charte canonique
 - `THEME.md` / `theme.css` — **tokens de référence `@otomata/ui`** (palette + typo). Source : `oto-websites/packages/ui/`.
 - `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing). Source : `oto-dashboard/design-system/tokens/`.
@@ -24,6 +30,7 @@ Assets de marque rapatriés ici pour le studio de com (cartes cas d'usage Linked
 - `otomata-mark-orange.svg` — mark disque saffran/orange (favicon secondaire)
 - `otomata-deck-disc.svg` — disque dégradé jaune→orange (deck)
 - `otomata-og.jpg` — image Open Graph
+- `icon.svg` / `favicon.svg` — icône et favicon de l'identité documentaire (Drive)
 
 ### `logos/oto/` — marque produit
 - `oto-mark-4colors.svg` — mark 4 couleurs (oto.ninja) : safran/terracotta/olive/cobalt
@@ -53,6 +60,7 @@ Esthétique : moderne analytique, chaud, solaire. Voile jaune léger sur le fond
 
 | Ici | Origine |
 |---|---|
+| `charte/` | Drive `otomata-shared/identite/` (`charte-graphique.*`, `colors/palette.svg`) |
 | `theme/THEME.md`, `theme.css` | `oto-websites/packages/ui/` |
 | `theme/dashboard-tokens/` | `oto-dashboard/design-system/tokens/` |
 | `charte-doc/` | `oto-dashboard/design-system/{guidelines,components/brand,marques-*.html,screenshots}` |

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <style>
+    text { font-family: Inter, system-ui, sans-serif; fill: #2C3E50; }
+    .label { font-size: 11px; font-weight: 600; }
+    .hex { font-size: 9px; fill: #8C8C8C; }
+    .group { font-size: 13px; font-weight: 700; }
+  </style>
+
+  <!-- Primary -->
+  <text x="20" y="30" class="group">Primary — Warm</text>
+  <rect x="20" y="42" width="80" height="60" rx="6" fill="#E67E22"/>
+  <text x="60" y="120" text-anchor="middle" class="label">Orange</text>
+  <text x="60" y="134" text-anchor="middle" class="hex">#E67E22</text>
+
+  <rect x="115" y="42" width="80" height="60" rx="6" fill="#D35400"/>
+  <text x="155" y="120" text-anchor="middle" class="label">Orange Dark</text>
+  <text x="155" y="134" text-anchor="middle" class="hex">#D35400</text>
+
+  <rect x="210" y="42" width="80" height="60" rx="6" fill="#F39C12"/>
+  <text x="250" y="120" text-anchor="middle" class="label">Orange Light</text>
+  <text x="250" y="134" text-anchor="middle" class="hex">#F39C12</text>
+
+  <rect x="305" y="42" width="80" height="60" rx="6" fill="#F4D03F"/>
+  <text x="345" y="120" text-anchor="middle" class="label">Yellow</text>
+  <text x="345" y="134" text-anchor="middle" class="hex">#F4D03F</text>
+
+  <rect x="400" y="42" width="80" height="60" rx="6" fill="#FDF6E3"/>
+  <text x="440" y="120" text-anchor="middle" class="label">Cream</text>
+  <text x="440" y="134" text-anchor="middle" class="hex">#FDF6E3</text>
+
+  <rect x="495" y="42" width="80" height="60" rx="6" fill="#F5E6D3"/>
+  <text x="535" y="120" text-anchor="middle" class="label">Cream Dark</text>
+  <text x="535" y="134" text-anchor="middle" class="hex">#F5E6D3</text>
+
+  <!-- Accent -->
+  <text x="20" y="180" class="group">Accent</text>
+  <rect x="20" y="192" width="80" height="60" rx="6" fill="#3498DB"/>
+  <text x="60" y="270" text-anchor="middle" class="label">Blue</text>
+  <text x="60" y="284" text-anchor="middle" class="hex">#3498DB</text>
+
+  <rect x="115" y="192" width="80" height="60" rx="6" fill="#2980B9"/>
+  <text x="155" y="270" text-anchor="middle" class="label">Blue Dark</text>
+  <text x="155" y="284" text-anchor="middle" class="hex">#2980B9</text>
+
+  <rect x="210" y="192" width="80" height="60" rx="6" fill="#27AE60"/>
+  <text x="250" y="270" text-anchor="middle" class="label">Green</text>
+  <text x="250" y="284" text-anchor="middle" class="hex">#27AE60</text>
+
+  <rect x="305" y="192" width="80" height="60" rx="6" fill="#1E8449"/>
+  <text x="345" y="270" text-anchor="middle" class="label">Green Dark</text>
+  <text x="345" y="284" text-anchor="middle" class="hex">#1E8449</text>
+
+  <!-- Neutral -->
+  <text x="440" y="180" class="group">Neutral</text>
+  <rect x="440" y="192" width="60" height="60" rx="6" fill="#2C3E50"/>
+  <text x="470" y="270" text-anchor="middle" class="label">Dark</text>
+  <text x="470" y="284" text-anchor="middle" class="hex">#2C3E50</text>
+
+  <rect x="515" y="192" width="60" height="60" rx="6" fill="#555555"/>
+  <text x="545" y="270" text-anchor="middle" class="label">Text</text>
+  <text x="545" y="284" text-anchor="middle" class="hex">#555555</text>
+
+  <rect x="590" y="192" width="60" height="60" rx="6" fill="#8C8C8C"/>
+  <text x="620" y="270" text-anchor="middle" class="label">Muted</text>
+  <text x="620" y="284" text-anchor="middle" class="hex">#8C8C8C</text>
+
+  <rect x="665" y="192" width="60" height="60" rx="6" fill="#E8E4D9" stroke="#D5D0C4"/>
+  <text x="695" y="270" text-anchor="middle" class="label">Border</text>
+  <text x="695" y="284" text-anchor="middle" class="hex">#E8E4D9</text>
+
+  <!-- Gradient bar -->
+  <text x="20" y="330" class="group">Gradient principal</text>
+  <defs>
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E67E22"/>
+      <stop offset="40%" stop-color="#F39C12"/>
+      <stop offset="100%" stop-color="#F4D03F"/>
+    </linearGradient>
+    <linearGradient id="retroGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E67E22"/>
+      <stop offset="50%" stop-color="#F4D03F"/>
+      <stop offset="100%" stop-color="#3498DB"/>
+    </linearGradient>
+  </defs>
+  <rect x="20" y="342" width="340" height="30" rx="6" fill="url(#mainGrad)"/>
+  <text x="190" y="363" text-anchor="middle" style="fill:white;font-size:9px;font-weight:600">Orange → Yellow (headers, accents)</text>
+
+  <rect x="400" y="342" width="340" height="30" rx="6" fill="url(#retroGrad)"/>
+  <text x="570" y="363" text-anchor="middle" style="fill:white;font-size:9px;font-weight:600">Orange → Yellow → Blue (retro, logo)</text>
+</svg>
