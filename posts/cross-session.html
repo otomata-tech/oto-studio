@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 26px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  .context {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 17px; color: var(--mute);
+    letter-spacing: 0.02em;
+    margin-bottom: 22px; z-index: 1;
+  }
+  .context b { color: var(--ink); font-weight: 700; }
+
+  /* ---- la scène : trois sessions reliées ---- */
+  .scene { position: relative; width: 1024px; height: 924px; z-index: 1; }
+  .wires { position: absolute; inset: 0; width: 1024px; height: 924px; z-index: 0; overflow: visible; }
+
+  .term {
+    position: absolute; z-index: 1;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 7px 7px 0 rgba(44,33,18,0.85);
+    display: flex; flex-direction: column;
+    transform-origin: 50% 50%;
+    overflow: hidden;
+  }
+  .term .bar {
+    height: 44px; flex: none;
+    background: var(--ink);
+    border-bottom: 2px solid var(--ink);
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px;
+  }
+  .term.lead .bar { background: var(--primary); }
+  .term .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(254,252,245,0.45); flex: none; }
+  .term.lead .dot { background: rgba(44,33,18,0.40); }
+  .term .name {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px; letter-spacing: 0.10em;
+    color: var(--bg); margin-left: 6px; white-space: nowrap;
+  }
+  .term.lead .name { color: var(--ink); font-weight: 700; }
+  .term .tag {
+    margin-left: auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(254,252,245,0.62);
+  }
+  .term.lead .tag { color: rgba(44,33,18,0.68); }
+
+  .term .body { flex: 1; padding: 22px 22px; }
+  .ln {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 21px; line-height: 34px;
+    white-space: pre; letter-spacing: -0.01em;
+    margin: 0 -8px; padding: 0 8px;
+  }
+  .ln.cmd  { color: var(--ink); font-weight: 700; }
+  .ln.own  { color: var(--mute); }                /* travail autonome */
+  .ln.msg  { color: #b87d05; font-weight: 700; }  /* échange entre sessions */
+  .ln.done { color: var(--ink); font-weight: 700; }
+
+  /* le message en vol, dans le couloir entre les colonnes */
+  .packet {
+    position: absolute;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px; letter-spacing: 0.01em; font-weight: 700;
+    background: var(--primary);
+    border: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 rgba(44,33,18,0.85);
+    padding: 9px 13px;
+    white-space: nowrap;
+    z-index: 20;
+    transform-origin: 50% 50%;
+  }
+
+  /* ---- chute ---- */
+  .phrase {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding-bottom: 26px; z-index: 2;
+  }
+  .phrase p { font-size: 78px; line-height: 1.06; }
+  .phrase .kick { display: inline-block; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 22px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Claude Code 2.1.224 · 7 août 2026</div>
+  </header>
+
+  <div class="context" id="ctx"><b>11 sessions ouvertes</b> — trois avancent en parallèle.</div>
+
+  <div class="scene" id="scene">
+    <!-- les fils : la relation existe en permanence, pas seulement quand ça circule -->
+    <svg class="wires" viewBox="0 0 1024 924">
+      <g transform="translate(4,5)">
+        <path class="w" d="M 400 462 L 584 220" stroke="#f0b41e" stroke-width="4" fill="none"/>
+        <path class="w" d="M 400 462 L 584 704" stroke="#f0b41e" stroke-width="4" fill="none"/>
+      </g>
+      <path class="w" d="M 400 462 L 584 220" stroke="#2c2112" stroke-width="4" fill="none"/>
+      <path class="w" d="M 400 462 L 584 704" stroke="#2c2112" stroke-width="4" fill="none"/>
+      <circle id="hub" cx="400" cy="462" r="10" fill="#f0b41e" stroke="#2c2112" stroke-width="4"/>
+    </svg>
+
+    <!-- le chef : colonne de gauche -->
+    <div class="term lead" id="t0" style="left:0px; top:182px; width:400px; height:560px;">
+      <div class="bar"><span class="dot"></span><span class="name">refonte</span><span class="tag">chef</span></div>
+      <div class="body" id="b0"></div>
+    </div>
+
+    <!-- les deux autres : colonne de droite -->
+    <div class="term" id="t1" style="left:584px; top:0px; width:440px; height:440px;">
+      <div class="bar"><span class="dot"></span><span class="name">prospection</span><span class="tag">session 2</span></div>
+      <div class="body" id="b1"></div>
+    </div>
+
+    <div class="term" id="t2" style="left:584px; top:484px; width:440px; height:440px;">
+      <div class="bar"><span class="dot"></span><span class="name">mission</span><span class="tag">session 3</span></div>
+      <div class="body" id="b2"></div>
+    </div>
+
+    <div class="packet" id="pk0">point ?</div>
+    <div class="packet" id="pk1">point ?</div>
+    <div class="packet" id="pk2">audit ok</div>
+    <div class="packet" id="pk3">conflit !</div>
+  </div>
+
+  <div class="phrase">
+    <p class="display" id="ph">Ce n’est plus une session.<br><span class="kick" id="kick">C’est une équipe.</span></p>
+  </div>
+
+  <footer>
+    <div class="mono">Otomata · alexis laporte</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+  const lerp = (a, b, p) => a + (b - a) * p;
+
+  const CPS = 20;   // ms par caractère
+
+  // --- ce que font vraiment les trois sessions --------------------------
+  // cls : cmd = commande | own = travail propre (gris) | msg = échange (saffran)
+  // fl  : la ligne s'allume à l'arrivée du message
+  const SCRIPTS = [
+    // 0 — le chef : il avance sur son propre chantier ET coordonne
+    [
+      { t:  900, cls: 'cmd',  txt: '$ claude --model fable-5' },
+      { t: 1700, cls: 'own',  txt: '● 746 contenus migrés' },
+      { t: 2500, cls: 'own',  txt: '● maquette passée en revue' },
+      { t: 3300, cls: 'own',  txt: '● 2 bugs de prod corrigés' },
+      { t: 4100, cls: 'cmd',  txt: '> je fais le point' },
+      { t: 4800, cls: 'msg',  txt: '→ prospection : point ?' },
+      { t: 5400, cls: 'msg',  txt: '→ mission : point ?' },
+      { t: 6100, cls: 'own',  txt: '● je prépare la synthèse' },
+      { t: 7000, cls: 'own',  txt: '● j’attends leurs retours' },
+      { t: 8900, cls: 'msg',  txt: '← prospection : audit ok', fl: 1 },
+      { t:10300, cls: 'msg',  txt: '← mission : conflit', fl: 1 },
+      { t:11000, cls: 'own',  txt: '● je corrige avant demain' },
+      { t:11600, cls: 'done', txt: '✓ personne n’avait vu ça' },
+    ],
+    // 1 — prospection : travaillait déjà avant qu'on l'appelle
+    [
+      { t: 1300, cls: 'cmd',  txt: '$ claude --model opus-5' },
+      { t: 2100, cls: 'own',  txt: '● 501 fiches qualifiées' },
+      { t: 3000, cls: 'own',  txt: '● 107 dirigeants corrigés' },
+      { t: 3900, cls: 'own',  txt: '● doublons écartés' },
+      { t: 5700, cls: 'msg',  txt: '← chef : point d’étape ?', fl: 1 },
+      { t: 6500, cls: 'own',  txt: '● audit qualité en cours' },
+      { t: 7300, cls: 'own',  txt: '● 3 sources croisées' },
+      { t: 8100, cls: 'msg',  txt: '→ chef : audit en cours' },
+    ],
+    // 2 — mission : son propre rythme, répond plus tard
+    [
+      { t: 1550, cls: 'cmd',  txt: '$ claude --model opus-5' },
+      { t: 2400, cls: 'own',  txt: '● écran reporting livré' },
+      { t: 3300, cls: 'own',  txt: '● export client maîtrisé' },
+      { t: 4200, cls: 'own',  txt: '● retours client intégrés' },
+      { t: 6300, cls: 'msg',  txt: '← chef : point d’étape ?', fl: 1 },
+      { t: 7200, cls: 'own',  txt: '● 4 évolutions validées' },
+      { t: 8300, cls: 'own',  txt: '● ton export fausse mes totaux' },
+      { t: 9500, cls: 'msg',  txt: '→ chef : conflit détecté' },
+    ],
+  ];
+
+  // --- les messages, qui glissent le long des fils -----------------------
+  const PACKETS = [
+    { el: 'pk0', t: 5000, d: 640, ax: 468, ay: 430, bx: 516, by: 258, rot: -4 },
+    { el: 'pk1', t: 5600, d: 640, ax: 468, ay: 496, bx: 516, by: 666, rot:  4 },
+    { el: 'pk2', t: 8350, d: 520, ax: 516, ay: 258, bx: 468, by: 430, rot:  3 },
+    { el: 'pk3', t: 9750, d: 520, ax: 516, ay: 666, bx: 468, by: 496, rot: -3 },
+  ];
+
+  const LINES = SCRIPTS.map((script, i) => {
+    const body = $('b' + i);
+    return script.map(L => {
+      const el = document.createElement('div');
+      el.className = 'ln ' + L.cls;
+      body.appendChild(el);
+      return el;
+    });
+  });
+  const PK = PACKETS.map(p => $(p.el));
+  const WIRES = Array.from(document.querySelectorAll('.w'));
+  const WLEN = WIRES.map(w => w.getTotalLength());
+
+  const T = {
+    term: [200, 450, 700],
+    wire: 1150,
+    phrase: 12400,
+    fadeOut: 15200,
+  };
+  const LOOP = 15900;
+  window.__DURATION = LOOP;
+
+  function typeTerm(script, els, t) {
+    let last = -1;
+    for (let i = 0; i < script.length; i++) if (t >= script[i].t) last = i;
+    script.forEach((L, i) => {
+      const el = els[i];
+      if (t < L.t) { el.textContent = ''; el.style.background = 'transparent'; return; }
+      const n = Math.min(L.txt.length, Math.floor((t - L.t) / CPS));
+      let s = L.txt.slice(0, n);
+      if (i === last) {
+        if (n < L.txt.length) s += '█';
+        else if (Math.floor(t / 460) % 2 === 0) s += '█';
+      }
+      el.textContent = s;
+      // une ligne reçue s'allume, puis retombe : l'arrivée se voit
+      if (L.fl) {
+        const f = 1 - clamp((t - L.t) / 1400);
+        el.style.background = `rgba(240,180,30,${0.5 * f})`;
+      }
+    });
+  }
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+    $('ctx').style.opacity = eoc(io(0, 500, t));
+
+    // les fils se tendent une fois les fenêtres posées
+    const pw = eoc(io(T.wire, 700, t));
+    WIRES.forEach((w, i) => {
+      w.style.strokeDasharray = WLEN[i];
+      w.style.strokeDashoffset = WLEN[i] * (1 - pw);
+    });
+    $('hub').style.opacity = clamp(io(T.wire, 300, t) * 2);
+
+    [0, 1, 2].forEach(i => {
+      const p = eob(io(T.term[i], 480, t));
+      const el = $('t' + i);
+      el.style.opacity = clamp(io(T.term[i], 200, t) * 3);
+      el.style.transform = `rotate(${(i === 1 ? 0.5 : i === 2 ? -0.5 : -0.4) * (2 - p)}deg) scale(${1.06 - 0.06 * p})`;
+      typeTerm(SCRIPTS[i], LINES[i], t);
+    });
+
+    PACKETS.forEach((P, i) => {
+      const el = PK[i];
+      const p = io(P.t, P.d, t);
+      if (p <= 0 || p >= 1) { el.style.opacity = 0; return; }
+      el.style.opacity = Math.min(1, p * 5, (1 - p) * 4);
+      const e = eoc(p);
+      el.style.left = lerp(P.ax, P.bx, e) + 'px';
+      el.style.top = lerp(P.ay, P.by, e) + 'px';
+      el.style.transform = `translate(-50%,-50%) rotate(${P.rot}deg) scale(${0.88 + 0.12 * Math.sin(Math.PI * e)})`;
+    });
+
+    const pp = eoc(io(T.phrase, 600, t));
+    const ps2 = eoc(io(T.phrase + 400, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${38 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps2}px ${5 * ps2}px 0 #f0b41e`;
+
+    const pk = eoc(io(T.phrase + 900, 550, t));
+    $('kick').style.opacity = pk;
+    $('kick').style.transform = `translateY(${26 * (1 - pk)}px)`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>
