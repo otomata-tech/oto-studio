@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&family=Playfair+Display:wght@700&family=Syne:wght@700&family=Space+Grotesk:wght@600&family=Outfit:wght@600&family=DM+Sans:wght@600&family=Unbounded:wght@500&family=Bricolage+Grotesque:wght@600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @page { size: A4 landscape; margin: 14mm; }
+
+        body {
+            background: #E8E4D9;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .option {
+            width: 220px;
+            height: 220px;
+            background: #F4D03F;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .option .circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #FDF6E3;
+        }
+
+        .option .wordmark {
+            font-size: 22px;
+            color: #2C3E50;
+            letter-spacing: 1.5px;
+        }
+
+        .option .font-name {
+            position: absolute;
+            bottom: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 7px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(44, 62, 80, 0.3);
+        }
+
+        .f1 .wordmark { font-family: 'Inter', sans-serif; font-weight: 600; }
+        .f2 .wordmark { font-family: 'Playfair Display', serif; font-weight: 700; }
+        .f3 .wordmark { font-family: 'Syne', sans-serif; font-weight: 700; }
+        .f4 .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+        .f5 .wordmark { font-family: 'Outfit', sans-serif; font-weight: 600; }
+        .f6 .wordmark { font-family: 'DM Sans', sans-serif; font-weight: 600; }
+        .f7 .wordmark { font-family: 'Unbounded', sans-serif; font-weight: 500; font-size: 18px; }
+        .f8 .wordmark { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="option f1">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Inter 600 (actuel)</div>
+    </div>
+    <div class="option f2">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Playfair Display</div>
+    </div>
+    <div class="option f3">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Syne 700</div>
+    </div>
+    <div class="option f4">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Space Grotesk</div>
+    </div>
+    <div class="option f5">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Outfit</div>
+    </div>
+    <div class="option f6">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">DM Sans</div>
+    </div>
+    <div class="option f7">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Unbounded</div>
+    </div>
+    <div class="option f8">
+        <div class="circle"></div>
+        <div class="wordmark">otomata</div>
+        <div class="font-name">Bricolage Grotesque</div>
+    </div>
+</body>
+</html>

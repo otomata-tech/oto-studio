@@ -51,6 +51,9 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 - `oto-cli-flower-legacy.svg` — ancienne fleur or (oto CLI) — *legacy*
 - `oto-icons-sprite.svg` — sprite d'icônes des sites oto
 
+### `merch/` — merchandising
+Designs t-shirt (`tshirt-design`, `tshirt-otomata` en SVG + PNG) et leurs planches de rendu (`tshirt-fonts`, `tshirt-preview` en HTML + PDF). Hors charte à proprement parler, mais assets de marque. Source : Drive `identite/`.
+
 ### `charte-doc/` — documentation
 - `guidelines/` — cartes HTML du design-system (brand-logo, brand-iconography, color-*, type-*, spacing-*)
 - `brand-components/` — composants React de marque (`OtoMark`, `Medallion`, `Avatar`) + prompts
