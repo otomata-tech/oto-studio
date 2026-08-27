@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oto — icônes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fefcf5; font-family: "Familjen Grotesk", sans-serif; color: #2c2112; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 44px 40px 80px; }
+  .ey { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #a89c7a; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; margin: 10px 0 8px; }
+  .lead { font-size: 15px; line-height: 1.6; color: #5a4a2e; max-width: 780px; }
+  .lead b { color: #2c2112; font-weight: 600; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 16px; display: flex; align-items: center; gap: 10px; }
+  h2::after { content: ''; flex: 1; height: 1px; background: #e9dcb4; }
+
+  /* in-context: dark sidebars */
+  .ctx { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .mini { border: 1px solid #ede1bd; border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 4px 18px -12px rgba(44,33,18,.42); }
+  .mini .cap { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #f0e6c8; }
+  .mini .cap .nm { font-weight: 700; font-size: 13.5px; }
+  .mini .cap .tag { font-family: "JetBrains Mono", monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #a89c7a; }
+  .sb { background: #2c2112; padding: 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .sb .gl { font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #a99a75; padding: 8px 8px 5px; }
+  .sb .it { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: #e4d7ba; }
+  .sb .it .ic { width: 17px; height: 17px; display: inline-flex; align-items: center; justify-content: center; color: #a99a75; font-size: 17px; }
+  .sb .it.on { background: #f0b41e; color: #2c2112; font-weight: 700; }
+  .sb .it.on .ic { color: #2c2112; }
+  .sb svg { width: 17px; height: 17px; }
+
+  /* comparison grid */
+  .cmp { border: 1px solid #ede1bd; border-radius: 8px; overflow: hidden; background: #fff; }
+  .crow { display: grid; grid-template-columns: 130px 1fr; border-bottom: 1px solid #f0e6c8; }
+  .crow:last-child { border-bottom: 0; }
+  .clab { padding: 16px 18px; border-right: 1px solid #f0e6c8; background: #fdfaf0; }
+  .clab .t { font-weight: 700; font-size: 13px; }
+  .clab .d { font-family: "JetBrains Mono", monospace; font-size: 9.5px; color: #a89c7a; margin-top: 3px; letter-spacing: 0.04em; }
+  .icons { display: flex; align-items: center; gap: 0; flex-wrap: wrap; padding: 8px 6px; }
+  .ib { width: 58px; height: 46px; display: flex; align-items: center; justify-content: center; color: #2c2112; }
+  .ib svg { width: 22px; height: 22px; }
+  .ib i { font-size: 22px; line-height: 1; }
+  .muted { color: #b7ab88 !important; }
+
+  .reco { margin-top: 40px; background: #fff; border: 1px solid #ede1bd; border-radius: 8px; box-shadow: 0 4px 18px -12px rgba(44,33,18,.42); padding: 22px 24px; display: flex; gap: 18px; align-items: flex-start; }
+  .reco .k { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; background: #8aa620; border-radius: 6px; padding: 5px 9px; flex-shrink: 0; }
+  .reco .b { font-size: 14px; line-height: 1.6; color: #4a3a23; }
+  .reco .b b { color: #2c2112; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="ey">oto · iconographie</div>
+  <h1>Une iconographie plus moderne</h1>
+  <p class="lead">Le set actuel du design system est dessiné à la main (fallback du prototype). Or <b>le produit configure déjà Lucide</b> (`@lucide/vue`, `components.json → iconLibrary: "lucide"`). Voici Lucide — le choix officiel, épuré, ~1500 icônes — face à <b>Phosphor</b>, plus rond et chaleureux, jugés dans la sidebar encre retenue.</p>
+
+  <h2>En contexte — sidebar retenue</h2>
+  <div class="ctx">
+    <!-- current -->
+    <div class="mini">
+      <div class="cap"><span class="nm">Actuel</span><span class="tag">hand-drawn</span></div>
+      <div class="sb">
+        <div class="it on"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5M5 8.5V21h14V8.5M9.5 21v-6h5v6"/></svg></span>overview</div>
+        <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>context</div>
+        <div class="gl">workspace</div>
+        <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v5m6-5v5M7 8h10v3a5 5 0 0 1-5 5 5 5 0 0 1-5-5V8Zm5 8v5"/></svg></span>connectors</div>
+        <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7V3Zm7 0v4h4M10 12h5m-5 4h5m-5-8h2"/></svg></span>procédures</div>
+        <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-4 0-7 1.1-7 2.5v13C5 19.9 8 21 12 21s7-1.1 7-2.5v-13C19 4.1 16 3 12 3Zm-7 2.5C5 6.9 8 8 12 8s7-1.1 7-2.5"/></svg></span>données</div>
+      </div>
+    </div>
+    <!-- lucide -->
+    <div class="mini">
+      <div class="cap"><span class="nm">Lucide</span><span class="tag">officiel · recommandé</span></div>
+      <div class="sb">
+        <div class="it on"><span class="ic"><i data-lucide="house"></i></span>overview</div>
+        <div class="it"><span class="ic"><i data-lucide="zap"></i></span>context</div>
+        <div class="gl">workspace</div>
+        <div class="it"><span class="ic"><i data-lucide="unplug"></i></span>connectors</div>
+        <div class="it"><span class="ic"><i data-lucide="scroll-text"></i></span>procédures</div>
+        <div class="it"><span class="ic"><i data-lucide="database"></i></span>données</div>
+      </div>
+    </div>
+    <!-- phosphor -->
+    <div class="mini">
+      <div class="cap"><span class="nm">Phosphor</span><span class="tag">plus chaleureux</span></div>
+      <div class="sb">
+        <div class="it on"><span class="ic"><i class="ph-bold ph-house"></i></span>overview</div>
+        <div class="it"><span class="ic"><i class="ph ph-lightning"></i></span>context</div>
+        <div class="gl">workspace</div>
+        <div class="it"><span class="ic"><i class="ph ph-plugs-connected"></i></span>connectors</div>
+        <div class="it"><span class="ic"><i class="ph ph-scroll"></i></span>procédures</div>
+        <div class="it"><span class="ic"><i class="ph ph-database"></i></span>données</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Jeu complet — mêmes concepts, trois traits</h2>
+  <div class="cmp">
+    <div class="crow">
+      <div class="clab"><div class="t">Actuel</div><div class="d">svg · fait main</div></div>
+      <div class="icons">
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5M5 8.5V21h14V8.5M9.5 21v-6h5v6"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v5m6-5v5M7 8h10v3a5 5 0 0 1-5 5 5 5 0 0 1-5-5V8Zm5 8v5"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7V3Zm7 0v4h4M10 12h5m-5 4h5m-5-8h2"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-4 0-7 1.1-7 2.5v13C5 19.9 8 21 12 21s7-1.1 7-2.5v-13C19 4.1 16 3 12 3Zm-7 2.5C5 6.9 8 8 12 8s7-1.1 7-2.5"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.3-4.5-1.3-7 0v12c2.5-1.3 5-1.3 7 0m0-12c2-1.3 4.5-1.3 7 0v12c-2.5-1.3-5-1.3-7 0m0-12v12"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V5h8v16m4 0V9h-4M9 8h2m-2 4h2m-2 4h2"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm9 3-4.4-4.4"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 10a4 4 0 1 0-4 4l1.5-1.5M10 14l-6 6v1h3l1-1v-2h2l1-1 1-1"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-6 9c0-3 2.7-5 6-5s6 2 6 5M16 4.3A3.5 3.5 0 0 1 16 11"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10m5.3 10V4m5.4 16v-8m5.3 8V7"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.5 7.7-8 9-4.5-1.3-8-4.5-8-9V6l8-3Z"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3V6Zm0 .5 9 6.5 9-6.5"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4L14.5 12l-2.5-2.5 2.7-3.2Z"/></svg></span>
+        <span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3m-9 0 1 14h8l1-14M10 11v6m4-6v6"/></svg></span>
+      </div>
+    </div>
+    <div class="crow">
+      <div class="clab"><div class="t">Lucide</div><div class="d">stroke 1.75 · rond</div></div>
+      <div class="icons">
+        <span class="ib"><i data-lucide="house"></i></span>
+        <span class="ib"><i data-lucide="zap"></i></span>
+        <span class="ib"><i data-lucide="unplug"></i></span>
+        <span class="ib"><i data-lucide="scroll-text"></i></span>
+        <span class="ib"><i data-lucide="database"></i></span>
+        <span class="ib"><i data-lucide="book-open"></i></span>
+        <span class="ib"><i data-lucide="building-2"></i></span>
+        <span class="ib"><i data-lucide="search"></i></span>
+        <span class="ib"><i data-lucide="key-round"></i></span>
+        <span class="ib"><i data-lucide="users"></i></span>
+        <span class="ib"><i data-lucide="chart-column"></i></span>
+        <span class="ib"><i data-lucide="shield"></i></span>
+        <span class="ib"><i data-lucide="mail"></i></span>
+        <span class="ib"><i data-lucide="settings"></i></span>
+        <span class="ib"><i data-lucide="trash-2"></i></span>
+      </div>
+    </div>
+    <div class="crow">
+      <div class="clab"><div class="t">Phosphor</div><div class="d">regular + bold</div></div>
+      <div class="icons">
+        <span class="ib"><i class="ph ph-house"></i></span>
+        <span class="ib"><i class="ph ph-lightning"></i></span>
+        <span class="ib"><i class="ph ph-plugs-connected"></i></span>
+        <span class="ib"><i class="ph ph-scroll"></i></span>
+        <span class="ib"><i class="ph ph-database"></i></span>
+        <span class="ib"><i class="ph ph-book-open"></i></span>
+        <span class="ib"><i class="ph ph-buildings"></i></span>
+        <span class="ib"><i class="ph ph-magnifying-glass"></i></span>
+        <span class="ib"><i class="ph ph-key"></i></span>
+        <span class="ib"><i class="ph ph-users"></i></span>
+        <span class="ib"><i class="ph ph-chart-bar"></i></span>
+        <span class="ib"><i class="ph ph-shield"></i></span>
+        <span class="ib"><i class="ph ph-envelope-simple"></i></span>
+        <span class="ib"><i class="ph ph-gear"></i></span>
+        <span class="ib"><i class="ph ph-trash"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="reco">
+    <span class="k">reco</span>
+    <div class="b"><b>Lucide</b> — c'est déjà la lib du produit, elle est moderne, cohérente et immense (~1500 icônes), et elle s'intègre proprement (CDN ou paquet, trait réglable pour matcher notre densité). <b>Phosphor</b> reste une belle option si tu veux un ton plus rond et « sympathique » (elle a 6 graisses, dont un <i class="ph-bold ph-heart" style="font-size:13px"></i> bold très lisible en petit). Dis-moi laquelle tu retiens et je remplace le set `Icon` du design system par celle-ci (composant + doc + cartes).</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+<script>
+  lucide.createIcons({ attrs: { "stroke-width": 1.75, width: 22, height: 22 } });
+</script>
+</body>
+</html>

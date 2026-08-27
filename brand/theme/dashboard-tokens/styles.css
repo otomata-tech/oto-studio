@@ -1,0 +1,10 @@
+/* ════════════════════════════════════════════════════════════════════
+ * oto console — design system entry point
+ * Consumers link THIS file. It only @imports; no rules live here.
+ * Palette « Manuscrit chaud ». Source : oto-dashboard/design-system/styles.css
+ * (archivé le 2026-08-27) — chemins d’@import ajustés : les tokens sont ici des frères.
+ * ════════════════════════════════════════════════════════════════════ */
+@import "./fonts.css";
+@import "./colors.css";
+@import "./typography.css";
+@import "./spacing.css";

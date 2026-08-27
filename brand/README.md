@@ -11,6 +11,15 @@ Concrètement :
 
 *(Historiquement l'inverse : ce dossier était un cache des repos d'origine. Inversé le 2026-08-12 — trop de copies divergentes, aucune ne faisant autorité.)*
 
+**2026-08-27 — `oto-dashboard/design-system/` a été archivé, sa part de MARQUE est ici.** Décision :
+le futur design system du produit sera celui du nouveau front, donc les 180 fichiers du design
+system dashboard (maquettes d'écrans en JSX/HTML, UI kit, readme d'outillage) n'avaient plus de
+raison d'être maintenus. Ce qui relève de la marque Otomata a été consolidé ici — tokens,
+guidelines, composants de marque et explorations d'identité y étaient déjà à l'identique depuis le
+12/08 ; s'y ajoutent ce jour le brief de direction artistique, les quatre maquettes d'exploration
+et le point d'entrée des tokens. Le reste est supprimé d'`oto-dashboard` et vit dans son historique
+git.
+
 ## Deux marques distinctes
 
 | | **Otomata** (société) | **Oto** (produit / assistant) |
@@ -34,7 +43,7 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 
 ### `theme/` — charte canonique
 - `THEME.md` / `theme.css` — **tokens de référence `@otomata/ui`** (palette + typo). Source : `oto-websites/packages/ui/`.
-- `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing). Source : `oto-dashboard/design-system/tokens/`.
+- `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing) + `styles.css`, le point d'entrée qui les `@import`. Source : `oto-dashboard/design-system/tokens/` + `styles.css`. ⚠️ **Depuis le 2026-08-27 ce n'est plus une copie mais l'ORIGINAL** : `oto-dashboard/design-system/` a été archivé (voir plus bas), et les tokens *vivants* du dashboard sont désormais son `frontend/src/assets/console.css`.
 
 ### `logos/otomata/` — marque société
 - `otomata-logo-violet.svg` — logo actuel otomata.tech (violet `#863bff`)
@@ -55,10 +64,16 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 Designs t-shirt (`tshirt-design`, `tshirt-otomata` en SVG + PNG) et leurs planches de rendu (`tshirt-fonts`, `tshirt-preview` en HTML + PDF). Hors charte à proprement parler, mais assets de marque. Source : Drive `identite/`.
 
 ### `charte-doc/` — documentation
+- `DESIGN-BRIEF.md` — **le *pourquoi* de la direction artistique** (« Manuscrit chaud », direction « 2a » : sidebar encre, cartes chaudes, rayons 8px/pill, Lucide, Familjen Grotesk + Spline Sans Mono). Ses §0-3 font autorité ; ses §4-8 inventorient le design system du dashboard de 2026 et sont de l'histoire.
 - `guidelines/` — cartes HTML du design-system (brand-logo, brand-iconography, color-*, type-*, spacing-*)
 - `brand-components/` — composants React de marque (`OtoMark`, `Medallion`, `Avatar`) + prompts
 - `marques-exploration/` — explorations d'identité (`marques-proposition/v2/v3/v4`)
+- `direction-exploration/` — explorations de direction artistique : `directions-artistiques` (les pistes), `direction-retenue` (« 2a »), `icones-comparaison`, `polices-comparaison`. Les aperçus correspondants sont dans `screenshots/`.
 - `screenshots/` — aperçus (polices, icônes, directions)
+
+⚠️ Les maquettes de `direction-exploration/` portaient un utilisateur d'exemple nommé ; il a été
+remplacé par un placeholder au rapatriement — **ce dépôt est public, aucun nom de personne ne
+doit y entrer**.
 
 ## Palette `@otomata/ui` (résumé)
 
@@ -77,16 +92,20 @@ Ces emplacements **implémentent** la charte définie ici. Une évolution part d
 | Consommateur | Ce qu'il applique | Correspond ici à |
 |---|---|---|
 | `oto-websites/packages/ui/` | tokens `@otomata/ui` (`THEME.md`, `src/theme.css`), consommés en `"*"` local par `web/`, `extension/` et les `sites/*` | `theme/` |
-| `oto-dashboard/design-system/` | tokens dashboard, guidelines, composants de marque | `theme/dashboard-tokens/`, `charte-doc/` |
+| `oto-dashboard/frontend/src/assets/console.css` | les tokens dashboard *vivants* (`:root`), consommés en `var(--…)` par les vues console | `theme/dashboard-tokens/` |
 | Drive `otomata-shared/identite/` | la charte formelle diffusée aux tiers | `charte/` |
 | `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
 | `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
 
-Vérifier la dérive — **sur les valeurs**, au 2026-08-12 : aucune.
+Vérifier la dérive — **sur les valeurs**, au 2026-08-27 : aucune.
 
 ```bash
-diff -q  brand/theme/theme.css  /data/oto/oto-websites/packages/ui/src/theme.css
-diff -rq brand/theme/dashboard-tokens/ /data/oto/oto-dashboard/design-system/tokens/
+diff -q brand/theme/theme.css /data/oto/oto-websites/packages/ui/src/theme.css
 ```
+
+⚠️ **Le second `diff` d'avant le 2026-08-27 n'a plus de cible** : il comparait
+`theme/dashboard-tokens/` à `oto-dashboard/design-system/tokens/`, dossier supprimé. Les tokens
+dashboard n'ont plus de miroir mécanique — leur vie est dans `console.css`, et une évolution de
+charte s'y porte à la main depuis ici.
 
 ⚠️ **Ne pas comparer les `THEME.md`** : la copie d'`oto-websites` porte en tête un encart « source de vérité = oto-studio/brand » que l'original n'a pas — ils divergent donc d'un bloc, volontairement. Ce sont `theme.css` et les tokens qui portent les valeurs, et eux doivent rester strictement identiques.

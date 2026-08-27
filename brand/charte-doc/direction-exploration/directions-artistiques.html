@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="design_doc_mode" content="canvas" />
+<title>Oto — directions artistiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9e4d6; font-family: "Familjen Grotesk", sans-serif; }
+  .canvas { position: relative; width: 3180px; height: 1460px; }
+
+  /* ── column chrome (description above each pair) ── */
+  .col { position: absolute; top: 60px; width: 980px; }
+  .dhead { margin-bottom: 22px; padding-left: 4px; }
+  .badge { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; background: #2c2112; color: #fefcf5; padding: 4px 10px; border-radius: 6px; }
+  .dtitle { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; color: #2c2112; margin: 13px 0 7px; }
+  .ddesc { font-size: 14px; line-height: 1.55; color: #5a4a2e; max-width: 930px; }
+  .ddesc b { color: #2c2112; font-weight: 600; }
+  .dtag { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.04em; color: #8a7c5c; margin-top: 9px; }
+  .flabel { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a7c5c; margin: 26px 0 10px 4px; }
+
+  /* ── the "screen" ── */
+  .frame { width: 980px; border-radius: 16px; overflow: hidden; background: var(--paper);
+    box-shadow: 0 30px 80px -42px rgba(44,33,18,.5); border: 1px solid rgba(44,33,18,.10); }
+
+  /* ══ shell ══ */
+  .mk-shell { display: grid; grid-template-columns: 250px 1fr; height: 604px; font-family: var(--font-body); color: var(--ink); }
+  .mk-sb { display: flex; flex-direction: column; background: var(--sb-bg); border-right: 1px solid var(--sb-hair); min-width: 0; }
+  .mk-brand { display: flex; align-items: center; gap: 11px; padding: 17px 18px 15px; border-bottom: 1px solid var(--sb-hair); }
+  .mk-brand img { width: 34px; height: 34px; display: block; }
+  .mk-brand .bn { font-family: var(--font-display); font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: var(--sb-fg-strong); line-height: 1.1; }
+  .mk-brand .bk { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sb-fg-mute); margin-top: 2px; }
+  .mk-nav { flex: 1; padding: 13px 12px; display: flex; flex-direction: column; gap: 15px; overflow: hidden; }
+  .mk-grp { display: flex; flex-direction: column; gap: 2px; }
+  .mk-gl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sb-fg-mute); padding: 2px 8px 5px; }
+  .mk-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-nav); font-size: 13.5px; font-weight: 500; color: var(--sb-fg); position: relative; }
+  .mk-item .ic { width: 16px; height: 16px; color: var(--sb-fg-mute); flex-shrink: 0; }
+  .mk-item .ct { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--sb-fg-mute); }
+  .mk-item.on { background: var(--sb-active-bg); color: var(--sb-active-fg); font-weight: 700; }
+  .mk-item.on .ic { color: var(--sb-accent); }
+  .mk-foot { border-top: 1px solid var(--sb-hair); padding: 12px 14px; display: flex; flex-direction: column; gap: 11px; }
+  .mk-mcp { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sb-fg-mute); }
+  .mk-user { display: flex; align-items: center; gap: 10px; }
+  .mk-user .av { width: 30px; height: 30px; border-radius: 999px; background: var(--accent); color: #2c2112; display: flex; align-items: center; justify-content: center; font-weight: 700; font-style: italic; font-size: 14px; flex-shrink: 0; }
+  .mk-user .un { font-size: 12.5px; font-weight: 600; color: var(--sb-fg-strong); }
+  .mk-user .ue { font-size: 10.5px; color: var(--sb-fg-mute); }
+
+  /* ══ main ══ */
+  .mk-main { display: flex; flex-direction: column; min-width: 0; background: var(--paper); }
+  .mk-top { display: flex; align-items: center; gap: 12px; padding: 0 24px; height: 60px; border-bottom: 1px solid var(--hair); flex-shrink: 0; }
+  .mk-top .tt { display: flex; align-items: baseline; gap: 11px; min-width: 0; }
+  .mk-top h1 { font-family: var(--font-display); font-size: var(--title-size); font-weight: var(--title-weight); letter-spacing: var(--title-spacing); font-style: var(--title-style, normal); margin: 0; color: var(--ink); white-space: nowrap; }
+  .mk-top .cr { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+  .mk-orgpill { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border: 1px solid var(--hair); border-radius: var(--radius-pill, 999px); font-size: 12px; color: var(--ink-soft); background: var(--surface); }
+  .mk-orgpill .ic { width: 13px; height: 13px; color: var(--mute); }
+  .mk-content { padding: 22px 24px; display: flex; flex-direction: column; gap: 17px; overflow: hidden; }
+  .mk-eyebrow { display: flex; align-items: center; gap: 9px; }
+  .mk-dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; }
+  .mk-eb { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+  .mk-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .mk-kpi { background: var(--surface); border: var(--card-bd); border-radius: var(--radius-card); padding: 15px 17px; box-shadow: var(--card-shadow); }
+  .mk-kpi .kl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+  .mk-kpi .kv { font-family: var(--font-display); font-size: 29px; font-weight: var(--num-weight); letter-spacing: -0.03em; color: var(--ink); margin-top: 6px; line-height: 1; }
+  .mk-kpi .kv .u { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--faint); margin-left: 5px; letter-spacing: 0; }
+  .mk-kpi .ks { font-size: 11.5px; color: var(--mute); margin-top: 6px; }
+  .mk-grid23 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 16px; }
+  .mk-card { background: var(--surface); border: var(--card-bd); border-radius: var(--radius-card); padding: 17px 19px; box-shadow: var(--card-shadow); position: relative; }
+  .mk-ch { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 13px; }
+  .mk-ct { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .mk-cs { font-size: 11.5px; color: var(--mute); margin-top: 2px; }
+  .mk-secno { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--faint); }
+  .mk-crow { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--hair-soft); }
+  .mk-crow:last-child { border-bottom: 0; }
+  .mk-crow code { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink); }
+  .mk-tag { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: var(--radius-pill, 999px); white-space: nowrap; }
+  .mk-endpoint { display: flex; align-items: center; gap: 8px; border: 1px solid var(--hair); border-radius: var(--radius-btn); background: var(--paper-2); padding: 8px 8px 8px 12px; }
+  .mk-endpoint code { flex: 1; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-copy { font-family: var(--font-mono); font-size: 10px; color: var(--mute); border: 1px solid var(--hair); border-radius: 6px; padding: 3px 7px; background: var(--surface); }
+  .mk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: var(--btn-bg); color: var(--btn-fg); border: var(--btn-bd); border-radius: var(--radius-btn); padding: 8px 15px; font-family: var(--font-body); font-size: 12.5px; font-weight: 700; text-transform: lowercase; }
+  .mk-btn.mini { padding: 5px 11px; font-size: 11.5px; background: var(--surface); color: var(--ink-soft); border: var(--mini-bd, 1px solid var(--hair)); border-radius: var(--radius-mini, 8px); font-weight: 600; }
+  .mk-quad { display: grid; grid-template-columns: 1fr 1fr; width: 22px; height: 22px; border-radius: 5px; overflow: hidden; }
+  .mk-quad span { display: block; }
+
+  /* ══ sign-in ══ */
+  .mk-signin { display: grid; grid-template-columns: 1fr 1fr; height: 430px; font-family: var(--font-body); color: var(--ink); }
+  .mk-si-brand { display: flex; flex-direction: column; justify-content: center; gap: 15px; padding: 44px; background: var(--si-brand-bg); }
+  .mk-si-brand .si-mark { display: flex; align-items: center; gap: 12px; }
+  .mk-si-brand .si-mark img { width: 40px; height: 40px; }
+  .mk-si-brand .si-wm { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--si-brand-fg); }
+  .mk-si-brand .si-tag { font-size: 15px; line-height: 1.5; color: var(--si-brand-fg2); max-width: 320px; }
+  .mk-si-brand .si-meta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--si-brand-fg3); }
+  .mk-si-form { display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 44px; background: var(--surface); }
+  .mk-si-form .si-h { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .mk-field { display: flex; flex-direction: column; gap: 6px; }
+  .mk-lbl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .mk-inp { border: 1px solid var(--hair); border-radius: var(--radius-btn); padding: 10px 12px; font-family: var(--font-body); font-size: 13.5px; color: var(--ink); background: var(--paper); }
+  .mk-inp.ph { color: var(--faint); }
+  .mk-div { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .mk-div::before, .mk-div::after { content: ''; flex: 1; height: 1px; background: var(--hair); }
+  .mk-link { font-size: 12.5px; color: var(--accent-ink); font-weight: 600; }
+
+  /* ════════════════════ DIRECTION A — manuscrit chaud, raffiné ════════════════════ */
+  .dir-a {
+    --paper: #fefcf5; --paper-2: #f4ecd2; --surface: #ffffff;
+    --ink: #2c2112; --ink-soft: #4a3a23; --mute: #7a6c50; --faint: #a89c7a;
+    --hair: #e6d9b0; --hair-soft: #f0e6c8;
+    --sb-bg: #faf5e6; --sb-fg: #4a3a23; --sb-fg-strong: #2c2112; --sb-fg-mute: #a89c7a; --sb-hair: #e6d9b0;
+    --sb-active-bg: #fbe7a8; --sb-active-fg: #2c2112; --sb-accent: #5a3b03;
+    --accent: #f0b41e; --accent-ink: #5a3b03;
+    --radius-card: 14px; --radius-btn: 999px; --radius-nav: 9px; --radius-mini: 8px; --radius-pill: 999px;
+    --card-bd: 1px solid #e6d9b0; --card-shadow: 0 6px 22px -16px rgba(44,33,18,.4);
+    --font-display: "Familjen Grotesk"; --font-body: "Familjen Grotesk"; --font-mono: "JetBrains Mono";
+    --title-size: 19px; --title-weight: 700; --title-spacing: -0.02em; --num-weight: 700;
+    --btn-bg: #2c2112; --btn-fg: #fefcf5; --btn-bd: 1px solid #2c2112;
+    --si-brand-bg: #f4ecd2; --si-brand-fg: #2c2112; --si-brand-fg2: #5a4a2e; --si-brand-fg3: #a89c7a;
+  }
+  .dir-a .mk-item.on::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
+  .dir-a .squig { position: relative; font-style: italic; font-weight: 600; }
+  .dir-a .squig svg { position: absolute; left: 0; right: 0; bottom: -5px; width: 100%; height: 6px; }
+
+  /* ════════════════════ DIRECTION B — éditorial · papeterie ════════════════════ */
+  .dir-b {
+    --paper: #fbf7ec; --paper-2: #efe6cb; --surface: #fffdf7;
+    --ink: #241a0d; --ink-soft: #4a3a23; --mute: #786a4f; --faint: #a89c7a;
+    --hair: #e0d3ab; --hair-soft: #ece1bd;
+    --sb-bg: #f6efdd; --sb-fg: #3a2c18; --sb-fg-strong: #241a0d; --sb-fg-mute: #a2946f; --sb-hair: #ddcea3;
+    --sb-active-bg: transparent; --sb-active-fg: #241a0d; --sb-accent: #b8541f;
+    --accent: #f0b41e; --accent-ink: #b8541f;
+    --radius-card: 7px; --radius-btn: 6px; --radius-nav: 6px; --radius-mini: 6px; --radius-pill: 999px;
+    --card-bd: 1px solid #e0d3ab; --card-shadow: none;
+    --font-display: "Newsreader"; --font-body: "Familjen Grotesk"; --font-mono: "JetBrains Mono";
+    --title-size: 27px; --title-weight: 500; --title-spacing: -0.01em; --title-style: italic; --num-weight: 500;
+    --btn-bg: #241a0d; --btn-fg: #fbf7ec; --btn-bd: 1px solid #241a0d;
+    --si-brand-bg: #f6efdd; --si-brand-fg: #241a0d; --si-brand-fg2: #5a4a2e; --si-brand-fg3: #a2946f;
+  }
+  .dir-b .mk-brand { border-bottom: 2px double var(--sb-hair); }
+  .dir-b .mk-item.on::before { content: ''; position: absolute; left: 1px; top: 7px; bottom: 7px; width: 2px; background: var(--sb-accent); }
+  .dir-b .mk-ct { font-style: italic; font-weight: 600; }
+  .dir-b .mk-card { border-top: 2px solid var(--ink); border-radius: 0 0 7px 7px; }
+  .dir-b .mk-kpi { border-top: 2px solid var(--ink); border-radius: 0 0 7px 7px; }
+  .dir-b .mk-si-brand { border-right: 1px solid var(--hair); }
+  .dir-b .mk-si-brand .si-wm { font-style: italic; }
+  .dir-b .mk-inp { border-width: 0 0 1px 0; border-radius: 0; background: transparent; padding: 8px 2px; }
+
+  /* ════════════════════ DIRECTION C — bloc · géométrique enjoué ════════════════════ */
+  .dir-c {
+    --paper: #fdf9ee; --paper-2: #f6edd6; --surface: #ffffff;
+    --ink: #241a0d; --ink-soft: #3a2c18; --mute: #6f6146; --faint: #a89c7a;
+    --hair: #e8dcbb; --hair-soft: #eee3c6;
+    --sb-bg: #2c2112; --sb-fg: #e9dcc0; --sb-fg-strong: #fefcf5; --sb-fg-mute: #a99a75; --sb-hair: rgba(255,255,255,.10);
+    --sb-active-bg: #f0b41e; --sb-active-fg: #2c2112; --sb-accent: #2c2112;
+    --accent: #f0b41e; --accent-ink: #b8541f;
+    --radius-card: 18px; --radius-btn: 12px; --radius-nav: 10px; --radius-mini: 10px; --radius-pill: 999px;
+    --card-bd: 2px solid #2c2112; --card-shadow: 3px 3px 0 rgba(44,33,18,.10);
+    --font-display: "Bricolage Grotesque"; --font-body: "Familjen Grotesk"; --font-mono: "JetBrains Mono";
+    --title-size: 20px; --title-weight: 700; --title-spacing: -0.02em; --num-weight: 700;
+    --btn-bg: #2c2112; --btn-fg: #fefcf5; --btn-bd: 2px solid #2c2112;
+    --mini-bd: 2px solid #2c2112;
+    --si-brand-bg: #2c2112; --si-brand-fg: #fefcf5; --si-brand-fg2: #e9dcc0; --si-brand-fg3: #a99a75;
+  }
+  .dir-c .mk-item.on { box-shadow: 2px 2px 0 rgba(0,0,0,.18); }
+  .dir-c .mk-top { border-bottom: 2px solid #2c2112; }
+  .dir-c .mk-endpoint { border: 2px solid #2c2112; }
+  .dir-c .mk-copy { border: 2px solid #2c2112; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- shared icon symbols (verbatim from the product's Icon set) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="i-home"><path d="M3 9.5 12 3l9 6.5M5 8.5V21h14V8.5M9.5 21v-6h5v6"/></g>
+    <g id="i-bolt"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></g>
+    <g id="i-plug"><path d="M9 3v5m6-5v5M7 8h10v3a5 5 0 0 1-5 5 5 5 0 0 1-5-5V8Zm5 8v5"/></g>
+    <g id="i-doc"><path d="M7 3h7l4 4v14H7V3Zm7 0v4h4M10 12h5m-5 4h5m-5-8h2"/></g>
+    <g id="i-db"><path d="M12 3c-4 0-7 1.1-7 2.5v13C5 19.9 8 21 12 21s7-1.1 7-2.5v-13C19 4.1 16 3 12 3Zm-7 2.5C5 6.9 8 8 12 8s7-1.1 7-2.5M5 12c0 1.4 3 2.5 7 2.5s7-1.1 7-2.5"/></g>
+    <g id="i-book"><path d="M12 6c-2-1.3-4.5-1.3-7 0v12c2.5-1.3 5-1.3 7 0m0-12c2-1.3 4.5-1.3 7 0v12c-2.5-1.3-5-1.3-7 0m0-12v12"/></g>
+    <g id="i-building"><path d="M4 21h16M6 21V5h8v16m4 0V9h-4M9 8h2m-2 4h2m-2 4h2"/></g>
+  </defs></svg>
+
+  <!-- ══════════════════════ COLUMN 1 — DIRECTION A ══════════════════════ -->
+  <div class="col" style="left: 60px;">
+    <div class="dhead">
+      <span class="badge">1a</span>
+      <div class="dtitle">Manuscrit chaud, raffiné</div>
+      <div class="ddesc">L'évolution directe de l'existant. Même ADN — crème, encre chaude, les quatre confettis — mais <b>plus de contraste et de hiérarchie</b> : barre latérale sur crème teinté, état actif marqué (pastille saffron + filet), cartes détachées par une ombre chaude discrète, titres plus grands. La signature <b>italique + squiggle saffron</b> assumée. Moins « console dev », plus outil artisanal chaleureux.</div>
+      <div class="dtag">Familjen Grotesk · JetBrains Mono · le socle actuel, poussé</div>
+    </div>
+
+    <div class="frame dir-a">
+      <div class="mk-shell">
+        <aside class="mk-sb">
+          <div class="mk-brand">
+            <img src="assets/favicon.svg" alt="" />
+            <div><div class="bn">Otomata</div><div class="bk">votre contexte</div></div>
+          </div>
+          <nav class="mk-nav">
+            <div class="mk-grp">
+              <div class="mk-item on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>overview</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg>context</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">workspace</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>projects</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg>connectors<span class="ct">7/12</span></div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-doc"/></svg>procédures</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">memory</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-db"/></svg>données</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book"/></svg>documents</div>
+            </div>
+          </nav>
+          <div class="mk-foot">
+            <div class="mk-mcp"><span class="mk-dot" style="background:#8aa620"></span>mcp connected</div>
+            <div class="mk-user"><span class="av">c</span><div><div class="un">Camille Roux</div><div class="ue">camille@oto.ninja</div></div></div>
+          </div>
+        </aside>
+        <div class="mk-main">
+          <div class="mk-top">
+            <div class="tt"><h1>overview</h1><span class="cr">app.oto.ninja</span></div>
+            <span class="mk-orgpill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-building"/></svg>Otomata</span>
+          </div>
+          <div class="mk-content">
+            <div class="mk-eyebrow"><span class="mk-dot" style="background:#8aa620"></span><span class="mk-eb">studio open · all systems nominal</span></div>
+            <div class="mk-kpis">
+              <div class="mk-kpi"><div class="kl">connectors live</div><div class="kv">7<span class="u">/ 12</span></div><div class="ks">api keys resolvable</div></div>
+              <div class="mk-kpi"><div class="kl">calls · 7 days</div><div class="kv">1,204</div><div class="ks">12 errors · 1%</div></div>
+              <div class="mk-kpi"><div class="kl">active org</div><div class="kv" style="font-size:22px">Otomata</div><div class="ks">you · org_admin</div></div>
+            </div>
+            <div class="mk-grid23">
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">connector <span class="squig">health<svg viewBox="0 0 100 8" preserveAspectRatio="none"><path d="M1 5 Q 12 1 24 5 T 48 5 T 72 5 T 99 5" fill="none" stroke="#f0b41e" stroke-width="2.5" stroke-linecap="round"/></svg></span></div><div class="mk-cs">what your tools can reach</div></div></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>serper</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">live</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>google workspace</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">linked</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#d63d0a"></span><code>crunchbase</code><span style="margin-left:auto"><span class="mk-tag" style="background:#f7cdbb;color:#5a1804">re-auth</span></span></div>
+              </div>
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">mcp endpoint</div><div class="mk-cs">point your client here</div></div></div>
+                <div class="mk-endpoint"><code>https://mcp.oto.cx/sse</code><span class="mk-copy">copy</span></div>
+                <div style="display:flex;gap:8px;margin-top:13px"><span class="mk-btn">add a key</span><span class="mk-btn mini">monitoring →</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flabel">→ page de connexion</div>
+    <div class="frame dir-a">
+      <div class="mk-signin">
+        <div class="mk-si-brand">
+          <div class="si-mark"><img src="assets/favicon.svg" alt="" /><span class="si-wm">oto</span></div>
+          <div class="si-tag">l'automatisation B2B, pilotée par vos agents — connecteurs, données publiques, CRM, le tout via MCP.</div>
+          <div class="si-meta">open source · app.oto.ninja</div>
+        </div>
+        <div class="mk-si-form">
+          <div class="si-h">connexion</div>
+          <div class="mk-field"><span class="mk-lbl">email</span><div class="mk-inp ph">vous@entreprise.fr</div></div>
+          <span class="mk-btn" style="margin-top:2px">se connecter</span>
+          <div class="mk-div">ou</div>
+          <span class="mk-btn mini" style="justify-content:center">continuer avec google</span>
+          <span class="mk-link" style="margin-top:4px">pas de compte ? rejoindre l'alpha →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ COLUMN 2 — DIRECTION B ══════════════════════ -->
+  <div class="col" style="left: 1100px;">
+    <div class="dhead">
+      <span class="badge">1b</span>
+      <div class="dtitle">Éditorial · papeterie</div>
+      <div class="ddesc">Un <b>serif de titrage</b> (Newsreader, en italique) posé sur la palette chaude, des <b>filets réglés</b> comme un cahier, des cartes coiffées d'une réglure noire, une nav en table des matières. Le contraste vient du noir d'encre sur crème et de la structure, pas de la couleur — les confettis passent en simples signaux. <b>Très lisible, littéraire, résolument humain</b> : Oto comme un almanach bien composé.</div>
+      <div class="dtag">Newsreader · Familjen Grotesk · JetBrains Mono</div>
+    </div>
+
+    <div class="frame dir-b">
+      <div class="mk-shell">
+        <aside class="mk-sb">
+          <div class="mk-brand">
+            <img src="assets/favicon.svg" alt="" />
+            <div><div class="bn">Otomata</div><div class="bk">votre contexte</div></div>
+          </div>
+          <nav class="mk-nav">
+            <div class="mk-grp">
+              <div class="mk-item on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>overview</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg>context</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">workspace</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>projects</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg>connectors<span class="ct">7/12</span></div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-doc"/></svg>procédures</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">memory</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-db"/></svg>données</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book"/></svg>documents</div>
+            </div>
+          </nav>
+          <div class="mk-foot">
+            <div class="mk-mcp"><span class="mk-dot" style="background:#8aa620"></span>mcp connected</div>
+            <div class="mk-user"><span class="av">c</span><div><div class="un">Camille Roux</div><div class="ue">camille@oto.ninja</div></div></div>
+          </div>
+        </aside>
+        <div class="mk-main">
+          <div class="mk-top">
+            <div class="tt"><h1>overview</h1><span class="cr">app.oto.ninja</span></div>
+            <span class="mk-orgpill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-building"/></svg>Otomata</span>
+          </div>
+          <div class="mk-content">
+            <div class="mk-eyebrow"><span class="mk-dot" style="background:#8aa620"></span><span class="mk-eb">studio open · all systems nominal</span></div>
+            <div class="mk-kpis">
+              <div class="mk-kpi"><div class="kl">connectors live</div><div class="kv">7<span class="u">/ 12</span></div><div class="ks">api keys resolvable</div></div>
+              <div class="mk-kpi"><div class="kl">calls · 7 days</div><div class="kv">1,204</div><div class="ks">12 errors · 1%</div></div>
+              <div class="mk-kpi"><div class="kl">active org</div><div class="kv" style="font-size:22px">Otomata</div><div class="ks">you · org_admin</div></div>
+            </div>
+            <div class="mk-grid23">
+              <div class="mk-card">
+                <div class="mk-ch"><span class="mk-secno">01</span><div><div class="mk-ct">Connector health</div><div class="mk-cs">what your tools can reach</div></div></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>serper</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">live</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>google workspace</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">linked</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#d63d0a"></span><code>crunchbase</code><span style="margin-left:auto"><span class="mk-tag" style="background:#f7cdbb;color:#5a1804">re-auth</span></span></div>
+              </div>
+              <div class="mk-card">
+                <div class="mk-ch"><span class="mk-secno">02</span><div><div class="mk-ct">MCP endpoint</div><div class="mk-cs">point your client here</div></div></div>
+                <div class="mk-endpoint"><code>https://mcp.oto.cx/sse</code><span class="mk-copy">copy</span></div>
+                <div style="display:flex;gap:8px;margin-top:13px"><span class="mk-btn">add a key</span><span class="mk-btn mini">monitoring →</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flabel">→ page de connexion</div>
+    <div class="frame dir-b">
+      <div class="mk-signin">
+        <div class="mk-si-brand">
+          <div class="si-mark"><img src="assets/favicon.svg" alt="" /><span class="si-wm">oto</span></div>
+          <div class="si-tag">« Ce que voit votre agent. » L'automatisation B2B, tenue comme un carnet — connecteurs, données, procédures.</div>
+          <div class="si-meta">open source · app.oto.ninja</div>
+        </div>
+        <div class="mk-si-form">
+          <div class="si-h">Connexion</div>
+          <div class="mk-field"><span class="mk-lbl">email</span><div class="mk-inp ph">vous@entreprise.fr</div></div>
+          <span class="mk-btn" style="margin-top:6px">se connecter</span>
+          <div class="mk-div">ou</div>
+          <span class="mk-btn mini" style="justify-content:center">continuer avec google</span>
+          <span class="mk-link" style="margin-top:4px">pas de compte ? rejoindre l'alpha →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ COLUMN 3 — DIRECTION C ══════════════════════ -->
+  <div class="col" style="left: 2140px;">
+    <div class="dhead">
+      <span class="badge">1c</span>
+      <div class="dtitle">Bloc · géométrique enjoué</div>
+      <div class="ddesc">On pousse le <b>motif à quatre couleurs</b> du logo : barre latérale <b>encre foncée</b> (contraste maximal, très lisible), cartes à bord épais et petite ombre portée, chips de statut pleines, formes rondes et généreuses. Numéros en <b>Bricolage Grotesque</b>, gras et sympathiques. Un open source moderne, coloré et confiant — sans jamais perdre la chaleur du crème.</div>
+      <div class="dtag">Bricolage Grotesque · Familjen Grotesk · JetBrains Mono</div>
+    </div>
+
+    <div class="frame dir-c">
+      <div class="mk-shell">
+        <aside class="mk-sb">
+          <div class="mk-brand">
+            <img src="assets/favicon.svg" alt="" />
+            <div><div class="bn">Otomata</div><div class="bk">votre contexte</div></div>
+          </div>
+          <nav class="mk-nav">
+            <div class="mk-grp">
+              <div class="mk-item on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>overview</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg>context</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">workspace</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>projects</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg>connectors<span class="ct">7/12</span></div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-doc"/></svg>procédures</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">memory</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-db"/></svg>données</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book"/></svg>documents</div>
+            </div>
+          </nav>
+          <div class="mk-foot">
+            <div class="mk-mcp"><span class="mk-dot" style="background:#8aa620"></span>mcp connected</div>
+            <div class="mk-user"><span class="av">c</span><div><div class="un">Camille Roux</div><div class="ue">camille@oto.ninja</div></div></div>
+          </div>
+        </aside>
+        <div class="mk-main">
+          <div class="mk-top">
+            <div class="tt"><h1>overview</h1><span class="cr">app.oto.ninja</span></div>
+            <span class="mk-orgpill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-building"/></svg>Otomata</span>
+          </div>
+          <div class="mk-content">
+            <div class="mk-eyebrow"><span class="mk-dot" style="background:#8aa620"></span><span class="mk-eb">studio open · all systems nominal</span></div>
+            <div class="mk-kpis">
+              <div class="mk-kpi"><div class="kl">connectors live</div><div class="kv">7<span class="u">/ 12</span></div><div class="ks">api keys resolvable</div></div>
+              <div class="mk-kpi"><div class="kl">calls · 7 days</div><div class="kv">1,204</div><div class="ks">12 errors · 1%</div></div>
+              <div class="mk-kpi"><div class="kl">active org</div><div class="kv" style="font-size:22px">Otomata</div><div class="ks">you · org_admin</div></div>
+            </div>
+            <div class="mk-grid23">
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">connector health</div><div class="mk-cs">what your tools can reach</div></div></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>serper</code><span style="margin-left:auto"><span class="mk-tag" style="background:#8aa620;color:#fff">live</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>google workspace</code><span style="margin-left:auto"><span class="mk-tag" style="background:#8aa620;color:#fff">linked</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#d63d0a"></span><code>crunchbase</code><span style="margin-left:auto"><span class="mk-tag" style="background:#d63d0a;color:#fff">re-auth</span></span></div>
+              </div>
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">mcp endpoint</div><div class="mk-cs">point your client here</div></div><span class="mk-quad" style="margin-left:auto"><span style="background:#f0b41e"></span><span style="background:#d63d0a"></span><span style="background:#1f6dba"></span><span style="background:#8aa620"></span></span></div>
+                <div class="mk-endpoint"><code>https://mcp.oto.cx/sse</code><span class="mk-copy">copy</span></div>
+                <div style="display:flex;gap:8px;margin-top:13px"><span class="mk-btn">add a key</span><span class="mk-btn mini">monitoring →</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flabel">→ page de connexion</div>
+    <div class="frame dir-c">
+      <div class="mk-signin">
+        <div class="mk-si-brand">
+          <div class="si-mark"><img src="assets/favicon.svg" alt="" /><span class="si-wm">oto</span></div>
+          <div class="si-tag">l'automatisation B2B, pilotée par vos agents. connecteurs, données publiques, CRM — via MCP.</div>
+          <div class="si-meta">open source · app.oto.ninja</div>
+        </div>
+        <div class="mk-si-form">
+          <div class="si-h">connexion</div>
+          <div class="mk-field"><span class="mk-lbl">email</span><div class="mk-inp ph">vous@entreprise.fr</div></div>
+          <span class="mk-btn" style="margin-top:2px">se connecter</span>
+          <div class="mk-div">ou</div>
+          <span class="mk-btn mini" style="justify-content:center">continuer avec google</span>
+          <span class="mk-link" style="margin-top:4px">pas de compte ? rejoindre l'alpha →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

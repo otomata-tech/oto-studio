@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="design_doc_mode" content="canvas" />
+<title>Oto — direction retenue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9e4d6; font-family: "Familjen Grotesk", sans-serif; }
+  .canvas { position: relative; width: 1360px; height: 1580px; }
+  .col { position: absolute; top: 56px; left: 60px; width: 1120px; }
+
+  .dhead { margin-bottom: 22px; padding-left: 4px; }
+  .badge { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; background: #2c2112; color: #fefcf5; padding: 4px 10px; border-radius: 6px; }
+  .dtitle { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #2c2112; margin: 13px 0 7px; }
+  .ddesc { font-size: 14px; line-height: 1.55; color: #5a4a2e; max-width: 1000px; }
+  .ddesc b { color: #2c2112; font-weight: 600; }
+  .flabel { font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #8a7c5c; margin: 30px 0 12px 4px; }
+
+  :root {
+    --paper: #fefcf5; --paper-2: #f4ecd2; --surface: #ffffff;
+    --ink: #2c2112; --ink-soft: #4a3a23; --mute: #7a6c50; --faint: #a89c7a;
+    --hair: #e9dcb4; --hair-soft: #f0e6c8; --card-bd: #ede1bd;
+    --sb-bg: #2c2112; --sb-fg: #e4d7ba; --sb-fg-strong: #fefcf5; --sb-fg-mute: #a99a75; --sb-hair: rgba(255,255,255,.10);
+    --sb-active-bg: #f0b41e; --sb-active-fg: #2c2112;
+    --accent: #f0b41e; --accent-ink: #5a3b03;
+    --r-xs: 6px; --r-sm: 8px; --r-pill: 999px;
+    --card-shadow: 0 4px 18px -12px rgba(44,33,18,.42);
+    --font-display: "Familjen Grotesk"; --font-body: "Familjen Grotesk"; --font-mono: "JetBrains Mono";
+  }
+
+  .frame { width: 1120px; border-radius: 12px; overflow: hidden; background: var(--paper);
+    box-shadow: 0 30px 80px -42px rgba(44,33,18,.5); border: 1px solid rgba(44,33,18,.10); }
+
+  /* ══ shell ══ */
+  .mk-shell { display: grid; grid-template-columns: 250px 1fr; height: 616px; font-family: var(--font-body); color: var(--ink); }
+  .mk-sb { display: flex; flex-direction: column; background: var(--sb-bg); border-right: 1px solid var(--sb-hair); min-width: 0; }
+  .mk-brand { display: flex; align-items: center; gap: 11px; padding: 17px 18px 15px; border-bottom: 1px solid var(--sb-hair); }
+  .mk-brand img { width: 34px; height: 34px; display: block; }
+  .mk-brand .bn { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; color: var(--sb-fg-strong); line-height: 1.1; }
+  .mk-brand .bk { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sb-fg-mute); margin-top: 2px; }
+  .mk-nav { flex: 1; padding: 13px 12px; display: flex; flex-direction: column; gap: 15px; overflow: hidden; }
+  .mk-grp { display: flex; flex-direction: column; gap: 2px; }
+  .mk-gl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sb-fg-mute); padding: 2px 8px 5px; }
+  .mk-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm); font-size: 13.5px; font-weight: 500; color: var(--sb-fg); }
+  .mk-item .ic { width: 16px; height: 16px; color: var(--sb-fg-mute); flex-shrink: 0; }
+  .mk-item .ct { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--sb-fg-mute); }
+  .mk-item.on { background: var(--sb-active-bg); color: var(--sb-active-fg); font-weight: 700; }
+  .mk-item.on .ic { color: var(--sb-active-fg); }
+  .mk-foot { border-top: 1px solid var(--sb-hair); padding: 12px 14px; display: flex; flex-direction: column; gap: 11px; }
+  .mk-mcp { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sb-fg-mute); }
+  .mk-user { display: flex; align-items: center; gap: 10px; }
+  .mk-user .av { width: 30px; height: 30px; border-radius: var(--r-pill); background: var(--accent); color: #2c2112; display: flex; align-items: center; justify-content: center; font-weight: 700; font-style: italic; font-size: 14px; flex-shrink: 0; }
+  .mk-user .un { font-size: 12.5px; font-weight: 600; color: var(--sb-fg-strong); }
+  .mk-user .ue { font-size: 10.5px; color: var(--sb-fg-mute); }
+
+  /* ══ main ══ */
+  .mk-main { display: flex; flex-direction: column; min-width: 0; background: var(--paper); }
+  .mk-top { display: flex; align-items: center; gap: 12px; padding: 0 24px; height: 60px; border-bottom: 1px solid var(--hair); flex-shrink: 0; }
+  .mk-top .tt { display: flex; align-items: baseline; gap: 11px; min-width: 0; }
+  .mk-top h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--ink); white-space: nowrap; }
+  .mk-top .cr { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+  .mk-orgpill { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border: 1px solid var(--hair); border-radius: var(--r-pill); font-size: 12px; color: var(--ink-soft); background: var(--surface); }
+  .mk-orgpill .ic { width: 13px; height: 13px; color: var(--mute); }
+  .mk-content { padding: 22px 24px; display: flex; flex-direction: column; gap: 17px; overflow: hidden; }
+  .mk-eyebrow { display: flex; align-items: center; gap: 9px; }
+  .mk-dot { width: 8px; height: 8px; border-radius: var(--r-pill); flex-shrink: 0; }
+  .mk-eb { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+  .mk-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .mk-kpi { background: var(--surface); border: 1px solid var(--card-bd); border-radius: var(--r-sm); padding: 15px 17px; box-shadow: var(--card-shadow); }
+  .mk-kpi .kl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+  .mk-kpi .kv { font-size: 29px; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); margin-top: 6px; line-height: 1; }
+  .mk-kpi .kv .u { font-size: 13px; font-weight: 500; color: var(--faint); margin-left: 5px; letter-spacing: 0; }
+  .mk-kpi .ks { font-size: 11.5px; color: var(--mute); margin-top: 6px; }
+  .mk-grid23 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 16px; }
+  .mk-card { background: var(--surface); border: 1px solid var(--card-bd); border-radius: var(--r-sm); padding: 17px 19px; box-shadow: var(--card-shadow); }
+  .mk-ch { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 13px; }
+  .mk-ct { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .mk-cs { font-size: 11.5px; color: var(--mute); margin-top: 2px; }
+  .mk-crow { display: flex; align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--hair-soft); }
+  .mk-crow:last-child { border-bottom: 0; }
+  .mk-crow code { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink); }
+  .mk-tag { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: var(--r-pill); white-space: nowrap; }
+  .mk-endpoint { display: flex; align-items: center; gap: 8px; border: 1px solid var(--hair); border-radius: var(--r-sm); background: var(--paper-2); padding: 8px 8px 8px 12px; }
+  .mk-endpoint code { flex: 1; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-copy { font-family: var(--font-mono); font-size: 10px; color: var(--mute); border: 1px solid var(--hair); border-radius: var(--r-xs); padding: 3px 7px; background: var(--surface); }
+  .mk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: var(--r-pill); padding: 8px 15px; font-family: var(--font-body); font-size: 12.5px; font-weight: 600; text-transform: lowercase; }
+  .mk-btn.ghost { background: transparent; color: var(--ink); }
+  .mk-btn.accent { background: var(--accent); color: #2c2112; border-color: var(--accent); }
+  .mk-btn.mini { padding: 5px 11px; font-size: 11.5px; background: var(--surface); color: var(--ink-soft); border: 1px solid var(--hair); border-radius: var(--r-sm); }
+  .mk-link { background: none; border: 0; font-size: 12.5px; font-weight: 600; color: var(--accent-ink); text-transform: lowercase; }
+
+  /* ══ components + radii strip ══ */
+  .strip { display: grid; grid-template-columns: 1fr; gap: 0; font-family: var(--font-body); color: var(--ink); }
+  .srow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 22px; border-bottom: 1px solid var(--hair); }
+  .srow:last-child { border-bottom: 0; }
+  .skey { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); width: 96px; flex-shrink: 0; }
+  .rann { font-family: var(--font-mono); font-size: 10px; color: var(--mute); background: var(--paper-2); border-radius: var(--r-xs); padding: 2px 7px; }
+  .kbd { font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--hair); border-bottom-width: 2px; border-radius: var(--r-xs); padding: 1px 5px; color: var(--mute); background: var(--surface); }
+  .sinp { width: 220px; background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r-sm); padding: 8px 11px; font-size: 13px; color: var(--faint); }
+  .sseg { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--hair); border-radius: var(--r-sm); background: var(--surface); }
+  .sseg span { padding: 4px 12px; font-size: 11.5px; font-weight: 600; border-radius: var(--r-xs); color: var(--mute); }
+  .sseg span.on { background: var(--ink); color: var(--paper); }
+
+  /* ══ sign-in ══ */
+  .mk-signin { display: grid; grid-template-columns: 1fr 1fr; height: 440px; font-family: var(--font-body); color: var(--ink); }
+  .mk-si-brand { display: flex; flex-direction: column; justify-content: center; gap: 15px; padding: 46px; background: #2c2112; }
+  .mk-si-brand .si-mark { display: flex; align-items: center; gap: 12px; }
+  .mk-si-brand .si-mark img { width: 42px; height: 42px; }
+  .mk-si-brand .si-wm { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; color: #fefcf5; }
+  .mk-si-brand .si-tag { font-size: 15px; line-height: 1.55; color: #e4d7ba; max-width: 340px; }
+  .mk-si-brand .si-meta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #a99a75; }
+  .mk-si-form { display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: 46px; background: var(--surface); }
+  .mk-si-form .si-h { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+  .mk-field { display: flex; flex-direction: column; gap: 6px; }
+  .mk-lbl { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .mk-inp { border: 1px solid var(--hair); border-radius: var(--r-sm); padding: 10px 12px; font-size: 13.5px; color: var(--faint); background: var(--paper); }
+  .mk-div { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .mk-div::before, .mk-div::after { content: ''; flex: 1; height: 1px; background: var(--hair); }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="i-home"><path d="M3 9.5 12 3l9 6.5M5 8.5V21h14V8.5M9.5 21v-6h5v6"/></g>
+    <g id="i-bolt"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></g>
+    <g id="i-plug"><path d="M9 3v5m6-5v5M7 8h10v3a5 5 0 0 1-5 5 5 5 0 0 1-5-5V8Zm5 8v5"/></g>
+    <g id="i-doc"><path d="M7 3h7l4 4v14H7V3Zm7 0v4h4M10 12h5m-5 4h5m-5-8h2"/></g>
+    <g id="i-db"><path d="M12 3c-4 0-7 1.1-7 2.5v13C5 19.9 8 21 12 21s7-1.1 7-2.5v-13C19 4.1 16 3 12 3Zm-7 2.5C5 6.9 8 8 12 8s7-1.1 7-2.5M5 12c0 1.4 3 2.5 7 2.5s7-1.1 7-2.5"/></g>
+    <g id="i-book"><path d="M12 6c-2-1.3-4.5-1.3-7 0v12c2.5-1.3 5-1.3 7 0m0-12c2-1.3 4.5-1.3 7 0v12c-2.5-1.3-5-1.3-7 0m0-12v12"/></g>
+    <g id="i-building"><path d="M4 21h16M6 21V5h8v16m4 0V9h-4M9 8h2m-2 4h2m-2 4h2"/></g>
+  </defs></svg>
+
+  <div class="col">
+    <div class="dhead">
+      <span class="badge">2a · direction retenue</span>
+      <div class="dtitle">Contraste chaud — sidebar encre, cartes douces, radius disciplinés</div>
+      <div class="ddesc">Le fort contraste de 1c (barre latérale <b>encre foncée</b> contre contenu clair) mais <b>sans les bords noirs</b> : les cartes se détachent par un filet crème doux et une ombre chaude discrète. Et une règle stricte sur les rayons — <b>6px, 8px, ou pill, jamais entre</b> : inputs/cartes/boutons secondaires en 8px, boutons primaires &amp; tags en pill. Chaleureux, très lisible, net.</div>
+    </div>
+
+    <div class="frame">
+      <div class="mk-shell">
+        <aside class="mk-sb">
+          <div class="mk-brand">
+            <img src="assets/favicon.svg" alt="" />
+            <div><div class="bn">Otomata</div><div class="bk">votre contexte</div></div>
+          </div>
+          <nav class="mk-nav">
+            <div class="mk-grp">
+              <div class="mk-item on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>overview</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt"/></svg>context</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">workspace</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home"/></svg>projects</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plug"/></svg>connectors<span class="ct">7/12</span></div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-doc"/></svg>procédures</div>
+            </div>
+            <div class="mk-grp">
+              <div class="mk-gl">memory</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-db"/></svg>données</div>
+              <div class="mk-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book"/></svg>documents</div>
+            </div>
+          </nav>
+          <div class="mk-foot">
+            <div class="mk-mcp"><span class="mk-dot" style="background:#8aa620"></span>mcp connected</div>
+            <div class="mk-user"><span class="av">c</span><div><div class="un">Camille Roux</div><div class="ue">camille@oto.ninja</div></div></div>
+          </div>
+        </aside>
+        <div class="mk-main">
+          <div class="mk-top">
+            <div class="tt"><h1>overview</h1><span class="cr">app.oto.ninja</span></div>
+            <span class="mk-orgpill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-building"/></svg>Otomata</span>
+          </div>
+          <div class="mk-content">
+            <div class="mk-eyebrow"><span class="mk-dot" style="background:#8aa620"></span><span class="mk-eb">studio open · all systems nominal</span></div>
+            <div class="mk-kpis">
+              <div class="mk-kpi"><div class="kl">connectors live</div><div class="kv">7<span class="u">/ 12</span></div><div class="ks">api keys resolvable</div></div>
+              <div class="mk-kpi"><div class="kl">calls · 7 days</div><div class="kv">1,204</div><div class="ks">12 errors · 1%</div></div>
+              <div class="mk-kpi"><div class="kl">active org</div><div class="kv" style="font-size:22px">Otomata</div><div class="ks">you · org_admin</div></div>
+            </div>
+            <div class="mk-grid23">
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">connector health</div><div class="mk-cs">what your tools can reach right now</div></div></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>serper</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">live</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#8aa620"></span><code>google workspace</code><span style="margin-left:auto"><span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">linked</span></span></div>
+                <div class="mk-crow"><span class="mk-dot" style="background:#d63d0a"></span><code>crunchbase</code><span style="margin-left:auto"><span class="mk-tag" style="background:#f7cdbb;color:#5a1804">re-auth</span></span></div>
+              </div>
+              <div class="mk-card">
+                <div class="mk-ch"><div><div class="mk-ct">mcp endpoint</div><div class="mk-cs">point your client here</div></div></div>
+                <div class="mk-endpoint"><code>https://mcp.oto.cx/sse</code><span class="mk-copy">copy</span></div>
+                <div style="display:flex;gap:8px;margin-top:13px"><span class="mk-btn accent">add a key</span><span class="mk-link" style="align-self:center">monitoring →</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flabel">→ composants &amp; règle des rayons (6 · 8 · pill)</div>
+    <div class="frame">
+      <div class="strip">
+        <div class="srow">
+          <span class="skey">boutons</span>
+          <span class="mk-btn">se connecter</span>
+          <span class="mk-btn ghost">annuler</span>
+          <span class="mk-btn accent">add a key</span>
+          <span class="mk-btn mini">+ nouveau</span>
+          <span class="mk-link">monitoring →</span>
+          <span class="rann" style="margin-left:auto">primaire = pill · mini = 8px</span>
+        </div>
+        <div class="srow">
+          <span class="skey">tags</span>
+          <span class="mk-tag" style="background:#e6eec0;color:#3e4c0c">live</span>
+          <span class="mk-tag" style="background:#fbe7a8;color:#5a3b03">partial</span>
+          <span class="mk-tag" style="background:#f7cdbb;color:#5a1804">re-auth</span>
+          <span class="mk-tag" style="background:#c4dcf0;color:#0b2e54">personal</span>
+          <span class="mk-tag" style="background:#2c2112;color:#fefcf5">org</span>
+          <span class="rann" style="margin-left:auto">pill</span>
+        </div>
+        <div class="srow">
+          <span class="skey">saisie</span>
+          <span class="sinp">vous@entreprise.fr</span>
+          <span class="sseg"><span class="on">status</span><span>activity</span></span>
+          <span class="kbd">⌘</span><span class="kbd">K</span>
+          <span class="rann" style="margin-left:auto">input/seg = 8px · kbd = 6px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flabel">→ page de connexion</div>
+    <div class="frame">
+      <div class="mk-signin">
+        <div class="mk-si-brand">
+          <div class="si-mark"><img src="assets/favicon.svg" alt="" /><span class="si-wm">oto</span></div>
+          <div class="si-tag">l'automatisation B2B, pilotée par vos agents — connecteurs, données publiques, CRM, le tout via MCP.</div>
+          <div class="si-meta">open source · app.oto.ninja</div>
+        </div>
+        <div class="mk-si-form">
+          <div class="si-h">connexion</div>
+          <div class="mk-field"><span class="mk-lbl">email</span><div class="mk-inp">vous@entreprise.fr</div></div>
+          <span class="mk-btn accent" style="margin-top:2px">se connecter</span>
+          <div class="mk-div">ou</div>
+          <span class="mk-btn mini" style="justify-content:center;padding:9px">continuer avec google</span>
+          <span class="mk-link" style="margin-top:4px">pas de compte ? rejoindre l'alpha →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
