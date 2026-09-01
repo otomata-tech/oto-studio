@@ -60,6 +60,9 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 - `oto-cli-flower-legacy.svg` — ancienne fleur or (oto CLI) — *legacy*
 - `oto-icons-sprite.svg` — sprite d'icônes des sites oto
 
+### `photos/` — portraits de l'équipe
+Les portraits publiés au nom d'Otomata (`alexis-laporte.jpg`, `sarah-soumahoro.jpg`, 1024×1024, fond bleu nuit commun) + leurs sources d'origine, et surtout **la procédure pour harmoniser un nouveau portrait** avec la série : `harmonise-portrait.py` (retouche du décor par modèle d'image — remplacement de fond, élargissement du cadre) et son mode d'emploi dans `photos/README.md`, dont les contrôles à faire avant publication. Servis en ligne depuis `oto-websites/sites/otomata.tech/public/equipe/`.
+
 ### `merch/` — merchandising
 Designs t-shirt (`tshirt-design`, `tshirt-otomata` en SVG + PNG) et leurs planches de rendu (`tshirt-fonts`, `tshirt-preview` en HTML + PDF). Hors charte à proprement parler, mais assets de marque. Source : Drive `identite/`.
 
