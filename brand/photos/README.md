@@ -82,9 +82,15 @@ heures — arrivé le 2026-09-01 sur les deux portraits.
 Donc : attendre la fin du déploiement, puis tester **avec un paramètre
 anti-cache** (`?cb=$RANDOM`) et contrôler le `content-type`, pas seulement le
 code de retour. Un `200` en `text/html` sur une image, c'est le fallback, pas le
-fichier. Purger ensuite ne se fait que depuis le tableau de bord Cloudflare : le
-jeton d'administration lit la zone et écrit le DNS, mais **ne sait pas déléguer
-la permission de purge**.
+fichier.
+
+Si le mal est fait, la purge se scripte — `purge-cache.py` à côté de ce fichier :
+il crée avec le jeton d'administration un jeton éphémère limité à la zone et à la
+seule permission `Cache Purge`, purge, puis supprime le jeton. **Le piège est la
+propagation** : un jeton Cloudflare tout juste créé est refusé en authentification
+pendant quelques secondes, ce qui fait conclure à tort que la permission n'est pas
+délégable — elle l'est (vérifié le 2026-09-01, purge acceptée 15 s après création).
+D'où les essais espacés.
 
 ### Fond
 
