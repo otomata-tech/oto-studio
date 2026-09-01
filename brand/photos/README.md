@@ -71,6 +71,21 @@ Donc, à chaque fois :
 3. **Le portrait de quelqu'un d'autre se fait valider par cette personne** avant
    publication. C'est son visage, modifié par une machine.
 
+### Publier, et vérifier sans empoisonner le cache
+
+Les portraits sont servis par `otomata.tech`, un site en application monopage :
+une adresse **qui n'existe pas encore** y répond `200` avec la page d'accueil, et
+Cloudflare met cette réponse HTML en cache pour 4 h. Vérifier une URL d'image
+avant la fin du déploiement suffit donc à la rendre inutilisable pendant quatre
+heures — arrivé le 2026-09-01 sur les deux portraits.
+
+Donc : attendre la fin du déploiement, puis tester **avec un paramètre
+anti-cache** (`?cb=$RANDOM`) et contrôler le `content-type`, pas seulement le
+code de retour. Un `200` en `text/html` sur une image, c'est le fallback, pas le
+fichier. Purger ensuite ne se fait que depuis le tableau de bord Cloudflare : le
+jeton d'administration lit la zone et écrit le DNS, mais **ne sait pas déléguer
+la permission de purge**.
+
 ### Fond
 
 Le fond retenu est le bleu nuit du portrait d'Alexis (`#2a4562` environ), qui
