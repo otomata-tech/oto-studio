@@ -4,12 +4,19 @@
 // Elle est DÉRIVÉE du registre de gabarits : un gabarit ajouté s'y décrit tout seul.
 import * as templates from './templates.mjs';
 
-const champs = fields => fields.map(f => {
-  const t = f.type === 'list'
-    ? `liste de { ${f.item.map(i => i.key).join(', ')} }`
-    : f.type;
-  const opts = f.type === 'enum' ? ` — valeurs : ${f.options.slice(0, 8).join(', ')}${f.options.length > 8 ? '…' : ''}` : '';
-  return `  - \`${f.key}\` (${t}${f.required ? ', requis' : ', optionnel'})${opts}${f.hint ? ` — ${f.hint}` : ''}`;
+// Les valeurs autorisées sont données EN ENTIER, y compris pour les sous-champs d'une
+// liste : une énumération tronquée fait inventer une valeur plausible, refusée ensuite
+// (constaté en appelant l'API depuis un agent — « check » n'est pas une icône).
+const enumValues = f => f.type === 'enum' ? ` — valeurs autorisées : ${f.options.join(', ')}` : '';
+
+const champs = (fields, indent = '  ') => fields.map(f => {
+  const head = `${indent}- \`${f.key}\` (${f.type === 'list' ? 'liste' : f.type}` +
+    `${f.required ? ', requis' : ', optionnel'}` +
+    `${f.min ? `, ${f.min} minimum` : ''}${f.max ? `, ${f.max} maximum` : ''})` +
+    `${enumValues(f)}${f.hint ? ` — ${f.hint}` : ''}`;
+  return f.type === 'list'
+    ? `${head}\n${indent}  chaque entrée :\n${champs(f.item, indent + '    ')}`
+    : head;
 }).join('\n');
 
 export function openapi() {
