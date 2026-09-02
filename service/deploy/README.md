@@ -59,10 +59,19 @@ en anonyme pour faire plus vite.
 ## État
 
 **Posé le 2026-09-02 sur otomata-0** : checkout `/opt/oto-studio`, unité active et activée
-au démarrage, port **8100** inscrit dans `/opt/ports.conf`. Premier rendu réel sur la box
-(carte en PNG + MP4) : **43 s**, cgroup à **406 Mo**, `memory.events` **tout à zéro** — ni
-plafond touché, ni swap, ni kill. Restent à faire : la politique Access, puis le vhost,
-puis le DNS.
+au démarrage, port **8100** inscrit dans `/opt/ports.conf`, vhost `studio.oto.zone` fermé
+par Cloudflare Access, connecteur `http` d'org (`org:2:http:studio`) sur l'adresse privée.
+
+Mesures réelles sur la box (à jour du passage des images intermédiaires en JPEG) :
+
+| rendu | durée | cgroup |
+|---|---|---|
+| carte, PNG + MP4 (121 images, 1080²) | **43 s** | 406 Mo |
+| affiche, MP4 (300 images, 1200×1500) | **2 min 21 s** (avant : 4 min 39 s) | 336 Mo |
+
+`memory.events` **tout à zéro** dans les deux cas — ni plafond touché, ni swap, ni kill.
+⚠️ Une affiche animée demande donc plus de deux minutes : c'est un travail de fond, l'IHM
+et l'API le disent (`status` = `en_cours`), personne n'attend devant une requête bloquée.
 
 ## Ce que le service coûte à la box
 
