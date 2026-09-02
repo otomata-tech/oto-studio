@@ -1,0 +1,43 @@
+[Unit]
+Description=oto studio — rendu de visuels (API + IHM)
+Documentation=https://github.com/otomata-tech/oto-studio
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/oto-studio
+ExecStart=/usr/bin/node service/server.mjs
+Restart=on-failure
+RestartSec=5
+
+# Loopback strict : l'exposition passe par Caddy, l'authentification par Cloudflare
+# Access devant le vhost. Ce service n'a AUCUNE auth applicative — s'il écoutait sur
+# 0.0.0.0, n'importe qui sur le réseau pourrait le piloter.
+Environment=STUDIO_HOST=127.0.0.1
+Environment=STUDIO_PORT=8100
+Environment=STUDIO_CHROME=/usr/bin/google-chrome
+Environment=STUDIO_CHROME_IDLE_MS=600000
+Environment=STUDIO_KEEP=60
+
+# ⚠️ SANS CES TROIS LIGNES, RIEN NE PLAFONNE CE SERVICE. Les garde-fous mémoire posés
+# sur cette box après les gels du 30/06 et du 06/08 ne couvrent que `user-*.slice` et
+# les unités `actions.runner.*` : `system.slice` a `memory.max = max`. Une unité de
+# rendu qui y tombe sans limite, c'est le troisième gel.
+# Calibrage : pointe mesurée ~900 Mo par rendu (une carte 1080×1080, 121 images).
+# Dépasser le plafond tue le rendu — un rendu perdu, pas une box à redémarrer.
+MemoryHigh=1G
+MemoryMax=1400M
+MemorySwapMax=256M
+
+# Le rendu est du travail de fond : il cède le pas à tout ce qui sert du trafic.
+Nice=10
+CPUWeight=50
+
+# /tmp privé : le profil Chrome et les images intermédiaires n'atterrissent pas dans
+# le /tmp partagé de la box.
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

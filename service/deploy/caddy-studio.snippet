@@ -1,0 +1,23 @@
+# --- studio.oto.zone — studio de visuels (API + IHM, :8100) -------------------
+#     ⚠️ AUCUNE auth applicative dans le service : l'accès DOIT être fermé par
+#     Cloudflare Access (Zero Trust) AVANT que le record DNS soit créé. Même
+#     règle et même raison que mucho.oto.zone, plus bas dans ce fichier.
+#     Politique Access : les comptes d'Otomata. Un jeton de service viendra s'y
+#     ajouter le jour où le connecteur http d'oto appellera /api/* (en-têtes
+#     CF-Access-Client-Id / CF-Access-Client-Secret — cf. cloudflare-tunnel-ssh.md).
+#
+#     À recopier dans /data/infra/Caddyfile (box otomata-0), puis scp + validate +
+#     reload selon la procédure en tête de ce fichier-là.
+studio.oto.zone {
+	tls /etc/caddy/origin-certs/oto-zone.pem /etc/caddy/origin-certs/oto-zone.key
+
+	# Le service sert l'IHM, l'API, les aperçus et les fichiers produits : un seul
+	# upstream, pas de racine statique locale — les rendus vivent hors du tree servi.
+	reverse_proxy localhost:8100 {
+		# Un rendu peut occuper la file : la requête de création répond tout de suite
+		# (le travail part en fond), mais les listes attendent le disque.
+		transport http {
+			read_timeout 120s
+		}
+	}
+}

@@ -1,0 +1,295 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>oto — studio</title>
+<style>
+:root{--bg:#fefcf5;--surface:#fff;--hair:#e9dcb4;--ink:#2c2112;--soft:#4a3a23;--mute:#7a6c50;--faint:#aa9f7e;
+  --terra:#d63d0a;--terra-ink:#5a1804;--saffron:#f0b41e;--olive:#8aa620;--cobalt:#1f6dba;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#efe7d3;color:var(--ink);min-height:100vh;display:flex}
+.panel{width:44%;max-width:620px;min-height:100vh;overflow:auto;background:var(--bg);border-right:1px solid var(--hair);padding:24px 26px 60px}
+.stage{flex:1;min-height:100vh;padding:24px;overflow:auto}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+h1 .d{color:var(--terra)}
+h2{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:26px 0 10px}
+.sub{color:var(--mute);font-size:13px;margin:3px 0 18px}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:14px 0 5px}
+.hint{font-size:12px;color:var(--faint);margin:3px 0 0;font-weight:400;text-transform:none;letter-spacing:0}
+input,select,textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--hair);border-radius:9px;padding:10px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--terra)}
+textarea{resize:vertical;min-height:56px}
+.item{border:1px solid var(--hair);border-radius:12px;padding:12px 12px 14px;background:#fffdf7;position:relative;margin-top:10px}
+.item .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item label{margin:8px 0 4px}
+.x{position:absolute;top:9px;right:9px;border:1px solid var(--hair);background:var(--surface);border-radius:7px;
+  width:26px;height:26px;font-size:15px;line-height:1;color:var(--mute);cursor:pointer}
+.x:hover{color:var(--terra);border-color:var(--terra)}
+.add{margin-top:10px;background:transparent;border:1px dashed var(--faint);color:var(--soft);border-radius:9px;padding:9px;width:100%;font-weight:600;cursor:pointer}
+.add:hover{border-color:var(--terra);color:var(--terra)}
+.btn{background:var(--ink);color:var(--bg);border:none;border-radius:999px;padding:12px 22px;font-size:15px;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.actions{display:flex;gap:10px;align-items:center;margin-top:22px;position:sticky;bottom:0;background:linear-gradient(180deg,transparent,var(--bg) 30%);padding:14px 0 4px}
+.status{font-size:13px;color:var(--mute);min-height:18px;margin-top:8px}
+.status.err{color:var(--terra-ink);font-weight:600}
+.frame{width:min(66vh,560px);aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(44,33,18,.2);background:var(--bg)}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:12px}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:12px;overflow:hidden;font-size:12px}
+.card video,.card img{width:100%;display:block;background:#efe7d3}
+.card .meta{padding:8px 10px}
+.card .t{font-weight:700;font-size:12px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .s{color:var(--mute);margin-top:2px}
+.pill{display:inline-block;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+.pill.ok{background:#eef4d9;color:#4d5c0f}
+.pill.run{background:#fdf0cf;color:#7a5c05}
+.pill.ko{background:#fbe0d7;color:var(--terra-ink)}
+.card a{color:var(--terra-ink);font-weight:700;text-decoration:none;margin-right:8px}
+.empty{color:var(--faint);font-size:13px;padding:18px 0}
+.checks{display:flex;gap:14px;margin-top:6px}
+.checks label{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--soft)}
+.checks input{width:auto}
+</style></head>
+<body>
+<div class="panel">
+  <h1>oto <span class="d">·</span> studio</h1>
+  <div class="sub">choisis un gabarit, remplis, regarde, exporte.</div>
+
+  <label>Gabarit</label>
+  <select id="tpl"></select>
+  <div class="hint" id="tpl-desc"></div>
+
+  <div id="form"></div>
+
+  <h2>Formats</h2>
+  <div class="checks" id="formats"></div>
+
+  <div class="actions">
+    <button class="btn ghost" id="preview">Aperçu</button>
+    <button class="btn" id="go">Générer</button>
+  </div>
+  <div class="status" id="status"></div>
+</div>
+
+<div class="stage">
+  <div class="frame"><iframe id="view" title="aperçu"></iframe></div>
+  <h2>Produits récemment</h2>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+const api = async (path, opts) => {
+  const r = await fetch(path, opts);
+  const j = await r.json().catch(() => ({ error: `réponse illisible (${r.status})` }));
+  if (!r.ok) throw new Error(j.error || `erreur ${r.status}`);
+  return j;
+};
+const say = (msg, isErr) => { const s = $('#status'); s.textContent = msg; s.classList.toggle('err', !!isErr); };
+
+let manifest = null;
+const state = {};   // valeurs du formulaire, par clé de champ
+
+/* ---------- rendu du formulaire depuis le manifeste ---------- */
+
+function field(f, value, onChange) {
+  const wrap = document.createElement('div');
+  const lab = document.createElement('label');
+  lab.textContent = f.label + (f.required ? '' : ' (optionnel)');
+  wrap.append(lab);
+
+  let el;
+  if (f.type === 'textarea') { el = document.createElement('textarea'); }
+  else if (f.type === 'enum') {
+    el = document.createElement('select');
+    for (const o of f.options) el.append(new Option(o, o));
+  } else { el = document.createElement('input'); el.type = 'text'; }
+
+  el.value = value ?? '';
+  el.addEventListener('input', () => onChange(el.value));
+  el.addEventListener('change', () => onChange(el.value));
+  wrap.append(el);
+  if (f.hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = f.hint; wrap.append(h); }
+  return wrap;
+}
+
+function listField(f) {
+  const box = document.createElement('div');
+  const lab = document.createElement('label');
+  lab.textContent = f.label;
+  box.append(lab);
+  if (f.hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = f.hint; box.append(h); }
+
+  const host = document.createElement('div');
+  box.append(host);
+  state[f.key] = state[f.key] || [];
+
+  const draw = () => {
+    host.textContent = '';
+    state[f.key].forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'item';
+      const del = document.createElement('button');
+      del.className = 'x'; del.textContent = '×'; del.title = 'retirer';
+      del.onclick = () => { state[f.key].splice(i, 1); draw(); };
+      card.append(del);
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      for (const sub of f.item) {
+        const cell = field(sub, item[sub.key], v => { item[sub.key] = v; });
+        (sub.type === 'textarea' ? card : grid).append(cell);
+      }
+      card.append(grid);
+      host.append(card);
+    });
+    add.disabled = f.max ? state[f.key].length >= f.max : false;
+    add.textContent = add.disabled ? `maximum ${f.max}` : '+ ajouter';
+  };
+
+  const add = document.createElement('button');
+  add.className = 'add';
+  add.onclick = () => {
+    const blank = {};
+    for (const sub of f.item) blank[sub.key] = sub.type === 'enum' ? sub.options[0] : '';
+    state[f.key].push(blank); draw();
+  };
+  box.append(add);
+  draw();
+  return box;
+}
+
+function buildForm() {
+  const host = $('#form');
+  host.textContent = '';
+  for (const f of manifest.fields) {
+    if (f.type === 'list') host.append(listField(f));
+    else host.append(field(f, state[f.key], v => { state[f.key] = v; }));
+  }
+  const fmt = $('#formats');
+  fmt.textContent = '';
+  manifest.formats.forEach((f, i) => {
+    const l = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = f; cb.checked = i === 0; cb.className = 'fmt';
+    l.append(cb, document.createTextNode(f));
+    fmt.append(l);
+  });
+}
+
+const formats = () => [...document.querySelectorAll('.fmt')].filter(c => c.checked).map(c => c.value);
+
+/* ---------- aperçu et génération ---------- */
+
+$('#preview').onclick = async () => {
+  try {
+    say('aperçu…');
+    const { url } = await api('/api/previews', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template: manifest.id, data: state })
+    });
+    $('#view').src = url;
+    say('aperçu à jour.');
+  } catch (e) { say(e.message, true); }
+};
+
+$('#go').onclick = async () => {
+  const f = formats();
+  if (!f.length) return say('choisis au moins un format.', true);
+  $('#go').disabled = true;
+  try {
+    say('rendu lancé…');
+    const job = await api('/api/renders', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template: manifest.id, data: state, formats: f })
+    });
+    await follow(job.id);
+  } catch (e) { say(e.message, true); }
+  finally { $('#go').disabled = false; }
+};
+
+async function follow(id) {
+  for (let i = 0; i < 300; i++) {
+    const j = await api(`/api/renders/${id}`);
+    await gallery();
+    if (j.status === 'fini') return say(`terminé en ${(j.ms / 1000).toFixed(1)} s.`);
+    if (j.status === 'échoué') return say(j.error, true);
+    say('rendu en cours…');
+    await new Promise(r => setTimeout(r, 2000));
+  }
+  say('toujours en cours — la galerie se mettra à jour.', true);
+}
+
+/* ---------- galerie ---------- */
+
+async function gallery() {
+  const { renders } = await api('/api/renders');
+  const host = $('#gallery');
+  host.textContent = '';
+  if (!renders.length) {
+    const d = document.createElement('div');
+    d.className = 'empty'; d.textContent = 'rien encore.';
+    return host.append(d);
+  }
+  for (const r of renders) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    if (r.files?.mp4) {
+      const v = document.createElement('video');
+      v.src = `/files/${r.id}/${r.files.mp4}`;
+      v.muted = true; v.loop = true; v.playsInline = true; v.controls = true;
+      card.append(v);
+    } else if (r.files?.png) {
+      const img = document.createElement('img');
+      img.src = `/files/${r.id}/${r.files.png}`; img.alt = '';
+      card.append(img);
+    }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const t = document.createElement('div');
+    t.className = 't';
+    t.textContent = r.data?.kicker || r.template_label;
+    const s = document.createElement('div');
+    s.className = 's';
+    const pill = document.createElement('span');
+    pill.className = 'pill ' + (r.status === 'fini' ? 'ok' : r.status === 'échoué' ? 'ko' : 'run');
+    pill.textContent = r.status;
+    s.append(pill, document.createTextNode(' ' + new Date(r.created_at).toLocaleString('fr-FR')));
+    meta.append(t, s);
+    if (r.status === 'échoué' && r.error) {
+      const e = document.createElement('div');
+      e.className = 's'; e.style.color = 'var(--terra-ink)'; e.textContent = r.error;
+      meta.append(e);
+    }
+    const links = document.createElement('div');
+    links.className = 's';
+    for (const [kind, name] of Object.entries(r.files || {})) {
+      const a = document.createElement('a');
+      a.href = `/files/${r.id}/${name}`; a.download = `${r.id}.${kind}`; a.textContent = kind;
+      links.append(a);
+    }
+    meta.append(links);
+    card.append(meta);
+    host.append(card);
+  }
+}
+
+/* ---------- démarrage ---------- */
+
+const { templates } = await api('/api/templates');
+const sel = $('#tpl');
+for (const t of templates) sel.append(new Option(t.label, t.id));
+sel.onchange = async () => {
+  manifest = await api(`/api/templates/${sel.value}`);
+  $('#tpl-desc').textContent = manifest.description;
+  for (const k of Object.keys(state)) delete state[k];
+  // Pré-remplissage par l'exemple du gabarit : on montre la forme attendue plutôt
+  // que de la décrire. Copie profonde — la liste d'outils est éditée en place.
+  if (manifest.example) Object.assign(state, structuredClone(manifest.example));
+  buildForm();
+};
+await sel.onchange();
+await gallery();
+setInterval(gallery, 15000);
+</script>
+</body></html>
