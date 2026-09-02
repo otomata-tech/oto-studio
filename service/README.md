@@ -31,3 +31,25 @@ réseau privé.
 **Le contrat est servi, pas écrit à la main** : `/openapi.json` est dérivé du registre de
 gabarits, valeurs d'énumération comprises. Un gabarit ajouté s'y décrit tout seul — il n'y a
 pas de documentation à tenir à jour en parallèle.
+
+### Les gabarits
+
+Un gabarit = une entrée dans `service/templates.mjs` (manifeste de champs + construction
+de l'HTML) et un fichier de dessin. **Rien n'est découvert dynamiquement** : un gabarit
+qu'on ne sait pas décrire en champs n'entre pas dans le studio. En contrepartie, l'ajouter
+suffit — il apparaît seul dans le formulaire, dans `/openapi.json`, et donc chez les agents,
+sans une ligne de front ni de documentation à écrire à côté.
+
+| gabarit | format | ce qu'il porte |
+|---|---|---|
+| `carte-cas-usage` | 1080×1080 | une demande en langage courant, les outils qu'oto enchaîne, le résultat |
+| `affiche-recul` | 1200×1500 | le pattern validé : la scène occupe tout, puis **recule** pour laisser monter la chute |
+
+Trois pièges rencontrés en écrivant le second, à connaître avant d'en écrire un troisième :
+
+- **L'image fixe n'est pas la dernière image.** Une animation qui finit par un fondu ne
+  rend que le fond si on capture la fin. Le gabarit désigne son instant : `window.__STILL`.
+- **`let top` au niveau global casse tout le script** — collision avec `window.top`, et la
+  page sort vide sans erreur au rendu. Vaut pour `name`, `length`, `status`, `self`.
+- **La durée dépend du texte** quand il est frappé. Elle se borne en accélérant la frappe,
+  jamais en coupant du texte (12 s pour trois cartes, 16,5 s pour quatre cartes pleines).
