@@ -19,10 +19,23 @@ const ICONS = read('assets/icons.json');
 const ICON_KEYS = Object.keys(JSON.parse(ICONS));
 const TINTS = ['terra', 'saffron', 'olive', 'cobalt'];
 
+// Du JSON posé DANS un <script> n'est pas du JSON : le parseur HTML ferme la balise
+// au premier `</script>` rencontré, même à l'intérieur d'une chaîne. Une valeur de
+// formulaire contenant `</script>` reprendrait donc la main sur la page — qui est
+// rendue depuis `file://`, avec ce que ça implique. Neutraliser `<` suffit et couvre
+// aussi `<!--`. À faire à CHAQUE injection, pas seulement sur les champs suspects.
+const inScript = value =>
+  (typeof value === 'string' ? value : JSON.stringify(value)).replace(/</g, '\\u003c');
+
+// Même piège que `inScript`, autre contexte : une valeur de formulaire posée dans le
+// <title> peut le refermer et ouvrir un <script>. Le titre vient toujours des données,
+// il s'échappe donc toujours.
+const inText = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 function page(title, body) {
   return `<!doctype html>\n<html lang="fr"><head><meta charset="utf-8">` +
     `<meta name="viewport" content="width=device-width,initial-scale=1">` +
-    `<title>${title}</title></head><body>\n${body}\n</body></html>`;
+    `<title>${inText(title)}</title></head><body>\n${body}\n</body></html>`;
 }
 
 /* ---------- carte « cas d'usage » ---------- */
@@ -60,7 +73,7 @@ const carte = {
   example: JSON.parse(read('cards/usecases.json'))[0],
   build(data) {
     const tpl = read('cards/template-body.html');
-    const inject = `<script>window.__ICONS=${ICONS};window.__UC=${JSON.stringify(data)};</script>`;
+    const inject = `<script>window.__ICONS=${inScript(ICONS)};window.__UC=${inScript(data)};</script>`;
     const body = tpl
       .replace('<!--__DATA__-->', inject)
       .replace('/* __FONTS__ */', read('assets/fonts.css'))
