@@ -53,7 +53,9 @@ const carte = {
     { key: 'msg', label: 'La demande', type: 'textarea', required: true,
       hint: 'la phrase telle qu\'on la dirait à un agent — pas un titre marketing' },
     {
-      key: 'tools', label: 'Outils enchaînés', type: 'list', min: 1, max: 4,
+      // `required` ET `min` : sans `required`, une liste absente échappe au contrôle
+      // (la validation saute les champs vides non requis) et `min` ne serait jamais lu.
+      key: 'tools', label: 'Outils enchaînés', type: 'list', required: true, min: 1, max: 4,
       hint: 'l\'ordre est celui de l\'animation',
       item: [
         { key: 'icon', label: 'Icône', type: 'enum', options: ICON_KEYS, required: true },

@@ -7,6 +7,7 @@ import { dirname, join, extname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
 import * as templates from './templates.mjs';
+import { openapi } from './openapi.mjs';
 import { render } from './render.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
@@ -53,6 +54,10 @@ const previews = new Map();   // aperçus éphémères : id -> { html, at }
 
 const routes = [
   ['GET', /^\/healthz$/, () => ({ ok: true })],
+
+  // Lu par `http_doc()` du connecteur http d'oto : c'est ce document, et lui seul,
+  // qui dit à un agent quoi appeler et avec quels champs.
+  ['GET', /^\/openapi\.json$/, () => openapi()],
 
   ['GET', /^\/api\/templates$/, () => ({ templates: templates.list() })],
 
