@@ -16,6 +16,10 @@ const WORK = join(ROOT, 'out', 'service');
 const PORT = Number(process.env.STUDIO_PORT || 8100);
 const HOST = process.env.STUDIO_HOST || '127.0.0.1';
 const KEEP = Number(process.env.STUDIO_KEEP || 60);   // travaux gardés dans la galerie
+// L'adresse par laquelle un HUMAIN atteint ce service. Elle n'a rien à voir avec celle
+// par laquelle un agent l'appelle (réseau privé) : un agent qui rend un lien doit rendre
+// celui qu'on peut ouvrir dans un navigateur, pas son propre chemin d'accès.
+const PUBLIC_URL = (process.env.STUDIO_PUBLIC_URL || 'https://studio.oto.zone').replace(/\/+$/, '');
 
 mkdirSync(WORK, { recursive: true });
 
@@ -47,6 +51,15 @@ function purge() {
   for (const { id } of all.slice(0, Math.max(0, all.length - KEEP)))
     rmSync(join(WORK, id), { recursive: true, force: true });
 }
+
+/** Un travail tel qu'on le rend au dehors : avec les liens qu'un humain peut ouvrir.
+ *  `page` existe dès la création — elle affiche l'attente, puis le visuel. */
+const withLinks = j => ({
+  ...j,
+  page: `${PUBLIC_URL}/r/${j.id}`,
+  files_url: Object.fromEntries(
+    Object.entries(j.files || {}).map(([k, name]) => [k, `${PUBLIC_URL}/files/${j.id}/${name}`]))
+});
 
 const previews = new Map();   // aperçus éphémères : id -> { html, at }
 
@@ -82,12 +95,16 @@ const routes = [
     res.end(p.html);
   }],
 
-  ['GET', /^\/api\/renders$/, () => ({ renders: listJobs() })],
+  ['GET', /^\/api\/renders$/, () => ({ renders: listJobs().map(withLinks) })],
 
   ['GET', /^\/api\/renders\/([\w-]+)$/, ([id]) => {
     if (!existsSync(jobPath(id))) throw Object.assign(new Error('rendu inconnu'), { status: 404 });
-    return readJob(id);
+    return withLinks(readJob(id));
   }],
+
+  // La page de suivi : une seule adresse à donner, dès le lancement. Elle montre
+  // l'attente puis le visuel — c'est ce qu'un agent rend à un humain.
+  ['GET', /^\/r\/([\w-]+)$/, (_a, _b, res) => serveWeb('r.html', res)],
 
   ['POST', /^\/api\/renders$/, async (_, body) => {
     const tpl = templates.get(body.template);
@@ -119,7 +136,7 @@ const routes = [
         finished_at: new Date().toISOString() });
     });
 
-    return { ...job, url: `/api/renders/${id}` };
+    return withLinks(job);
   }],
 
   ['GET', /^\/files\/([\w-]+)\/([\w.-]+)$/, ([id, name], _b, res) => {

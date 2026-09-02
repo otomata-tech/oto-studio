@@ -1,0 +1,112 @@
+<style>
+:root{--bg:#fefcf5;--surface:#fff;--hair:#e9dcb4;--ink:#2c2112;--soft:#4a3a23;--mute:#7a6c50;--faint:#aa9f7e;
+  --terra:#d63d0a;--terra-ink:#5a1804;--saffron:#f0b41e;--olive:#8aa620;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#efe7d3;color:var(--ink);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:40px 24px 60px;gap:20px}
+h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+h1 .d{color:var(--terra)}
+.card{background:var(--bg);border:1px solid var(--hair);border-radius:16px;padding:22px 24px;
+  width:min(760px,100%);box-shadow:0 18px 50px rgba(44,33,18,.12)}
+.row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+.pill.ok{background:#eef4d9;color:#4d5c0f}
+.pill.run{background:#fdf0cf;color:#7a5c05}
+.pill.ko{background:#fbe0d7;color:var(--terra-ink)}
+.meta{color:var(--mute);font-size:13px;margin-top:6px}
+.mono{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.view{margin-top:16px;border-radius:12px;overflow:hidden;background:#efe7d3}
+.view video,.view img{width:100%;display:block}
+.links{margin-top:14px;display:flex;gap:12px;flex-wrap:wrap}
+.links a{color:var(--terra-ink);font-weight:700;text-decoration:none;border:1px solid var(--hair);
+  background:var(--surface);border-radius:999px;padding:8px 16px;font-size:14px}
+.links a:hover{border-color:var(--terra)}
+.err{color:var(--terra-ink);font-weight:600;margin-top:10px;font-family:var(--mono);font-size:13px}
+.wait{color:var(--mute);font-size:14px;margin-top:12px}
+.bar{height:4px;background:var(--hair);border-radius:2px;overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;width:30%;background:var(--saffron);animation:slide 1.6s ease-in-out infinite}
+@keyframes slide{0%{margin-left:-30%}100%{margin-left:100%}}
+a.back{color:var(--mute);font-size:13px;text-decoration:none}
+a.back:hover{color:var(--terra)}
+</style>
+
+<h1>oto <span class="d">·</span> studio</h1>
+<div class="card" id="card"><div class="wait">chargement…</div></div>
+<a class="back" href="/">← tous les rendus</a>
+
+<script type="module">
+const id = location.pathname.split('/').filter(Boolean).pop();
+const card = document.getElementById('card');
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
+
+async function draw() {
+  let j;
+  try {
+    const r = await fetch(`/api/renders/${id}`);
+    j = await r.json();
+    if (!r.ok) throw new Error(j.error || `erreur ${r.status}`);
+  } catch (e) {
+    card.textContent = '';
+    card.append(el('div', 'err', e.message));
+    return true;   // inutile de réessayer
+  }
+
+  card.textContent = '';
+  const row = el('div', 'row');
+  row.append(el('strong', null, j.data?.kicker || j.template_label));
+  const pill = el('span', 'pill ' + (j.status === 'fini' ? 'ok' : j.status === 'échoué' ? 'ko' : 'run'), j.status);
+  row.append(pill);
+  card.append(row);
+
+  const meta = el('div', 'meta',
+    `${j.template_label} · demandé ${new Date(j.created_at).toLocaleString('fr-FR')}` +
+    (j.author ? ` · par ${j.author}` : '') +
+    (j.ms ? ` · rendu en ${(j.ms / 1000).toFixed(0)} s` : ''));
+  card.append(meta);
+  card.append(el('div', 'mono', id));
+
+  if (j.status === 'en_cours') {
+    card.append(el('div', 'wait', 'Rendu en cours — cette page se met à jour toute seule. ' +
+      'Une carte demande environ une minute, une affiche animée deux à trois.'));
+    const bar = el('div', 'bar'); bar.append(el('i')); card.append(bar);
+    return false;
+  }
+
+  if (j.status === 'échoué') {
+    card.append(el('div', 'err', j.error || 'échec sans message'));
+    return true;
+  }
+
+  const view = el('div', 'view');
+  if (j.files?.mp4) {
+    const v = document.createElement('video');
+    v.src = `/files/${id}/${j.files.mp4}`;
+    v.controls = true; v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+    view.append(v);
+  } else if (j.files?.png) {
+    const img = document.createElement('img');
+    img.src = `/files/${id}/${j.files.png}`; img.alt = '';
+    view.append(img);
+  }
+  card.append(view);
+
+  const links = el('div', 'links');
+  for (const [kind, name] of Object.entries(j.files || {})) {
+    const a = el('a', null, `télécharger le ${kind}`);
+    a.href = `/files/${id}/${name}`;
+    a.download = `${id}.${kind}`;
+    links.append(a);
+  }
+  card.append(links);
+  return true;
+}
+
+// Tant que le rendu tourne, on redemande. Pas de WebSocket : un rendu dure des
+// minutes, une requête toutes les 4 s suffit et ne casse rien si l'onglet dort.
+let done = await draw();
+while (!done) {
+  await new Promise(r => setTimeout(r, 4000));
+  done = await draw();
+}
+</script>

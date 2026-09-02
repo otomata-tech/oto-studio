@@ -34,11 +34,14 @@ export function openapi() {
       version: '1',
       description:
         'Produit des visuels dans la charte Otomata à partir de gabarits fermés.\n\n' +
-        'Marche à suivre : `POST /api/renders` avec un `template` et son `data` → la réponse ' +
-        'donne un `id` et un `status` **`en_cours`** ; le rendu se fait en tâche de fond ' +
-        '(compter ~45 s pour une vidéo). Relire `GET /api/renders/{id}` jusqu\'à `fini` ' +
-        '(ou `échoué`, qui porte alors son `error`), puis servir les fichiers listés dans ' +
-        '`files` via `/files/{id}/{nom}`.\n\n' +
+        'Marche à suivre : `POST /api/renders` avec un `template` et son `data`. La réponse ' +
+        'porte **`page`** — une URL à donner telle quelle à la personne : elle affiche ' +
+        'l\'attente, puis le visuel dès qu\'il est prêt. **C\'est ce qu\'il faut rendre**, ' +
+        'plutôt que de faire patienter quelqu\'un pendant le rendu.\n\n' +
+        'Le rendu se fait en tâche de fond : le travail sort en `status` **`en_cours`** ' +
+        '(compter ~1 min pour une carte, 2 à 3 min pour une affiche animée). Pour suivre soi-même, ' +
+        'relire `GET /api/renders/{id}` jusqu\'à `fini` (ou `échoué`, qui porte alors son ' +
+        '`error`) ; les fichiers sont alors dans `files_url`, en URL absolues.\n\n' +
         'Un champ inconnu, un champ requis manquant ou un format que le gabarit ne sert pas ' +
         'sont REFUSÉS avec un message explicite — il n\'y a pas de valeur de repli.\n\n' +
         '## Gabarits disponibles\n\n' + detail
