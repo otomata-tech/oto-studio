@@ -140,14 +140,19 @@ async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1
     rmSync(fdir, { recursive: true, force: true });
     mkdirSync(fdir, { recursive: true });
 
+    // Images intermédiaires en JPEG, pas en PNG : elles ne servent qu'à nourrir
+    // l'encodeur, qui recompresse en H.264 derrière. Compresser sans perte 300 images
+    // de 1,8 Mpx pour les jeter ensuite coûte l'essentiel du temps de rendu.
+    // Le PNG final, lui, reste sans perte — c'est un livrable, pas un intermédiaire.
     for (let f = 0; f < frames; f++) {
       await ss('Runtime.evaluate', { expression: `window.__seek(${Math.round(f / fps * 1000)})` });
-      const { data } = await ss('Page.captureScreenshot', { format: 'png', clip, captureBeyondViewport: true });
-      writeFileSync(`${fdir}/frame_${String(f).padStart(4, '0')}.png`, Buffer.from(data, 'base64'));
+      const { data } = await ss('Page.captureScreenshot',
+        { format: 'jpeg', quality: 94, clip, captureBeyondViewport: true });
+      writeFileSync(`${fdir}/frame_${String(f).padStart(4, '0')}.jpg`, Buffer.from(data, 'base64'));
     }
 
     const mp4 = `${dir}/visuel.mp4`;
-    ffmpeg(['-framerate', String(fps), '-i', `${fdir}/frame_%04d.png`, '-c:v', 'libx264',
+    ffmpeg(['-framerate', String(fps), '-i', `${fdir}/frame_%04d.jpg`, '-c:v', 'libx264',
       '-pix_fmt', 'yuv420p', '-crf', '18', '-movflags', '+faststart', mp4]);
     files.mp4 = 'visuel.mp4';
 
