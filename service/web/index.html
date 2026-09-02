@@ -50,11 +50,43 @@ textarea{resize:vertical;min-height:56px}
 .checks{display:flex;gap:14px;margin-top:6px}
 .checks label{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--soft)}
 .checks input{width:auto}
+.notice{border:1px solid var(--hair);background:#fffdf7;border-radius:12px;margin:16px 0 4px;overflow:hidden}
+.notice summary{cursor:pointer;padding:12px 14px;font-size:13px;font-weight:700;color:var(--soft);
+  list-style:none;display:flex;align-items:center;justify-content:space-between}
+.notice summary::-webkit-details-marker{display:none}
+.notice summary::after{content:"afficher";font-size:12px;font-weight:600;color:var(--faint)}
+.notice[open] summary::after{content:"masquer"}
+.notice summary:hover{color:var(--terra)}
+.notice .body{padding:0 16px 14px;font-size:13.5px;line-height:1.55;color:var(--soft)}
+.notice ol{margin:0 0 10px;padding-left:18px}
+.notice li{margin-bottom:5px}
+.notice li b{color:var(--ink)}
+.notice p{margin:8px 0 0;color:var(--mute);font-size:13px}
+.notice p b{color:var(--soft)}
 </style></head>
 <body>
 <div class="panel">
   <h1>oto <span class="d">·</span> studio</h1>
-  <div class="sub">choisis un gabarit, remplis, regarde, exporte.</div>
+  <div class="sub">choisissez un gabarit, remplissez, regardez, exportez.</div>
+
+  <details class="notice" id="notice">
+    <summary>Comment ça marche</summary>
+    <div class="body">
+      <ol>
+        <li><b>Le gabarit décide de la forme</b>, vous écrivez le contenu. Il n'y a pas
+          moyen de sortir de la charte, c'est voulu.</li>
+        <li><b>Remplissez.</b> Le formulaire s'ouvre sur un exemple : il est là pour montrer
+          le ton et la longueur attendus — remplacez-le.</li>
+        <li><b>Aperçu</b> pour vérifier la composition. C'est immédiat, ça ne lance aucun rendu.</li>
+        <li><b>Générez.</b> Comptez une minute pour une image fixe, deux à trois pour une
+          animation. Vous pouvez fermer l'onglet : le visuel apparaît dans « Produits
+          récemment » quand il est prêt.</li>
+      </ol>
+      <p><b>Pour LinkedIn, préférez le MP4</b> — le GIF y est souvent affiché figé.</p>
+      <p>La galerie est <b>commune</b> et ne garde que les 60 derniers rendus :
+        téléchargez ce que vous publiez.</p>
+    </div>
+  </details>
 
   <label>Gabarit</label>
   <select id="tpl"></select>
@@ -248,7 +280,9 @@ async function gallery() {
     meta.className = 'meta';
     const t = document.createElement('div');
     t.className = 't';
-    t.textContent = r.data?.kicker || r.template_label;
+    // Le kicker admet `<b>` : sans retirer les balises, la vignette affiche
+    // « <b>11 sessions ouvertes</b> » en clair. On veut le texte, pas le balisage.
+    t.textContent = (r.data?.kicker || '').replace(/<[^>]*>/g, '').trim() || r.template_label;
     const s = document.createElement('div');
     s.className = 's';
     const pill = document.createElement('span');
@@ -275,6 +309,15 @@ async function gallery() {
 }
 
 /* ---------- démarrage ---------- */
+
+// La notice s'ouvre la première fois, puis se souvient du choix. `localStorage` peut
+// jeter (navigation privée, site data bloqué) : on retombe sur « ouverte ».
+const notice = $('#notice');
+try { notice.open = localStorage.getItem('studio.notice') !== 'closed'; }
+catch { notice.open = true; }
+notice.addEventListener('toggle', () => {
+  try { localStorage.setItem('studio.notice', notice.open ? 'open' : 'closed'); } catch { /* tant pis */ }
+});
 
 const { templates } = await api('/api/templates');
 const sel = $('#tpl');
