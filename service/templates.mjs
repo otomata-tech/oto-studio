@@ -72,7 +72,14 @@ const carte = {
   ],
   // Le formulaire s'ouvre pré-rempli : un champ vide ne dit pas ce qu'on attend
   // (ton de la demande, granularité d'un résultat). Premier cas d'usage publié.
-  example: JSON.parse(read('cards/usecases.json'))[0],
+  // ⚠️ FILTRÉ sur les champs déclarés : le fichier source porte aussi un `slug`, que
+  // le gabarit n'expose pas. Servir l'exemple brut donnait un exemple que la
+  // validation refuse — un service qui se contredit lui-même.
+  get example() {
+    const clefs = new Set(['num', 'kicker', 'msg', 'tools', 'final']);
+    const src = JSON.parse(read('cards/usecases.json'))[0];
+    return Object.fromEntries(Object.entries(src).filter(([k]) => clefs.has(k)));
+  },
   build(data) {
     const tpl = read('cards/template-body.html');
     const inject = `<script>window.__ICONS=${inScript(ICONS)};window.__UC=${inScript(data)};</script>`;
@@ -149,28 +156,49 @@ export function get(id) {
   return t;
 }
 
-/** Valide les données contre le manifeste. Lève au premier champ fautif. */
+/** Valide les données contre le manifeste.
+ *
+ *  Deux règles que le contrat promet et qu'il faut donc tenir :
+ *  - un champ INCONNU est refusé. Sans ça, une faute de frappe sur un nom de champ
+ *    produit un visuel silencieusement amputé — l'échec le plus coûteux, parce qu'il
+ *    ressemble à un succès. (Trouvé en faisant appeler l'API par un agent, 02/09.)
+ *  - TOUS les refus sont rendus d'un coup. Un agent qui cumule trois fautes doit les
+ *    voir ensemble, pas faire trois allers-retours.
+ */
 export function validate(template, data) {
+  const refus = [];
+
   const check = (fields, values, path) => {
+    const où = k => (path ? `${path}.${k}` : k);
+    if (values === null || typeof values !== 'object' || Array.isArray(values)) {
+      refus.push(`${path || 'data'} doit être un objet`);
+      return;
+    }
+
+    const connus = new Set(fields.map(f => f.key));
+    for (const k of Object.keys(values))
+      if (!connus.has(k))
+        refus.push(`champ inconnu : ${où(k)} (attendus : ${[...connus].join(', ')})`);
+
     for (const f of fields) {
-      const v = values?.[f.key];
-      const where = path ? `${path}.${f.key}` : f.key;
+      const v = values[f.key];
       if (v === undefined || v === null || v === '') {
-        if (f.required) throw Object.assign(new Error(`champ manquant : ${where}`), { status: 400 });
+        if (f.required) refus.push(`champ manquant : ${où(f.key)}`);
         continue;
       }
       if (f.type === 'enum' && !f.options.includes(v))
-        throw Object.assign(new Error(`valeur refusée pour ${where} : ${v}`), { status: 400 });
+        refus.push(`valeur refusée pour ${où(f.key)} : ${v} (attendues : ${f.options.join(', ')})`);
       if (f.type === 'list') {
-        if (!Array.isArray(v)) throw Object.assign(new Error(`${where} doit être une liste`), { status: 400 });
-        if (f.min && v.length < f.min)
-          throw Object.assign(new Error(`${where} : au moins ${f.min} entrée(s)`), { status: 400 });
-        if (f.max && v.length > f.max)
-          throw Object.assign(new Error(`${where} : au plus ${f.max} entrées`), { status: 400 });
-        v.forEach((item, i) => check(f.item, item, `${where}[${i}]`));
+        if (!Array.isArray(v)) { refus.push(`${où(f.key)} doit être une liste`); continue; }
+        if (f.min && v.length < f.min) refus.push(`${où(f.key)} : au moins ${f.min} entrée(s)`);
+        if (f.max && v.length > f.max) refus.push(`${où(f.key)} : au plus ${f.max} entrées`);
+        v.forEach((item, i) => check(f.item, item, `${où(f.key)}[${i}]`));
       }
     }
   };
+
   check(template.fields, data, '');
+  if (refus.length)
+    throw Object.assign(new Error(refus.join(' · ')), { status: 400, refus });
   return data;
 }

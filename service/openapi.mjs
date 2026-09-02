@@ -43,7 +43,15 @@ export function openapi() {
         'relire `GET /api/renders/{id}` jusqu\'à `fini` (ou `échoué`, qui porte alors son ' +
         '`error`) ; les fichiers sont alors dans `files_url`, en URL absolues.\n\n' +
         'Un champ inconnu, un champ requis manquant ou un format que le gabarit ne sert pas ' +
-        'sont REFUSÉS avec un message explicite — il n\'y a pas de valeur de repli.\n\n' +
+        'sont REFUSÉS — il n\'y a pas de valeur de repli. **Tous les refus arrivent d\'un coup**, ' +
+        'séparés par ` · ` : inutile de corriger une faute à la fois.\n\n' +
+        '**Qui peut ouvrir `page` et `files_url`** : ces adresses sont derrière Cloudflare Access, ' +
+        'ouvertes aux comptes `@otomata.tech`. Elles se partagent en interne (Slack, mail entre ' +
+        'nous) ; envoyées à quelqu\'un d\'extérieur, elles tombent sur un écran de connexion. Pour ' +
+        'l\'extérieur, télécharger le fichier et le joindre.\n\n' +
+        '**Combien de temps** : les rendus sont purgés au-delà des 60 plus récents. Ce qui doit ' +
+        'durer se télécharge. `DELETE /api/renders/{id}` retire un essai raté de la galerie, ' +
+        'qui est commune.\n\n' +
         '## Gabarits disponibles\n\n' + detail
     },
     paths: {
@@ -85,6 +93,11 @@ export function openapi() {
         }
       },
       '/api/renders/{id}': {
+        delete: {
+          summary: 'Retirer un rendu de la galerie (commune) — irréversible',
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: { 200: { description: 'retiré' }, 404: { description: 'inconnu' } }
+        },
         get: {
           summary: 'L\'état d\'un rendu : en_cours | fini | échoué',
           parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],

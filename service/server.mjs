@@ -108,12 +108,16 @@ const routes = [
 
   ['POST', /^\/api\/renders$/, async (_, body) => {
     const tpl = templates.get(body.template);
-    templates.validate(tpl, body.data);
 
+    // Les formats sont contrôlés AVEC les champs, pas après : le contrat promet que
+    // tous les refus arrivent d'un coup, et une vérification en aval le démentait
+    // (les fautes de champs masquaient le format non servi).
     const formats = body.formats?.length ? body.formats : ['mp4'];
-    const refuses = formats.filter(f => !tpl.formats.includes(f));
-    if (refuses.length)
-      throw Object.assign(new Error(`format non servi par ce gabarit : ${refuses.join(', ')}`), { status: 400 });
+    const refus = formats.filter(f => !tpl.formats.includes(f))
+      .map(f => `format non servi par ce gabarit : ${f} (servis : ${tpl.formats.join(', ')})`);
+    try { templates.validate(tpl, body.data); }
+    catch (e) { refus.push(...(e.refus || [e.message])); }
+    if (refus.length) throw Object.assign(new Error(refus.join(' · ')), { status: 400, refus });
 
     const id = `${new Date().toISOString().slice(0, 10)}-${tpl.id}-${randomBytes(3).toString('hex')}`;
     const job = {
@@ -137,6 +141,14 @@ const routes = [
     });
 
     return withLinks(job);
+  }],
+
+  // Retirer un rendu : la galerie est partagée, un essai raté ne doit pas y rester
+  // faute de moyen de le nettoyer. Signalé en faisant appeler l'API par un agent.
+  ['DELETE', /^\/api\/renders\/([\w-]+)$/, ([id]) => {
+    if (!existsSync(jobPath(id))) throw Object.assign(new Error('rendu inconnu'), { status: 404 });
+    rmSync(join(WORK, id), { recursive: true, force: true });
+    return { ok: true, id, deleted: true };
   }],
 
   ['GET', /^\/files\/([\w-]+)\/([\w.-]+)$/, ([id, name], _b, res) => {
