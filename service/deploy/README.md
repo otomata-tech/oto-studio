@@ -39,6 +39,31 @@ pas posée, le nom `studio.oto.zone` ne doit pas résoudre : créer le DNS d'abo
 publier un pilote de rendu ouvert. C'est la règle déjà écrite pour `mucho.oto.zone`, pour
 exactement la même raison.
 
+### La politique Access, concrètement
+
+Dans Zero Trust → Access → Applications, une application **self-hosted** :
+
+| champ | valeur |
+|---|---|
+| domaine | `studio.oto.zone` (chemin vide : toute l'app, IHM **et** API) |
+| politique | *Allow* sur `Emails` → les comptes d'Otomata qui doivent produire des visuels |
+| durée de session | 24 h suffit (l'IHM ne garde aucun état côté navigateur) |
+
+Le jour où le connecteur `http` d'oto appellera cette API, **ajouter une seconde politique**
+de type `Service Auth` (non-identity) avec un **jeton de service** dédié, et poser ses deux
+en-têtes (`CF-Access-Client-Id`, `CF-Access-Client-Secret`) dans la configuration du
+connecteur. C'est le mécanisme déjà en service pour le SSH du CI
+(`/data/infra/docs/cloudflare-tunnel-ssh.md` § CI via service token) — ne pas ouvrir l'API
+en anonyme pour faire plus vite.
+
+## État
+
+**Posé le 2026-09-02 sur otomata-0** : checkout `/opt/oto-studio`, unité active et activée
+au démarrage, port **8100** inscrit dans `/opt/ports.conf`. Premier rendu réel sur la box
+(carte en PNG + MP4) : **43 s**, cgroup à **406 Mo**, `memory.events` **tout à zéro** — ni
+plafond touché, ni swap, ni kill. Restent à faire : la politique Access, puis le vhost,
+puis le DNS.
+
 ## Ce que le service coûte à la box
 
 | | |
