@@ -86,7 +86,58 @@ const carte = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte]]);
+/* ---------- affiche animée « la scène recule » ---------- */
+
+const affiche = {
+  id: 'affiche-recul',
+  label: 'Affiche animée — la scène recule',
+  description: 'Format LinkedIn 4:5. La scène occupe toute la hauteur pendant l\'animation, ' +
+    'puis recule pour laisser monter la phrase de chute. Pas de zone morte, contenus plus gros.',
+  size: { width: 1200, height: 1500 },
+  fps: 25,
+  formats: ['mp4', 'gif', 'png'],
+  fields: [
+    { key: 'mention', label: 'Mention', type: 'text', required: false,
+      hint: 'en haut à droite, ex. « Claude Code · 7 août 2026 »' },
+    { key: 'kicker', label: 'Ligne de contexte', type: 'text', required: true,
+      hint: 'une ligne, sous l\'en-tête ; <b>…</b> autorisé pour le chiffre' },
+    {
+      key: 'cards', label: 'Cartes de la scène', type: 'list', required: true, min: 2, max: 4,
+      hint: 'elles apparaissent dans l\'ordre, la première est mise en avant',
+      item: [
+        { key: 'title', label: 'Titre', type: 'text', required: true, hint: 'court, en capitales sur la carte' },
+        { key: 'tag', label: 'Étiquette', type: 'text', required: false, hint: 'à droite du titre, ex. « session 2 »' },
+        { key: 'body', label: 'Contenu', type: 'textarea', required: true,
+          hint: 'une ligne par ligne affichée (8 maximum) — frappées l\'une après l\'autre' }
+      ]
+    },
+    { key: 'phrase', label: 'La chute', type: 'text', required: true,
+      hint: 'la première ligne de la phrase clé' },
+    { key: 'kick', label: 'La chute, second temps', type: 'text', required: false,
+      hint: 'la ligne qui tombe après — c\'est elle qu\'on retient' }
+  ],
+  example: {
+    mention: 'Claude Code · 2 septembre 2026',
+    kicker: '<b>11 sessions ouvertes</b> — trois avancent en parallèle.',
+    cards: [
+      { title: 'refonte', tag: 'chef', body: '> où en est la prospection ?\nsession 2 → 42 contacts\nsession 3 → audit terminé' },
+      { title: 'prospection', tag: 'session 2', body: 'fr_search → 42 ETI\nhunter → 38 emails\nfolk → +42' },
+      { title: 'mission', tag: 'session 3', body: 'relecture du contrat\nconflit détecté art. 7\nremonté au chef' }
+    ],
+    phrase: 'Ce n\'est plus une session.',
+    kick: 'C\'est une équipe.'
+  },
+  build(data) {
+    const tpl = read('posts/template-affiche.html');
+    const inject = `<script>window.__AFF=${inScript(data)};</script>`;
+    const body = tpl
+      .replace('<!--__DATA__-->', inject)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`oto — ${data.kicker}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(

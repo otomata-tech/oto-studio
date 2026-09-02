@@ -117,10 +117,13 @@ async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1
   const clip = { x: 0, y: 0, width, height, scale: 1 };
 
   if (formats.includes('png')) {
-    // Dernière image de l'animation, pas un temps arbitrairement grand : les gabarits
-    // calculent leurs styles à partir de `t` et rien ne garantit leur tenue hors bornes.
+    // L'instant de l'image fixe est celui que le gabarit désigne (`__STILL`) — la
+    // dernière image ne convient pas quand l'animation finit par un fondu : on ne
+    // capturerait que le fond. À défaut, la dernière image, jamais un temps
+    // arbitrairement grand (les styles sont calculés depuis `t`, hors bornes ne
+    // garantit rien).
     if (await evalJs('typeof window.__seek === "function"'))
-      await evalJs('window.__seek((window.__DURATION || 6800) - 1)');
+      await evalJs('window.__seek(window.__STILL ?? ((window.__DURATION || 6800) - 1))');
     const { data } = await ss('Page.captureScreenshot', { format: 'png', clip, captureBeyondViewport: true });
     writeFileSync(`${dir}/visuel.png`, Buffer.from(data, 'base64'));
     files.png = 'visuel.png';
