@@ -49,12 +49,12 @@ Dans Zero Trust → Access → Applications, une application **self-hosted** :
 | politique | *Allow* sur `Emails` → les comptes d'Otomata qui doivent produire des visuels |
 | durée de session | 24 h suffit (l'IHM ne garde aucun état côté navigateur) |
 
-Le jour où le connecteur `http` d'oto appellera cette API, **ajouter une seconde politique**
-de type `Service Auth` (non-identity) avec un **jeton de service** dédié, et poser ses deux
-en-têtes (`CF-Access-Client-Id`, `CF-Access-Client-Secret`) dans la configuration du
-connecteur. C'est le mécanisme déjà en service pour le SSH du CI
-(`/data/infra/docs/cloudflare-tunnel-ssh.md` § CI via service token) — ne pas ouvrir l'API
-en anonyme pour faire plus vite.
+⚠️ **Access ne sert PAS aux agents, et ne le peut pas** (tranché le 02/09/2026). Il exige
+deux en-têtes ; le connecteur `http` d'oto n'en pose qu'un (`providers/http.py` : le mode
+`header` a un seul couple `header_name`/`token`). Un jeton de service ne changerait rien à
+ça. Les agents passent donc par le **réseau privé** (`http://172.16.16.3:8100`), pas par ce
+vhost — cf. `service/README.md`. Ne pas ouvrir l'API en anonyme pour « faire marcher »
+un chemin qui n'a pas lieu d'être.
 
 ## État
 
@@ -78,7 +78,7 @@ et l'API le disent (`status` = `en_cours`), personne n'attend devant une requêt
 | | |
 |---|---|
 | au repos | un Node (~40 Mo). Chrome est **rendu après 10 min** sans rendu (`STUDIO_CHROME_IDLE_MS`) |
-| en rendu | pointe mesurée **~900 Mo**, **un seul rendu à la fois** (file interne, pas une convention) |
+| en rendu | **336 à 406 Mo** de cgroup mesurés SUR LA BOX, **un seul rendu à la fois** (file interne, pas une convention). ⚠️ Le « ~900 Mo » annoncé au départ était le RSS d'un process sur un poste à 28 cœurs — Chrome y ouvre bien plus de renderers ; il ne valait pas pour cette machine |
 | plafond | `MemoryMax=1400M` — au-delà le rendu est tué, la box ne bouge pas |
 | disque | les travaux sont purgés au-delà des **60** plus récents (`STUDIO_KEEP`) |
 
