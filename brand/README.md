@@ -26,9 +26,27 @@ git.
 |---|---|---|
 | Sites | otomata.tech | oto.ninja, oto.zone, dashboard |
 | Couleur d'identité | **violet `#863bff`** | **saffran `#f0b41e`** |
-| Mark | glyphe violet (flèche/zigzag) ; ancien = disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone) |
+| Mark | **disque saffran plat cerné d'encre** (`otomata-mark-disque.svg`, + variante `-o` pour avatar/favicon) — décidé le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone). **Inchangé** : l'open O reste le mark d'oto |
 
-⚠️ Ne pas confondre : la **charte produit `@otomata/ui`** (fond crème + saffran, ci-dessous) est le socle commun ; le **violet** est propre à l'identité corporate otomata.tech.
+⚠️ Ne pas confondre : la **charte produit `@otomata/ui`** (fond crème + saffran, ci-dessous) est le socle commun.
+
+**2026-09-03 — le mark Otomata est le disque saffran, l'open O reste à oto.** Les deux marques
+partagent donc le saffran et se distinguent par la forme : **disque plein** pour la société,
+**anneau ouvert** pour le produit. Le disque vient du kit d'identité du studio
+(`oto-studio/posts/template-identite.html`, page `/kit`), d'où il est ici extrait comme mark.
+
+**Le violet `#863bff` n'est plus le mark de la société — et il n'était déjà affiché nulle part.**
+Vérifié le 2026-09-03 : `otomata-logo-violet.svg` n'est référencé par aucun site ni front (seulement
+ce README et celui de `slider/`), et le `favicon.svg` violet présent dans
+`oto-websites/sites/otomata.tech/public/` **comme** dans `sites/mento.cc/public/` n'est **déclaré par
+aucune des deux pages** : otomata.tech déclare `/favicon-otomata.svg` — le **disque jaune dégradé**,
+identique à `otomata-mark-orange.svg` — et mento.cc un `.ico` plus un PNG. Le rond jaune est donc
+déjà ce qu'on voit dans l'onglet, et le disque cerné en est la version riso : la décision du
+2026-09-03 **met au net un usage existant**, elle ne change pas de logo.
+
+À faire, dans `oto-websites` et pas ici : remplacer `favicon-otomata.svg` par le disque cerné
+(`otomata-mark-disque-o.svg` — un dégradé radial se perd à 16 px, un cerne non).
+**Pas fait, décision en attente.**
 
 ## Arborescence
 
@@ -46,7 +64,9 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 - `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing) + `styles.css`, le point d'entrée qui les `@import`. Source : `oto-dashboard/design-system/tokens/` + `styles.css`. ⚠️ **Depuis le 2026-08-27 ce n'est plus une copie mais l'ORIGINAL** : `oto-dashboard/design-system/` a été archivé (voir plus bas), et les tokens *vivants* du dashboard sont désormais son `frontend/src/assets/console.css`.
 
 ### `logos/otomata/` — marque société
-- `otomata-logo-violet.svg` — logo actuel otomata.tech (violet `#863bff`)
+- `otomata-mark-disque.svg` — **mark Otomata** (disque saffran `#f0b41e` cerné d'encre `#2c2112`) — le mark actuel
+- `otomata-mark-disque-o.svg` — la même chose avec le **O en réserve**, pour avatar et favicon (anneau dessiné, aucune fonte requise)
+- `otomata-logo-violet.svg` — *ancien* glyphe violet `#863bff` ; encore servi comme favicon par otomata.tech et mento.cc (cf. avertissement plus haut)
 - `otomata-mark-orange.svg` — mark disque saffran/orange (favicon secondaire)
 - `otomata-deck-disc.svg` — disque dégradé jaune→orange (deck)
 - `otomata-og.jpg` — image Open Graph
