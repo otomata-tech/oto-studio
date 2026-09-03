@@ -56,6 +56,14 @@ chercher toute seule.
 ⚠️ `--ff-only` est délibéré : si quelqu'un a édité le checkout à la main, la mise à jour
 **s'arrête** au lieu d'écraser. Le journal (`journalctl -u oto-studio-update`) le dit.
 
+⚠️ **Retour arrière automatique.** Si `/healthz` reste muet 40 s après le redémarrage, le script
+**repose le commit précédent** et redémarre. Sans ça, un commit qui casse le démarrage laisse le
+studio par terre et le minuteur retente le même commit toutes les deux minutes, sans alerte
+(remarque d'infra le 2026-09-03, motif repris de `/data/infra/scripts/auth-mailer/deploy.sh`).
+Codes de sortie : `0` déployé ou rien à faire, `1` échec puis retour arrière réussi — le dépôt
+reste en avance et le passage suivant retentera, donc **c'est le dépôt qu'il faut corriger** —,
+`2` ni la nouvelle ni l'ancienne version ne répondent, intervention nécessaire.
+
 ⚠️ Conséquence à assumer : **tout push sur `main` part en ligne dans les deux minutes.** C'est
 le régime « main = preprod » du reste de la plateforme, appliqué à un outil interne.
 
