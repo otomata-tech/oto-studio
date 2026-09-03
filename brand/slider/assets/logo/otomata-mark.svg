@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Otomata">
+  <!-- Mark Otomata (société) — arrêté le 2026-09-03.
+       Les trois couches FONT PARTIE du mark, ce n'est pas un effet d'affiche :
+       l'ombre dure (sans flou, sans radius), le disque cerné d'encre, et l'anneau
+       saffran décalé qui lit comme une couche d'impression mal calée.
+       Ordre de dessin imposé : ombre, anneau, disque. -->
+  <circle cx="66" cy="66" r="52" fill="#2c2112" opacity=".85"/>
+  <circle cx="54" cy="55" r="50.4" fill="none" stroke="#f0b41e" stroke-width="3.2"/>
+  <circle cx="60" cy="60" r="50.4" fill="#f0b41e" stroke="#2c2112" stroke-width="3.2"/>
+</svg>

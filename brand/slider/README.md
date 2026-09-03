@@ -19,10 +19,10 @@ Vivant ici, la charte suit la palette sans re-synchronisation : les valeurs de `
 
 | | Otomata (société) | Oto (produit) |
 |---|---|---|
-| Couleur | violet `#863bff` | **saffran `#f0b41e`** |
-| Logo ici | `assets/logo/otomata-logo-violet.svg` | `assets/logo/oto-dashboard-mark.svg` (« open O ») |
+| Couleur | **saffran `#f0b41e`** | **saffran `#f0b41e`** |
+| Logo ici | `assets/logo/otomata-mark.svg` (disque cerné) | `assets/logo/oto-dashboard-mark.svg` (« open O ») |
 
-La palette du `tokens.json` est celle du **produit** (saffran) — c'est le socle commun. Le violet est réservé à l'identité corporate otomata.tech ; il n'est volontairement pas dans les tokens, pour éviter qu'il se retrouve dans un deck produit.
+La palette du `tokens.json` est le socle commun (saffran). Depuis le 2026-09-03 les **deux marques partagent le saffran** et se distinguent par la forme — disque plein pour la société, anneau ouvert pour le produit ; le violet corporate a été retiré partout.
 
 ## Particularités
 

@@ -25,7 +25,7 @@ git.
 | | **Otomata** (société) | **Oto** (produit / assistant) |
 |---|---|---|
 | Sites | otomata.tech | oto.ninja, oto.zone, dashboard |
-| Couleur d'identité | **violet `#863bff`** | **saffran `#f0b41e`** |
+| Couleur d'identité | **saffran `#f0b41e`** (le violet a été retiré le 2026-09-03) | **saffran `#f0b41e`** |
 | Mark | **`otomata-mark.svg`** — disque saffran cerné d'encre, **ombre dure** en bas-droite et **anneau saffran décalé** en haut-gauche. Arrêté le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone). **Inchangé** : l'open O reste le mark d'oto |
 
 ⚠️ Ne pas confondre : la **charte produit `@otomata/ui`** (fond crème + saffran, ci-dessous) est le socle commun.
@@ -45,18 +45,13 @@ reste perceptible. C'est donc lui le favicon. `otomata-mark-compact.svg` (le dis
 sert que là où le support **rogne en cercle** — un avatar LinkedIn, une pastille ronde : l'ombre et
 l'anneau y tomberaient hors du visible. Ce n'est pas un second logo, c'est la version rognable.
 
-**Le violet `#863bff` n'est plus le mark de la société — et il n'était déjà affiché nulle part.**
-Vérifié le 2026-09-03 : `otomata-logo-violet.svg` n'est référencé par aucun site ni front (seulement
-ce README et celui de `slider/`), et le `favicon.svg` violet présent dans
-`oto-websites/sites/otomata.tech/public/` **comme** dans `sites/mento.cc/public/` n'est **déclaré par
-aucune des deux pages** : otomata.tech déclare `/favicon-otomata.svg` — le **disque jaune dégradé**,
-identique à `otomata-mark-orange.svg` — et mento.cc un `.ico` plus un PNG. Le rond jaune est donc
-déjà ce qu'on voit dans l'onglet, et le disque cerné en est la version riso : la décision du
-2026-09-03 **met au net un usage existant**, elle ne change pas de logo.
+**Le violet `#863bff` a disparu de la plateforme.** Il n'était déjà affiché nulle part —
+`otomata-logo-violet.svg` n'était référencé par aucun site, et le `favicon.svg` violet qui traînait
+dans `otomata.tech/public/` **comme** dans `mento.cc/public/` n'était déclaré par aucune des deux
+pages. Les fichiers ont été supprimés le 2026-09-03, ici comme dans `oto-websites` et `slider/`.
 
-À faire, dans `oto-websites` et pas ici : remplacer `favicon-otomata.svg` par le disque cerné
-(`otomata-mark-disque-o.svg` — un dégradé radial se perd à 16 px, un cerne non).
-**Pas fait, décision en attente.**
+`otomata.tech` sert désormais **un seul fichier**, `public/logo-otomata.svg` (le mark complet),
+déclaré à la fois comme `rel="icon"` et comme `logo` du JSON-LD.
 
 ## Arborescence
 
@@ -67,28 +62,27 @@ déjà ce qu'on voit dans l'onglet, et le disque cerné en est la version riso :
 ⚠️ **Le `README.md` qui accompagne la charte sur le Drive est périmé** : il décrit l'ancienne palette (orange `#E67E22`, bleu `#3498DB`, vert `#27AE60`, anthracite `#2C3E50`), abandonnée depuis. C'est `charte-graphique.html` (mai 2026) qui fait foi, et il utilise bien saffran/crème/encre. Ne pas appliquer le README du Drive.
 
 ### `slider/` — charte de slides Otomata
-Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-tech/slider) : `tokens.json` (palette reprise de `theme/theme.css`) + logos. Le moteur ignore `chartes/*` sauf son placeholder `blank`, donc la charte vit ici et s'y monte par lien symbolique — voir `slider/README.md`. Avant, aucune charte Otomata n'existait : tout deck sortant sous notre nom était re-charté à la main.
+Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-tech/slider) : `tokens.json` (palette reprise de `theme/theme.css`) + logos (**le mark Otomata et l'open O d'oto** ; le glyphe violet en est parti le 2026-09-03). Le moteur ignore `chartes/*` sauf son placeholder `blank`, donc la charte vit ici et s'y monte par lien symbolique — voir `slider/README.md`. Avant, aucune charte Otomata n'existait : tout deck sortant sous notre nom était re-charté à la main.
 
 ### `theme/` — charte canonique
 - `THEME.md` / `theme.css` — **tokens de référence `@otomata/ui`** (palette + typo). Source : `oto-websites/packages/ui/`.
 - `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing) + `styles.css`, le point d'entrée qui les `@import`. Source : `oto-dashboard/design-system/tokens/` + `styles.css`. ⚠️ **Depuis le 2026-08-27 ce n'est plus une copie mais l'ORIGINAL** : `oto-dashboard/design-system/` a été archivé (voir plus bas), et les tokens *vivants* du dashboard sont désormais son `frontend/src/assets/console.css`.
 
 ### `logos/otomata/` — marque société
-- `otomata-mark.svg` — **LE mark Otomata** : ombre dure + anneau saffran décalé + disque `#f0b41e` cerné d'encre `#2c2112`
-- `otomata-mark-compact.svg` — le disque cerné seul, **pour ≤ 32 px** et les surfaces rognées en cercle
+**Quatre fichiers, pas un de plus** (nettoyé le 2026-09-03 : tout ce qui portait une identité
+abandonnée est parti, l'historique git le garde) :
+- `otomata-mark.svg` — **LE mark** : ombre dure + anneau saffran décalé + disque `#f0b41e` cerné d'encre `#2c2112`
+- `otomata-mark-compact.svg` — le disque cerné seul, pour les surfaces **rognées en cercle** (avatar, pastille)
 - `otomata-mark-mono-encre.svg` / `otomata-mark-mono-blanc.svg` — monochromes (fond clair / fond sombre) : l'ombre y disparaît, c'est le **vide** entre disque et anneau qui porte le décalage
-- `otomata-logo-violet.svg` — *ancien* glyphe violet `#863bff` ; encore servi comme favicon par otomata.tech et mento.cc (cf. avertissement plus haut)
-- `otomata-mark-orange.svg` — mark disque saffran/orange (favicon secondaire)
-- `otomata-deck-disc.svg` — disque dégradé jaune→orange (deck)
-- `otomata-og.jpg` — image Open Graph
-- `icon.svg` / `favicon.svg` — icône et favicon de l'identité documentaire (Drive)
+
+Supprimés : `otomata-logo-violet.svg`, `otomata-mark-orange.svg`, `otomata-deck-disc.svg`,
+`otomata-og.jpg`, `icon.svg`, `favicon.svg`. Aucun n'était référencé ailleurs que par ce README.
 
 ### `logos/oto/` — marque produit
 - `oto-mark-4colors.svg` — mark 4 couleurs (oto.ninja) : safran/terracotta/olive/cobalt
 - `oto-dashboard-mark.svg` — **« open O » saffran** (mark canonique, dashboard)
 - `oto-mark-512.png` — mark rasterisé 512px
 - `oto-zone-mark.svg` — disque olive (oto.zone)
-- `oto-cli-flower-legacy.svg` — ancienne fleur or (oto CLI) — *legacy*
 - `oto-icons-sprite.svg` — sprite d'icônes des sites oto
 
 ### `photos/` — portraits de l'équipe
@@ -101,13 +95,10 @@ Designs t-shirt (`tshirt-design`, `tshirt-otomata` en SVG + PNG) et leurs planch
 - `DESIGN-BRIEF.md` — **le *pourquoi* de la direction artistique** (« Manuscrit chaud », direction « 2a » : sidebar encre, cartes chaudes, rayons 8px/pill, Lucide, Familjen Grotesk + Spline Sans Mono). Ses §0-3 font autorité ; ses §4-8 inventorient le design system du dashboard de 2026 et sont de l'histoire.
 - `guidelines/` — cartes HTML du design-system (brand-logo, brand-iconography, color-*, type-*, spacing-*)
 - `brand-components/` — composants React de marque (`OtoMark`, `Medallion`, `Avatar`) + prompts
-- `marques-exploration/` — explorations d'identité (`marques-proposition/v2/v3/v4`)
-- `direction-exploration/` — explorations de direction artistique : `directions-artistiques` (les pistes), `direction-retenue` (« 2a »), `icones-comparaison`, `polices-comparaison`. Les aperçus correspondants sont dans `screenshots/`.
-- `screenshots/` — aperçus (polices, icônes, directions)
+- `direction-exploration/direction-retenue.html` — la direction appliquée (« 2a »). Les pistes écartées, les comparatifs d'icônes et de polices et leurs captures ont été supprimés le 2026-09-03 : la direction est arrêtée, et le `DESIGN-BRIEF` en porte le pourquoi.
 
-⚠️ Les maquettes de `direction-exploration/` portaient un utilisateur d'exemple nommé ; il a été
-remplacé par un placeholder au rapatriement — **ce dépôt est public, aucun nom de personne ne
-doit y entrer**.
+⚠️ **Ce dépôt est public : aucun nom de personne ne doit y entrer.** (Les maquettes d'exploration
+qui portaient un utilisateur d'exemple nommé ont été supprimées le 2026-09-03.)
 
 ## Palette `@otomata/ui` (résumé)
 
