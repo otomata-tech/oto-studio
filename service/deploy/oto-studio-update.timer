@@ -1,0 +1,12 @@
+[Unit]
+Description=Studio — vérifier origin/main toutes les 2 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+# Sans ça, tous les timers de la box tirent à la même seconde.
+RandomizedDelaySec=20s
+Unit=oto-studio-update.service
+
+[Install]
+WantedBy=timers.target

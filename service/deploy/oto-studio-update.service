@@ -1,0 +1,13 @@
+[Unit]
+Description=Studio — déploiement continu (pull de origin/main)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/oto-studio/service/deploy/update.sh
+# Le checkout appartient à root et le redémarrage du service l'exige.
+User=root
+# Un déploiement ne doit pas peser : il ne fait qu'un fetch et un restart.
+MemoryMax=256M
+Nice=10

@@ -32,6 +32,33 @@ ssh otomata-0 'sudo systemctl enable --now oto-studio && \
 # 6. le record DNS studio.oto.zone (proxied) — EN DERNIER
 ```
 
+## Déploiement continu : la box tire, personne ne pousse
+
+```bash
+# une fois, sur otomata-0
+ssh otomata-0 'cp /opt/oto-studio/service/deploy/oto-studio-update.{service,timer} /etc/systemd/system/ && \
+  systemctl daemon-reload && systemctl enable --now oto-studio-update.timer && \
+  systemctl list-timers oto-studio-update --no-pager'
+```
+
+Toutes les deux minutes, `update.sh` compare `HEAD` à `origin/main` ; s'ils diffèrent, il fait
+un `merge --ff-only`, redémarre le service et **attend `/healthz`** avant de se déclarer bon
+(sinon il crie dans le journal). Sans changement, il sort en une fraction de seconde.
+
+**Pourquoi tirer plutôt que pousser.** Le port 22 est fermé depuis le 2026-07-04 et l'accès
+passe par un tunnel Cloudflare qui exige une authentification navigateur. Un workflow GitHub
+devrait donc détenir un **service token Access** — un secret entrant, à faire tourner, qui ouvre
+un shell root sur la box. Un `git fetch` sortant ne demande rien à personne et n'ouvre rien.
+C'est aussi ce qui évite la panne vécue le 2026-09-03 : le jeton Access du poste avait expiré,
+plus de SSH, donc plus de déploiement possible — alors que la box, elle, pouvait très bien aller
+chercher toute seule.
+
+⚠️ `--ff-only` est délibéré : si quelqu'un a édité le checkout à la main, la mise à jour
+**s'arrête** au lieu d'écraser. Le journal (`journalctl -u oto-studio-update`) le dit.
+
+⚠️ Conséquence à assumer : **tout push sur `main` part en ligne dans les deux minutes.** C'est
+le régime « main = preprod » du reste de la plateforme, appliqué à un outil interne.
+
 ## L'ordre n'est pas négociable
 
 Le service **n'a aucune authentification**. Tant que la politique Cloudflare Access n'est
