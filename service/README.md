@@ -32,6 +32,32 @@ réseau privé.
 gabarits, valeurs d'énumération comprises. Un gabarit ajouté s'y décrit tout seul — il n'y a
 pas de documentation à tenir à jour en parallèle.
 
+### La page `/kit` — les visuels fixes de la marque
+
+L'IHM de la racine est un **générateur** : on remplit, on rend, et le rendu part dans une
+galerie purgée au-delà des 60 derniers travaux. Un logo de page LinkedIn n'a rien à y faire —
+il ne se remplit pas, il ne change pas, et il doit rester à la même adresse. D'où `/kit` :
+
+- `GET /kit` — la page : un visuel par emplacement LinkedIn, sa cote livrée, son PNG à télécharger.
+- `GET /api/kit` — le même en JSON (formats, cotes, URL, ce qui est déjà en cache).
+- `GET /kit/<format>.png` — le visuel plein format ; `-apercu.png` sa version réduite (900 px).
+
+Le kit rend **à la demande au premier accès** (quelques secondes par format, sérialisées par
+la file du moteur), puis sert depuis `out/kit/`. Les fichiers portent une **empreinte des
+sources** (dessin + table des formats + données) : la charte change → l'empreinte change → les
+visuels se refont seuls, sans purge à faire à la main. Les données sont l'`example` du gabarit
+`kit-identite` : une seule source, sinon la page du kit et le formulaire montreraient deux
+identités qui divergent en silence.
+
+⚠️ **`out/` est gitignoré** : sur la box, le cache est vide après un déploiement, et c'est le
+premier visiteur qui paie le rendu. C'est voulu — un binaire généré n'a pas à vivre dans le
+dépôt — mais ça veut dire qu'il ne faut pas s'étonner du délai au premier chargement après
+chaque `git pull`.
+
+Le favicon (`service/web/favicon.svg`) est le disque du kit réduit à ce qui survit à 16 px :
+la lettre en réserve y est un anneau dessiné, pas du texte — un favicon qui dépend d'une fonte
+ne s'affiche pas.
+
 ### Les gabarits
 
 Un gabarit = une entrée dans `service/templates.mjs` (manifeste de champs + construction

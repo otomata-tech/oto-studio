@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- le disque du kit, réduit à ce qui survit à 16 px : encre plate, cerne franc,
+       la lettre en réserve dessinée comme un anneau (aucune fonte à charger). -->
+  <circle cx="16" cy="16" r="14" fill="#f0b41e" stroke="#2c2112" stroke-width="3.5"/>
+  <circle cx="16" cy="16" r="6.2" fill="none" stroke="#fefcf5" stroke-width="5"/>
+</svg>

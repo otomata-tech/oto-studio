@@ -1,0 +1,92 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.svg">
+<title>oto — kit de marque</title>
+<style>
+:root{--bg:#fefcf5;--surface:#fff;--hair:#e9dcb4;--ink:#2c2112;--soft:#4a3a23;--mute:#7a6c50;--faint:#aa9f7e;
+  --terra:#d63d0a;--saffron:#f0b41e;--olive:#8aa620;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#efe7d3;color:var(--ink);min-height:100vh;padding:36px 24px 70px}
+.wrap{width:min(1080px,100%);margin:0 auto}
+h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+h1 .d{color:var(--terra)}
+.sub{color:var(--mute);font-size:14px;margin:6px 0 4px;line-height:1.5}
+.sub a{color:var(--soft);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-top:24px;align-items:start}
+.v{background:var(--bg);border:1px solid var(--hair);border-radius:14px;overflow:hidden;
+  box-shadow:0 14px 40px rgba(44,33,18,.10);display:flex;flex-direction:column}
+.shot{background:#e7dcc0;display:flex;align-items:center;justify-content:center;min-height:150px;padding:14px}
+.shot img{max-width:100%;display:block;opacity:0;transition:opacity .25s;border:1px solid rgba(44,33,18,.12)}
+.shot img.vu{opacity:1}
+.shot .att{font-family:var(--mono);font-size:12px;color:var(--soft);letter-spacing:.04em}
+.meta{padding:13px 15px 15px;display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--hair)}
+.meta .f{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.meta .c{font-size:13px;color:var(--soft)}
+.meta .d{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.dl{margin-top:9px;align-self:flex-start;background:var(--ink);color:var(--bg);text-decoration:none;
+  border-radius:999px;padding:7px 15px;font-size:13px;font-weight:700}
+.notes{margin-top:30px;background:var(--bg);border:1px solid var(--hair);border-radius:14px;padding:16px 18px;
+  font-size:13.5px;line-height:1.6;color:var(--soft)}
+.notes b{color:var(--ink)}
+.notes p+p{margin-top:9px}
+.notes code{font-family:var(--mono);font-size:12.5px;background:#f4ecd6;padding:1px 5px;border-radius:5px}
+.err{color:var(--terra);font-weight:700}
+</style></head>
+<body>
+<div class="wrap">
+  <h1>oto <span class="d">·</span> kit de marque</h1>
+  <p class="sub">Les visuels fixes de l'identité, un par emplacement LinkedIn. Rien à remplir :
+    on télécharge. Pour fabriquer un visuel, <a href="/">le générateur est là</a>.</p>
+  <p class="sub" id="ident"></p>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="notes">
+    <p><b>Le premier affichage rend les visuels</b> — quelques secondes par format, une seule fois :
+      ensuite ils sont servis depuis le cache, à la même adresse.</p>
+    <p><b>Zones que LinkedIn masque, déjà prises en compte :</b> la photo de profil et le logo de page
+      recouvrent le bas-gauche des couvertures, et le rognage mobile mange les bords — d'où le
+      contenu groupé au centre plutôt qu'aux angles.</p>
+    <p><b>La couverture de page est en 4200×700.</b> L'ancienne cote 1128×191, encore partout dans
+      les guides, a le même ratio 6:1 mais rend flou.</p>
+    <p>Les fichiers portent l'empreinte du dessin (<code id="v"></code>) : si la charte change,
+      ils se refont d'eux-mêmes au prochain passage.</p>
+  </div>
+</div>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+try {
+  const r = await fetch('/api/kit');
+  const kit = await r.json();
+  if (!r.ok) throw new Error(kit.error || `erreur ${r.status}`);
+
+  $('#v').textContent = kit.version;
+  $('#ident').textContent = `${kit.identite.nom} — ${kit.identite.phrase} — ${kit.identite.url}`;
+
+  const grid = $('#grid');
+  for (const v of kit.visuels) {
+    const el = document.createElement('article');
+    el.className = 'v';
+    el.innerHTML =
+      `<div class="shot"><span class="att">préparation…</span>` +
+      `<img alt="${v.format} — ${v.cible}" hidden></div>` +
+      `<div class="meta"><span class="f">${v.format}</span>` +
+      `<span class="c">${v.cible}</span>` +
+      `<span class="d">${v.livre} · page ${v.page_css} rendue ${v.rendu}</span>` +
+      `<a class="dl" href="${v.fichier}" download="otomata-${v.format}.png">télécharger le PNG</a></div>`;
+    grid.append(el);
+
+    // L'attente est visible tant que l'image n'est pas là : le premier passage rend
+    // six visuels, et une carte vide sans un mot ressemble à une page cassée.
+    const img = el.querySelector('img'), att = el.querySelector('.att');
+    img.addEventListener('load', () => { img.hidden = false; img.classList.add('vu'); att.remove(); });
+    img.addEventListener('error', () => { att.textContent = 'rendu impossible'; att.className = 'att err'; });
+    img.src = v.apercu;
+  }
+} catch (e) {
+  $('#grid').innerHTML = `<p class="err">${e.message}</p>`;
+}
+</script>
+</body></html>

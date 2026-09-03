@@ -9,6 +9,7 @@ import { randomBytes } from 'node:crypto';
 import * as templates from './templates.mjs';
 import { openapi } from './openapi.mjs';
 import { render } from './render.mjs';
+import * as kit from './kit.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '..');
@@ -25,7 +26,7 @@ mkdirSync(WORK, { recursive: true });
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.mp4': 'video/mp4', '.gif': 'image/gif',
-  '.png': 'image/png', '.json': 'application/json; charset=utf-8' };
+  '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json; charset=utf-8' };
 
 /* ---------- état des travaux : sur disque, pour survivre au redémarrage ---------- */
 
@@ -163,8 +164,24 @@ const routes = [
     res.end(buf);
   }],
 
+  /* ---------- le kit de marque ----------
+     Des visuels FIXES, à une adresse stable, hors de la galerie qui se purge : le
+     générateur sert à fabriquer, le kit à retrouver. Rendus à la demande au premier
+     accès, puis servis depuis le cache (cf. kit.mjs). */
+  ['GET', /^\/kit$/, (_a, _b, res) => serveWeb('kit.html', res)],
+  ['GET', /^\/api\/kit$/, () => kit.etat()],
+  ['GET', /^\/kit\/([a-z0-9]+?)(-apercu)?\.png$/, async ([format, apercu], _b, res) => {
+    const p = await kit.visuel(format, { apercu: !!apercu });
+    const buf = readFileSync(p);
+    // L'URL porte l'empreinte des sources (`?v=`) : ce que ce chemin renvoie ne
+    // changera pas, on peut donc le laisser en cache côté navigateur.
+    res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+
   ['GET', /^\/$/, (_a, _b, res) => serveWeb('index.html', res)],
-  ['GET', /^\/([\w.-]+\.(?:css|js|html))$/, ([f], _b, res) => serveWeb(f, res)]
+  ['GET', /^\/([\w.-]+\.(?:css|js|html|svg))$/, ([f], _b, res) => serveWeb(f, res)]
 ];
 
 function serveWeb(name, res) {
