@@ -1,0 +1,22 @@
+name: CI
+
+# oto-studio est surtout du CONTENU (design system, gabarits HTML, tokens) plus une
+# dizaine de modules ESM sans aucune dépendance externe : pas de tests, pas de
+# package.json, rien à `build`. La plus petite vérification honnête est donc une
+# vérification d'intégrité du contenu, faite par .github/check.mjs — qui dit lui-même
+# ce qu'il attrape (syntaxe des modules, imports relatifs qui résolvent, JSON et
+# @import CSS valides). Il tourne aussi en local : `node .github/check.mjs`.
+# Node est préinstallé sur le runner : pas d'action à épingler pour ce job.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Intégrité du studio (modules, imports, JSON, CSS)
+        run: node .github/check.mjs
