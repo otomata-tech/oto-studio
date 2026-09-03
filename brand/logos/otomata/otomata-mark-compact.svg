@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Otomata">
+  <!-- Variante COMPACTE : disque cerné seul, sans ombre ni anneau. Réservée aux
+       tailles où le décalage se brouille (favicon 16-32 px, avatars minuscules) et
+       aux surfaces qui rognent en cercle. Ce n'est pas un second logo. -->
+  <circle cx="64" cy="64" r="58" fill="#f0b41e" stroke="#2c2112" stroke-width="7"/>
+</svg>

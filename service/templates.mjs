@@ -171,9 +171,7 @@ const identite = {
       hint: 'la ligne sous le nom, rendue en capitales ; <b>…</b> autorisé' },
     { key: 'phrase', label: 'Phrase des bandeaux', type: 'text', required: true,
       hint: 'ce que portent l\'aperçu de lien et les deux couvertures — une phrase, pas un slogan de deck' },
-    { key: 'url', label: 'Adresse', type: 'text', required: true, hint: 'ex. otomata.tech' },
-    { key: 'initiale', label: 'Lettre de l\'avatar', type: 'text', required: false,
-      hint: 'en réserve dans le disque ; à défaut, la première lettre du nom' }
+    { key: 'url', label: 'Adresse', type: 'text', required: true, hint: 'ex. otomata.tech' }
   ],
   example: {
     format: 'post45',

@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Variante avatar / favicon : le O en réserve, dessiné comme un anneau et non
-       composé en typo — un mark qui dépend d'une fonte ne s'affiche pas. -->
-  <circle cx="50" cy="50" r="45" fill="#f0b41e" stroke="#2c2112" stroke-width="6"/>
-  <circle cx="50" cy="50" r="19.5" fill="none" stroke="#fefcf5" stroke-width="15"/>
-</svg>

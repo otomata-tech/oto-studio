@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- le disque du kit, réduit à ce qui survit à 16 px : encre plate, cerne franc,
-       la lettre en réserve dessinée comme un anneau (aucune fonte à charger). -->
-  <circle cx="16" cy="16" r="14" fill="#f0b41e" stroke="#2c2112" stroke-width="3.5"/>
-  <circle cx="16" cy="16" r="6.2" fill="none" stroke="#fefcf5" stroke-width="5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Otomata">
+  <!-- Copie de brand/logos/otomata/otomata-mark-compact.svg : le mark Otomata en
+       version petite taille. Le mark complet (ombre + anneau décalé) se brouille à
+       16 px — l'anneau devient un cheveu, l'ombre un épaississement. -->
+  <circle cx="64" cy="64" r="58" fill="#f0b41e" stroke="#2c2112" stroke-width="7"/>
 </svg>

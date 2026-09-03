@@ -26,14 +26,24 @@ git.
 |---|---|---|
 | Sites | otomata.tech | oto.ninja, oto.zone, dashboard |
 | Couleur d'identité | **violet `#863bff`** | **saffran `#f0b41e`** |
-| Mark | **disque saffran plat cerné d'encre** (`otomata-mark-disque.svg`, + variante `-o` pour avatar/favicon) — décidé le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone). **Inchangé** : l'open O reste le mark d'oto |
+| Mark | **`otomata-mark.svg`** — disque saffran cerné d'encre, **ombre dure** en bas-droite et **anneau saffran décalé** en haut-gauche. Arrêté le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone). **Inchangé** : l'open O reste le mark d'oto |
 
 ⚠️ Ne pas confondre : la **charte produit `@otomata/ui`** (fond crème + saffran, ci-dessous) est le socle commun.
 
-**2026-09-03 — le mark Otomata est le disque saffran, l'open O reste à oto.** Les deux marques
-partagent donc le saffran et se distinguent par la forme : **disque plein** pour la société,
-**anneau ouvert** pour le produit. Le disque vient du kit d'identité du studio
-(`oto-studio/posts/template-identite.html`, page `/kit`), d'où il est ici extrait comme mark.
+**2026-09-03 — le mark Otomata est le disque saffran décalé, l'open O reste à oto.** Les deux
+marques partagent le saffran et se distinguent par la forme : **disque plein** pour la société,
+**anneau ouvert** pour le produit.
+
+⚠️ **Les trois couches font partie du mark** — l'ombre dure (sans flou ni radius), le disque
+cerné d'encre, l'anneau saffran décalé. Ce ne sont pas des effets d'affiche à ajouter au goût du
+support : c'est le mark, et c'est cette version-là qui a été retenue contre le disque nu. Ordre
+de dessin imposé : ombre, anneau, disque. *(Une version antérieure de ce README, le même jour,
+affirmait le contraire — corrigé.)*
+
+**Le décalage se brouille sous 32 px** : en dessous, l'anneau devient un cheveu et l'ombre un
+épaississement. D'où `otomata-mark-compact.svg`, le disque cerné seul, réservé aux favicons et
+aux surfaces qui rognent en cercle. Ce n'est pas un second logo, c'est la version petite taille
+du même.
 
 **Le violet `#863bff` n'est plus le mark de la société — et il n'était déjà affiché nulle part.**
 Vérifié le 2026-09-03 : `otomata-logo-violet.svg` n'est référencé par aucun site ni front (seulement
@@ -64,8 +74,9 @@ Charte maison pour le moteur [`otomata-tech/slider`](https://github.com/otomata-
 - `dashboard-tokens/` — tokens du design-system dashboard (colors/fonts/typography/spacing) + `styles.css`, le point d'entrée qui les `@import`. Source : `oto-dashboard/design-system/tokens/` + `styles.css`. ⚠️ **Depuis le 2026-08-27 ce n'est plus une copie mais l'ORIGINAL** : `oto-dashboard/design-system/` a été archivé (voir plus bas), et les tokens *vivants* du dashboard sont désormais son `frontend/src/assets/console.css`.
 
 ### `logos/otomata/` — marque société
-- `otomata-mark-disque.svg` — **mark Otomata** (disque saffran `#f0b41e` cerné d'encre `#2c2112`) — le mark actuel
-- `otomata-mark-disque-o.svg` — la même chose avec le **O en réserve**, pour avatar et favicon (anneau dessiné, aucune fonte requise)
+- `otomata-mark.svg` — **LE mark Otomata** : ombre dure + anneau saffran décalé + disque `#f0b41e` cerné d'encre `#2c2112`
+- `otomata-mark-compact.svg` — le disque cerné seul, **pour ≤ 32 px** et les surfaces rognées en cercle
+- `otomata-mark-mono-encre.svg` / `otomata-mark-mono-blanc.svg` — monochromes (fond clair / fond sombre) : l'ombre y disparaît, c'est le **vide** entre disque et anneau qui porte le décalage
 - `otomata-logo-violet.svg` — *ancien* glyphe violet `#863bff` ; encore servi comme favicon par otomata.tech et mento.cc (cf. avertissement plus haut)
 - `otomata-mark-orange.svg` — mark disque saffran/orange (favicon secondaire)
 - `otomata-deck-disc.svg` — disque dégradé jaune→orange (deck)

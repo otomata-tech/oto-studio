@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Otomata">
+  <!-- Monochrome encre, pour fond clair. Une seule couleur : l'ombre disparaît (elle
+       serait invisible sur le disque) et c'est le VIDE entre le disque et l'anneau
+       décalé qui porte le décalage. -->
+  <circle cx="54" cy="55" r="50.4" fill="none" stroke="#2c2112" stroke-width="3.2"/>
+  <circle cx="60" cy="60" r="48.8" fill="#2c2112"/>
+</svg>

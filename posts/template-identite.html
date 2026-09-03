@@ -45,8 +45,6 @@
   .mark .disc { position: absolute; inset: 0; border-radius: 50%;
     background: var(--primary); border: 6px solid var(--ink);
     box-shadow: 18px 18px 0 rgba(44,33,18,0.85); }
-  .mark .letter { position: absolute; inset: 0; display: none;
-    align-items: center; justify-content: center; color: var(--bg); line-height: 1; }
 
   .name { text-shadow: 11px 11px 0 var(--primary); }
   .base { font-family: "JetBrains Mono", monospace; text-transform: uppercase; color: var(--mute); }
@@ -124,11 +122,12 @@
   body[data-f="avatar"] { width: 400px; height: 400px; background-size: 40px 40px;
     display: flex; align-items: center; justify-content: center; }
   body[data-f="avatar"] .sun { left: 50%; top: 50%; transform: translate(-50%,-50%); width: 460px; height: 460px; }
-  body[data-f="avatar"] .mark { width: 322px; height: 322px; z-index: 1; }
-  body[data-f="avatar"] .mark .disc { box-shadow: 10px 10px 0 rgba(44,33,18,0.85); border-width: 5px; }
-  body[data-f="avatar"] .mark .ghost { transform: translate(-11px, -9px); border-width: 5px; }
-  body[data-f="avatar"] .mark .letter { display: flex; font-family: "Bricolage Grotesque", sans-serif;
-    font-variation-settings: "wdth" 90; font-weight: 700; font-size: 250px; letter-spacing: -0.04em; }
+  /* L'avatar est rogné EN CERCLE par LinkedIn : l'ombre dure et l'anneau décalé
+     tomberaient hors du disque visible. C'est le cas d'usage de la variante compacte
+     du mark (brand/logos/otomata/otomata-mark-compact.svg) : le disque cerné seul. */
+  body[data-f="avatar"] .mark { width: 348px; height: 348px; z-index: 1; }
+  body[data-f="avatar"] .mark .disc { box-shadow: none; border-width: 12px; }
+  body[data-f="avatar"] .mark .ghost { display: none; }
 </style>
 
 <div class="sun"></div>
@@ -137,7 +136,6 @@
   <div class="mark">
     <div class="ghost"></div>
     <div class="disc"></div>
-    <div class="letter"></div>
   </div>
   <div class="copy">
     <div class="kicker"></div>
@@ -162,7 +160,6 @@
   const baseline = D.baseline || '<b>Studio IA</b> &middot; <b>Marseille</b>';
   const phrase = D.phrase || 'Studio IA basé à Marseille.';
   const lien = D.url || 'otomata.tech';
-  const initiale = D.initiale || nom.trim().charAt(0) || 'O';
 
   const T = {
     post45: { name: nom, base: baseline },
@@ -170,7 +167,7 @@
     profil: { name: nom, base: phrase },
     page:   { name: nom, base: phrase },
     og:     { kicker: nom, name: phrase },
-    avatar: { letter: initiale },
+    avatar: {},
   }[f];
   if (!T) throw new Error(`format inconnu : ${f}`);
 
@@ -178,7 +175,7 @@
   const AFFICHE = f === 'post45' || f === 'post11';
 
   q('.url').textContent = lien;
-  for (const cls of ['kicker', 'name', 'base', 'letter']) {
+  for (const cls of ['kicker', 'name', 'base']) {
     const el = q('.' + cls);
     if (T[cls]) el.innerHTML = T[cls]; else el.style.display = 'none';
   }

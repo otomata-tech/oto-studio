@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Otomata">
+  <!-- Monochrome clair, pour fond sombre. Même construction que la version encre. -->
+  <circle cx="54" cy="55" r="50.4" fill="none" stroke="#fefcf5" stroke-width="3.2"/>
+  <circle cx="60" cy="60" r="48.8" fill="#fefcf5"/>
+</svg>

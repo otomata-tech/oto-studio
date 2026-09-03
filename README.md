@@ -78,8 +78,13 @@ Un **seul** fragment : le format vient des données (`window.__ID.format`, à d�
 pose `data-f` sur `<body>` ; chaque format a sa propre mise en page et son propre texte (une
 affiche porte le nom en grand, un bandeau porte la marque puis la phrase — jamais deux titres
 en display qui se battent). **Le même fragment est servi par le studio** (gabarit
-`kit-identite`, cf. `service/README.md`) : le nom, la baseline, la phrase, l'adresse et la
-lettre de l'avatar y sont des champs de formulaire.
+`kit-identite`, cf. `service/README.md`) : le nom, la baseline, la phrase et l'adresse y sont
+des champs de formulaire.
+
+Le disque que dessine le fragment **est** le mark Otomata — ombre dure, anneau saffran
+décalé, disque cerné d'encre (`brand/logos/otomata/otomata-mark.svg`, arrêté le 03/09/2026).
+Le format `avatar` en utilise la **variante compacte** (disque cerné seul) : LinkedIn rogne
+en cercle, l'ombre et l'anneau tomberaient hors du visible.
 
 `posts/identite-formats.mjs` porte la table des formats et **fait autorité pour les deux**
 chemins de rendu. Ajouter un format = une entrée dans cette table + un bloc
