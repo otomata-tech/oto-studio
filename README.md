@@ -129,6 +129,7 @@ google-chrome-stable --headless=new --disable-gpu --hide-scrollbars --no-first-r
 - Zones à respecter sur LinkedIn : la photo de profil recouvre le bas-gauche (rien d'important avant x≈300), et le rognage mobile mange les côtés — garder le texte porteur au centre
 
 ### Logos de marques (`assets/logos/`)
+- ⚠️ **Les logos sont téléchargés une fois, jamais chargés au rendu.** Sellsy, Lusha, Firecrawl et Apify viennent de logo.dev (PNG 512), les autres de simpleicons ou du site de l'éditeur. Le jeton logo.dev n'entre pas ici : ce dépôt est public, et un rendu ne doit pas dépendre d'un CDN tiers.
 - `cdn.simpleicons.org/<slug>` : reddit (`#FF4500`), zoho (`#E42527`) — **salesforce absent** → SVG Wikimedia Commons ; LightOn → SVG du CDN de lighton.ai, livré `fill="white"` → recolorer en encre `#2c2112`
 - Le backend oto passe par logo.dev (token env `LOGODEV_TOKEN`) — non disponible localement, ne pas compter dessus ici
 
