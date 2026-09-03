@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { FORMATS, CLES, livre } from '../posts/identite-formats.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -144,7 +145,54 @@ const affiche = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche]]);
+/* ---------- kit d'identité (la carte de visite, tous formats LinkedIn) ---------- */
+
+const identite = {
+  id: 'kit-identite',
+  label: 'Kit d\'identité',
+  description: 'La carte de visite de la marque, déclinée dans les formats LinkedIn : post 4:5, ' +
+    'post carré, aperçu de lien, couvertures de profil et de page, avatar. Statique, ' +
+    'un format par rendu — le champ « Format » décide aussi de la taille livrée.',
+  // `size` reste la taille de référence (post 4:5) ; c'est `sizes` + `size_field` qui
+  // disent au serveur quoi rendre vraiment, selon la valeur du champ Format.
+  size: { width: FORMATS.post45.width, height: FORMATS.post45.height },
+  sizes: FORMATS,
+  size_field: 'format',
+  fps: 25,
+  // Aucune animation dans ce gabarit (pas de window.__seek) : png seul, et le
+  // contrôle des formats côté serveur refusera mp4/gif avec un message clair.
+  formats: ['png'],
+  fields: [
+    { key: 'format', label: 'Format', type: 'enum', options: CLES, required: true,
+      hint: CLES.map(f => `${f} = ${livre(f)} (${FORMATS[f].cible})`).join(' · ') },
+    { key: 'nom', label: 'Le nom', type: 'text', required: true,
+      hint: 'en très grand sur les posts, en marque sur les bandeaux — ex. OTOMATA' },
+    { key: 'baseline', label: 'Baseline des posts', type: 'text', required: true,
+      hint: 'la ligne sous le nom, rendue en capitales ; <b>…</b> autorisé' },
+    { key: 'phrase', label: 'Phrase des bandeaux', type: 'text', required: true,
+      hint: 'ce que portent l\'aperçu de lien et les deux couvertures — une phrase, pas un slogan de deck' },
+    { key: 'url', label: 'Adresse', type: 'text', required: true, hint: 'ex. otomata.tech' },
+    { key: 'initiale', label: 'Lettre de l\'avatar', type: 'text', required: false,
+      hint: 'en réserve dans le disque ; à défaut, la première lettre du nom' }
+  ],
+  example: {
+    format: 'post45',
+    nom: 'OTOMATA',
+    baseline: '<b>Studio IA</b> · <b>Marseille</b>',
+    phrase: 'Studio IA basé à Marseille.',
+    url: 'otomata.tech'
+  },
+  build(data) {
+    const tpl = read('posts/template-identite.html');
+    const inject = `<script>window.__ID=${inScript(data)};</script>`;
+    const body = tpl
+      .replace('<!--__DATA__-->', inject)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`${data.nom} — ${data.format}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(

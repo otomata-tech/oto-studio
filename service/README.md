@@ -44,6 +44,23 @@ sans une ligne de front ni de documentation à écrire à côté.
 |---|---|---|
 | `carte-cas-usage` | 1080×1080 | une demande en langage courant, les outils qu'oto enchaîne, le résultat |
 | `affiche-recul` | 1200×1500 | le pattern validé : la scène occupe tout, puis **recule** pour laisser monter la chute |
+| `kit-identite` | 6 formats | la carte de visite de la marque : post 4:5, carré, aperçu de lien, couvertures de profil et de page, avatar |
+
+**Un gabarit peut porter plusieurs tailles.** `kit-identite` déclare `sizes` (valeur du
+champ → `{width, height, scale}`) et `size_field` (le champ enum qui choisit) ; le serveur rend
+`sizes[data[size_field]]` plutôt que `size`, `/openapi.json` annonce la table entière, et l'IHM
+met son cadre d'aperçu au bon ratio. `size` reste la taille de référence, celle qu'on montre
+quand aucun format n'est encore choisi. Sans ce mécanisme, demander une couverture de page
+rendait un 4:5 — silencieusement.
+
+⚠️ **La table des formats du kit vit dans `posts/identite-formats.mjs`**, importée à la fois
+par le gabarit et par le build local (`posts/build-kit.mjs`). Une seconde copie ici et les deux
+dériveraient : le studio livrerait des cotes fausses sans que rien n'échoue.
+
+⚠️ **Les titres dépendent de Google Fonts au moment du rendu.** `assets/fonts.css` n'embarque
+que Familjen Grotesk et JetBrains Mono ; Bricolage Grotesque et Hanken Grotesk arrivent par le
+`<link>` en tête du fragment. Un rendu sans réseau sortant sort donc avec une fonte de
+substitution — vrai pour `affiche-recul` comme pour `kit-identite`.
 
 Trois pièges rencontrés en écrivant le second, à connaître avant d'en écrire un troisième :
 

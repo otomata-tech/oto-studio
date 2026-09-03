@@ -19,12 +19,19 @@ const champs = (fields, indent = '  ') => fields.map(f => {
     : head;
 }).join('\n');
 
+// La taille livrée d'un gabarit multi-formats dépend d'un champ : l'annoncer en une
+// seule cote ferait produire un 4:5 à qui demande une couverture. On donne la table.
+const taille = t => t.sizes
+  ? `Taille selon \`${t.size_field}\` : ` + Object.entries(t.sizes)
+      .map(([k, s]) => `${k} → ${s.width * (s.scale || 1)}×${s.height * (s.scale || 1)}`).join(', ') + '.'
+  : `Taille : ${t.size.width}×${t.size.height}.`;
+
 export function openapi() {
   const list = templates.list();
   const detail = list.map(t => {
     const full = templates.get(t.id);
     return `### \`${t.id}\` — ${t.label}\n${t.description}\nFormats : ${t.formats.join(', ')}. ` +
-      `Taille : ${t.size.width}×${t.size.height}.\nChamps de \`data\` :\n${champs(full.fields)}`;
+      `${taille(t)}\nChamps de \`data\` :\n${champs(full.fields)}`;
   }).join('\n\n');
 
   return {

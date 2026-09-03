@@ -42,6 +42,7 @@ node posts/build-post.mjs <slug>   # rend posts/<slug>.html → out/<slug>.mp4 +
 - `posts/otocx.html` — post lancement oto.cx (« L'OS pour vous et votre agent »)
 - `posts/connectors.html` — post nouveaux connecteurs, en 2 actes : tuiles logos (grille→bandeau par morph) puis carte conversation façon cas d'usage ; les concepts oto (chips PROCÉDURE/TABLEAU, projet en ligne finale) encadrent les connecteurs — montrer l'apport d'oto, pas des connecteurs MCP « natifs »
 - `posts/cross-session.html` — post cross-session messaging : trois fenêtres de terminal reliées par des fils, contenu métier réel (sessions interrogées via SendMessage puis anonymisées)
+- `posts/template-identite.html` — **kit d'identité** (la carte de visite de la société) : disque saffran cerné d'encre, `OTOMATA` en encrage décalé. **Statique et multi-formats** — aucun `__seek`, un fragment unique dont le format vient des données, rendu par `build-kit.mjs` ou par le service (gabarit `kit-identite`), jamais par `build-post.mjs`.
 - Même pattern que les cartes : `window.__seek(t)` déterministe (styles calculés depuis t, pas de transitions CSS) + capture CDP + ffmpeg
 - Affiche statique one-shot : `google-chrome-stable --headless=new --screenshot --window-size=1200,1500 --force-device-scale-factor=2`
 - Direction éditoriale (validée) : une seule idée et une phrase clé par visuel ; pas de « slide de deck » ; les illustrations d'usage mobilisent procédures/tableaux/projets
@@ -55,6 +56,46 @@ Sur une affiche animée qui finit par une phrase clé, réserver dès le départ
 3. la chute monte dans la place ainsi libérée, positionnée en `absolute bottom` d'un `.stage` commun.
 
 `transform` n'affecte pas le layout, donc la chute doit être en position absolue dans le conteneur, pas dans le flux. Deux bénéfices : plus de zone morte, et **les contenus sont plus gros pendant l'animation** — décisif quand le visuel est lu au pouce sur un fil LinkedIn. Voir `posts/cross-session.html` (`T.zoomOut`, `ZOOM`).
+
+### Kit d'identité (`posts/template-identite.html`) — tous les formats LinkedIn
+
+```bash
+node posts/build-kit.mjs            # tout le kit → out/posts/identite/<format>.png
+node posts/build-kit.mjs og profil  # un ou plusieurs formats
+```
+
+Un **seul** fragment : le format vient des données (`window.__ID.format`, à défaut `?f=`) et
+pose `data-f` sur `<body>` ; chaque format a sa propre mise en page et son propre texte (une
+affiche porte le nom en grand, un bandeau porte la marque puis la phrase — jamais deux titres
+en display qui se battent). **Le même fragment est servi par le studio** (gabarit
+`kit-identite`, cf. `service/README.md`) : le nom, la baseline, la phrase, l'adresse et la
+lettre de l'avatar y sont des champs de formulaire.
+
+`posts/identite-formats.mjs` porte la table des formats et **fait autorité pour les deux**
+chemins de rendu. Ajouter un format = une entrée dans cette table + un bloc
+`body[data-f="…"]` dans le fragment ; il apparaît alors seul dans le studio.
+
+| `f` | page CSS | rendu | cible LinkedIn |
+|---|---|---|---|
+| `post45` | 1200×1500 | 2× → 2400×3000 | post portrait 4:5 (celui qui prend le plus de fil) |
+| `post11` | 1200×1200 | 2× → 2400×2400 | post carré |
+| `og` | 1200×627 | 2× → 2400×1254 | aperçu de lien / Open Graph |
+| `profil` | 1584×396 | 2× → 3168×792 | couverture de profil |
+| `page` | 1050×175 | 4× → 4200×700 | couverture de page entreprise |
+| `avatar` | 400×400 | 2× → 800×800 | avatar / logo, **affiché en rond** |
+
+⚠️ **La couverture de page est passée à 4200×700** (vérifié le 03/09/2026 sur deux sources
+secondaires ; pas de page d'aide LinkedIn officielle trouvée). L'ancienne cote 1128×191, encore
+partout dans les guides, a **exactement le même ratio 6:1** — d'où la page CSS en 1050×175
+rendue 4× : elle sert les deux, la seconde en surqualité.
+
+⚠️ Zones masquées, à ne pas remplir : sur `profil` et `page`, la photo/le logo recouvre le
+bas-gauche (rien d'important avant x≈300 en 1584, x≈170 en 1050) **et** le rognage mobile mange
+les côtés — d'où le groupe centré et l'URL rapatriée dans le bloc de texte plutôt qu'au bord.
+
+⚠️ `avatar` porte un **`O` en réserve dans le disque**. Ce mark n'existe pas dans `brand/` :
+c'est une création de ce kit, à y ranger s'il est adopté — et à ne pas confondre avec l'« open O »
+saffran, qui est le mark du **produit** oto.
 
 ## Bannières (`banners/`) — couvertures statiques
 

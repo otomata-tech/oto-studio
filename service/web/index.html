@@ -33,8 +33,8 @@ textarea{resize:vertical;min-height:56px}
 .actions{display:flex;gap:10px;align-items:center;margin-top:22px;position:sticky;bottom:0;background:linear-gradient(180deg,transparent,var(--bg) 30%);padding:14px 0 4px}
 .status{font-size:13px;color:var(--mute);min-height:18px;margin-top:8px}
 .status.err{color:var(--terra-ink);font-weight:600}
-.frame{width:min(66vh,560px);aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(44,33,18,.2);background:var(--bg)}
-.frame iframe{width:100%;height:100%;border:0;display:block}
+.frame{width:min(66vh,560px);aspect-ratio:1;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(44,33,18,.2);background:var(--bg);position:relative}
+.frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;display:block;transform-origin:0 0}
 .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:12px}
 .card{background:var(--surface);border:1px solid var(--hair);border-radius:12px;overflow:hidden;font-size:12px}
 .card video,.card img{width:100%;display:block;background:#efe7d3}
@@ -196,7 +196,11 @@ function buildForm() {
   host.textContent = '';
   for (const f of manifest.fields) {
     if (f.type === 'list') host.append(listField(f));
-    else host.append(field(f, state[f.key], v => { state[f.key] = v; }));
+    else host.append(field(f, state[f.key], v => {
+      state[f.key] = v;
+      // un gabarit multi-formats change de taille en cours de saisie : le cadre suit
+      if (f.key === manifest.size_field) fitView();
+    }));
   }
   const fmt = $('#formats');
   fmt.textContent = '';
@@ -207,7 +211,23 @@ function buildForm() {
     l.append(cb, document.createTextNode(f));
     fmt.append(l);
   });
+  fitView();
 }
+
+/* ---------- l'aperçu à la taille du gabarit ----------
+   Le cadre prend le ratio du visuel et l'iframe est réduite à l'échelle. Sans ça, une
+   page de 1200 px de large dans un cadre de 560 n'en montre que le coin haut-gauche —
+   et un bandeau 6:1 dans un cadre carré ne montre presque rien. */
+function fitView() {
+  const s = manifest.sizes?.[state[manifest.size_field]] ?? manifest.size;
+  const frame = document.querySelector('.frame');
+  frame.style.aspectRatio = `${s.width} / ${s.height}`;
+  const v = $('#view');
+  v.style.width = `${s.width}px`;
+  v.style.height = `${s.height}px`;
+  v.style.transform = `scale(${frame.clientWidth / s.width})`;
+}
+addEventListener('resize', () => { if (manifest) fitView(); });
 
 const formats = () => [...document.querySelectorAll('.fmt')].filter(c => c.checked).map(c => c.value);
 

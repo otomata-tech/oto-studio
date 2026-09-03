@@ -1,0 +1,200 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  /* __FONTS__ */
+  /* Un seul gabarit pour tout le kit : le format vient des données (`__ID.format`) et
+     pose data-f sur <body>. Chaque format a SA mise en page — un recadrage n'est pas
+     un design — mais partage la matière riso : crème grainé, halo saffran, cerne
+     d'encre, ombre dure sans radius. Aucune animation : pas de __seek, donc png seul. */
+  :root {
+    --bg: #fefcf5;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --primary: #f0b41e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: #ffffff; }
+  body {
+    position: relative; overflow: hidden;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07; mix-blend-mode: multiply;
+  }
+  .sun { position: absolute; z-index: 0;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.30), rgba(240,180,30,0.08) 55%, transparent 72%); }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto; font-variation-settings: "wdth" 90;
+    font-weight: 600; letter-spacing: -0.025em;
+  }
+
+  /* le disque : encre plate, cerne franc, ombre dure, et l'anneau saffran décalé
+     qui lit comme une couche d'impression mal calée */
+  .mark { position: relative; flex: none; }
+  .mark .ghost { position: absolute; inset: 0; border-radius: 50%; border: 6px solid var(--primary);
+    opacity: 0.9; transform: translate(-20px, -16px); }
+  .mark .disc { position: absolute; inset: 0; border-radius: 50%;
+    background: var(--primary); border: 6px solid var(--ink);
+    box-shadow: 18px 18px 0 rgba(44,33,18,0.85); }
+  .mark .letter { position: absolute; inset: 0; display: none;
+    align-items: center; justify-content: center; color: var(--bg); line-height: 1; }
+
+  .name { text-shadow: 11px 11px 0 var(--primary); }
+  .base { font-family: "JetBrains Mono", monospace; text-transform: uppercase; color: var(--mute); }
+  .base b { color: var(--ink); font-weight: 700; }
+  .url { color: var(--ink); font-weight: 700; }
+
+  /* ---------- 4:5 — post portrait (le format qui prend le plus de fil) ---------- */
+  body[data-f="post45"] { width: 1200px; height: 1500px; background-size: 64px 64px;
+    display: flex; flex-direction: column; padding: 88px 88px 84px; }
+  body[data-f="post45"] .sun { left: 50%; top: 96px; transform: translateX(-42%); width: 940px; height: 940px; }
+  body[data-f="post45"] .stage { flex: 1; z-index: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; }
+  body[data-f="post45"] .mark { width: 430px; height: 430px; margin-bottom: 86px; }
+  body[data-f="post45"] .name { font-size: 200px; line-height: 0.92; letter-spacing: -0.035em; }
+  body[data-f="post45"] .base { margin-top: 54px; font-size: 32px; letter-spacing: 0.22em; }
+  body[data-f="post45"] footer { border-top: 1.5px solid var(--ink); padding-top: 24px;
+    display: flex; justify-content: center; z-index: 1; }
+  body[data-f="post45"] .url { font-size: 20px; }
+
+  /* ---------- 1:1 — post carré ---------- */
+  body[data-f="post11"] { width: 1200px; height: 1200px; background-size: 60px 60px;
+    display: flex; flex-direction: column; padding: 76px 80px 72px; }
+  body[data-f="post11"] .sun { left: 50%; top: 60px; transform: translateX(-42%); width: 820px; height: 820px; }
+  body[data-f="post11"] .stage { flex: 1; z-index: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; }
+  body[data-f="post11"] .mark { width: 340px; height: 340px; margin-bottom: 68px; }
+  body[data-f="post11"] .name { font-size: 158px; line-height: 0.92; letter-spacing: -0.035em; }
+  body[data-f="post11"] .base { margin-top: 42px; font-size: 26px; letter-spacing: 0.22em; }
+  body[data-f="post11"] footer { border-top: 1.5px solid var(--ink); padding-top: 22px;
+    display: flex; justify-content: center; z-index: 1; }
+  body[data-f="post11"] .url { font-size: 18px; }
+
+  /* ---------- image de lien (OG) : disque à gauche, la phrase à droite ---------- */
+  body[data-f="og"] { width: 1200px; height: 627px; background-size: 56px 56px;
+    display: flex; align-items: center; justify-content: center; gap: 62px; padding: 0 84px; }
+  body[data-f="og"] .sun { left: -230px; top: -250px; width: 820px; height: 820px; }
+  body[data-f="og"] .mark { width: 300px; height: 300px; }
+  body[data-f="og"] .copy { z-index: 1; max-width: 620px; }
+  body[data-f="og"] .kicker { font-family: "JetBrains Mono", monospace; text-transform: uppercase;
+    letter-spacing: 0.24em; font-size: 22px; font-weight: 700; margin-bottom: 26px; }
+  body[data-f="og"] .name { font-size: 74px; line-height: 1.06; text-shadow: 7px 7px 0 var(--primary); }
+  body[data-f="og"] .url { margin-top: 34px; font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase; letter-spacing: 0.16em; font-size: 20px; }
+
+  /* ---------- couverture de profil 1584×396 ----------
+     la photo/le logo masque le bas-gauche (rien d'important avant x≈300) et le
+     rognage mobile mange les côtés : le porteur reste au centre. */
+  body[data-f="profil"] { width: 1584px; height: 396px; background-size: 48px 48px;
+    display: flex; align-items: center; justify-content: center; gap: 56px; padding: 0 96px 0 306px; }
+  body[data-f="profil"] .sun { left: 120px; top: -300px; width: 760px; height: 760px; }
+  body[data-f="profil"] .mark { width: 196px; height: 196px; }
+  body[data-f="profil"] .mark .disc { box-shadow: 12px 12px 0 rgba(44,33,18,0.85); }
+  body[data-f="profil"] .mark .ghost { transform: translate(-14px, -11px); border-width: 4px; }
+  body[data-f="profil"] .copy { z-index: 1; }
+  body[data-f="profil"] .name { font-size: 92px; line-height: 1; text-shadow: 6px 6px 0 var(--primary); }
+  body[data-f="profil"] .base { margin-top: 22px; font-size: 21px; letter-spacing: 0.18em; }
+  body[data-f="profil"] .url { margin-top: 18px; font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase; letter-spacing: 0.16em; font-size: 19px; }
+
+  /* ---------- couverture de page (rendue 4× → 4200×700) ---------- */
+  body[data-f="page"] { width: 1050px; height: 175px; background-size: 32px 32px;
+    display: flex; align-items: center; justify-content: center; gap: 24px; padding: 0 40px 0 168px; }
+  body[data-f="page"] .sun { left: 90px; top: -200px; width: 420px; height: 420px; }
+  body[data-f="page"] .mark { width: 86px; height: 86px; }
+  body[data-f="page"] .mark .disc { box-shadow: 6px 6px 0 rgba(44,33,18,0.85); border-width: 3px; }
+  body[data-f="page"] .mark .ghost { transform: translate(-7px, -6px); border-width: 3px; }
+  body[data-f="page"] .copy { z-index: 1; display: flex; align-items: baseline; gap: 26px; }
+  body[data-f="page"] .name { font-size: 52px; line-height: 1; text-shadow: 4px 4px 0 var(--primary); }
+  body[data-f="page"] .base { font-size: 15px; letter-spacing: 0.18em; }
+  body[data-f="page"] .url { z-index: 1; font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase; letter-spacing: 0.16em; font-size: 14px; }
+
+  /* ---------- avatar (rendu 2× → 800×800) : affiché en ROND, d'où le disque
+     inscrit et la lettre en réserve — le cerne doit rester dans le cercle visible. */
+  body[data-f="avatar"] { width: 400px; height: 400px; background-size: 40px 40px;
+    display: flex; align-items: center; justify-content: center; }
+  body[data-f="avatar"] .sun { left: 50%; top: 50%; transform: translate(-50%,-50%); width: 460px; height: 460px; }
+  body[data-f="avatar"] .mark { width: 322px; height: 322px; z-index: 1; }
+  body[data-f="avatar"] .mark .disc { box-shadow: 10px 10px 0 rgba(44,33,18,0.85); border-width: 5px; }
+  body[data-f="avatar"] .mark .ghost { transform: translate(-11px, -9px); border-width: 5px; }
+  body[data-f="avatar"] .mark .letter { display: flex; font-family: "Bricolage Grotesque", sans-serif;
+    font-variation-settings: "wdth" 90; font-weight: 700; font-size: 250px; letter-spacing: -0.04em; }
+</style>
+
+<div class="sun"></div>
+
+<div class="stage">
+  <div class="mark">
+    <div class="ghost"></div>
+    <div class="disc"></div>
+    <div class="letter"></div>
+  </div>
+  <div class="copy">
+    <div class="kicker"></div>
+    <div class="name display"></div>
+    <div class="base"></div>
+  </div>
+</div>
+
+<div class="url mono"></div>
+<div class="grain"></div>
+
+<!--__DATA__-->
+<script>
+  // Le format pilote la mise en page ET quel texte paraît : une affiche porte le nom
+  // en grand puis sa baseline, un bandeau porte la marque puis la phrase. Jamais deux
+  // titres en display sur le même visuel — ils se battraient.
+  const D = window.__ID || {};
+  const f = D.format || new URLSearchParams(location.search).get('f') || 'post45';
+  document.body.dataset.f = f;
+
+  const nom = D.nom || 'OTOMATA';
+  const baseline = D.baseline || '<b>Studio IA</b> &middot; <b>Marseille</b>';
+  const phrase = D.phrase || 'Studio IA basé à Marseille.';
+  const lien = D.url || 'otomata.tech';
+  const initiale = D.initiale || nom.trim().charAt(0) || 'O';
+
+  const T = {
+    post45: { name: nom, base: baseline },
+    post11: { name: nom, base: baseline },
+    profil: { name: nom, base: phrase },
+    page:   { name: nom, base: phrase },
+    og:     { kicker: nom, name: phrase },
+    avatar: { letter: initiale },
+  }[f];
+  if (!T) throw new Error(`format inconnu : ${f}`);
+
+  const q = s => document.querySelector(s);
+  const AFFICHE = f === 'post45' || f === 'post11';
+
+  q('.url').textContent = lien;
+  for (const cls of ['kicker', 'name', 'base', 'letter']) {
+    const el = q('.' + cls);
+    if (T[cls]) el.innerHTML = T[cls]; else el.style.display = 'none';
+  }
+  if (f === 'avatar') { q('.copy').style.display = 'none'; q('.url').style.display = 'none'; }
+
+  // Le .stage n'est une boîte de mise en page que sur les affiches : ailleurs le disque
+  // et le texte sont des enfants directs du body (flex en ligne).
+  if (!AFFICHE) {
+    const st = q('.stage'), body = document.body;
+    while (st.firstChild) body.insertBefore(st.firstChild, st);
+    st.remove();
+    // l'URL rejoint le bloc de texte : sur une couverture, les bords sont rognés en mobile
+    if (f !== 'avatar') q('.copy').appendChild(q('.url'));
+  } else {
+    const foot = document.createElement('footer');
+    foot.appendChild(q('.url'));
+    document.body.insertBefore(foot, q('.grain'));
+  }
+</script>

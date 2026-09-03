@@ -130,9 +130,12 @@ const routes = [
     purge();
 
     // On rend en tâche de fond : la file du moteur sérialise, la réponse ne l'attend pas.
+    // Un gabarit multi-formats (`sizes` + `size_field`) rend la taille que ses données
+    // désignent : sans ça, le studio produirait un 4:5 pour une couverture de page.
+    const dim = tpl.sizes?.[body.data?.[tpl.size_field]] ?? tpl.size;
     render({
       html: tpl.build(body.data), dir: join(WORK, id),
-      width: tpl.size.width, height: tpl.size.height, fps: tpl.fps, formats
+      width: dim.width, height: dim.height, scale: dim.scale ?? 1, fps: tpl.fps, formats
     }).then(({ files, ms }) => {
       saveJob({ ...readJob(id), status: 'fini', files, ms, finished_at: new Date().toISOString() });
     }).catch(err => {
