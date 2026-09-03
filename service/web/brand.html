@@ -1,0 +1,125 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.svg">
+<title>Otomata — charte de marque</title>
+<style>
+:root{--bg:#fefcf5;--surface:#fff;--hair:#e9dcb4;--ink:#2c2112;--soft:#4a3a23;--mute:#7a6c50;--faint:#aa9f7e;
+  --terra:#d63d0a;--saffron:#f0b41e;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:#efe7d3;color:var(--ink);min-height:100vh;padding:38px 24px 80px}
+.wrap{width:min(1080px,100%);margin:0 auto}
+h1{font-size:23px;font-weight:800;letter-spacing:-.02em}
+h1 .d{color:var(--terra)}
+.sub{color:var(--mute);font-size:14px;margin:7px 0 0;line-height:1.55;max-width:70ch}
+.sec{margin-top:36px;font-size:15px;font-weight:800}
+.sec span{font-weight:400;color:var(--mute);font-size:13px;margin-left:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:14px;align-items:start}
+.c{background:var(--bg);border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(44,33,18,.08)}
+.vue{height:130px;display:flex;align-items:center;justify-content:center;
+  background-image:linear-gradient(45deg,#e7dcc0 25%,transparent 25%,transparent 75%,#e7dcc0 75%),linear-gradient(45deg,#e7dcc0 25%,transparent 25%,transparent 75%,#e7dcc0 75%);
+  background-size:14px 14px;background-position:0 0,7px 7px;background-color:#f4ecd6}
+.vue.sombre{background-color:#241b0e;background-image:linear-gradient(45deg,#33281a 25%,transparent 25%,transparent 75%,#33281a 75%),linear-gradient(45deg,#33281a 25%,transparent 25%,transparent 75%,#33281a 75%)}
+.vue.saffran{background-color:#f0b41e;background-image:none}
+.vue img{max-height:96px;max-width:80%}
+.bas{padding:12px 14px 14px;border-top:1px solid var(--hair)}
+.n{font-size:13.5px;font-weight:700}
+.no{font-size:12px;color:var(--mute);margin:2px 0 9px;line-height:1.4}
+.px{display:flex;flex-wrap:wrap;gap:6px}
+.px a{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--soft);
+  border:1px solid var(--hair);border-radius:7px;padding:3px 8px;background:var(--surface)}
+.px a.fort{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+.pal{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.pg{background:var(--bg);border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
+.pg h3{font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:9px}
+.tons{display:flex;gap:8px;flex-wrap:wrap}
+.ton{width:96px}
+.sw{height:44px;border-radius:8px;border:1px solid rgba(44,33,18,.18)}
+.ton b{display:block;font-size:11px;margin-top:5px;font-weight:700}
+.ton code{font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:var(--bg);border:1px solid var(--hair);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 14px;font-size:13.5px;border-bottom:1px solid var(--hair)}
+th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute)}
+tr:last-child td{border-bottom:0}
+.notes{margin-top:32px;background:var(--bg);border:1px solid var(--hair);border-radius:14px;padding:16px 18px;font-size:13.5px;line-height:1.6;color:var(--soft)}
+.notes b{color:var(--ink)} .notes p+p{margin-top:9px}
+.notes code{font-family:var(--mono);font-size:12.5px;background:#f4ecd6;padding:1px 5px;border-radius:5px}
+.err{color:var(--terra);font-weight:700}
+</style></head>
+<body><div class="wrap">
+  <h1>Otomata <span class="d">·</span> charte de marque</h1>
+  <p class="sub">Le mark, la palette, la typographie et les fichiers d'impression. Cette page est
+    publique : elle est faite pour être donnée telle quelle à un imprimeur, un presta ou un
+    partenaire. Tout y est téléchargeable, rien n'y demande de compte.</p>
+
+  <div class="sec">Le mark<span>SVG, et PNG transparents</span></div>
+  <div class="cards" id="logos"></div>
+
+  <div class="sec">La palette<span>tokens <code style="font-family:var(--mono);font-size:12px">@otomata/ui</code></span></div>
+  <div class="pal" id="palette"></div>
+
+  <div class="sec">La typographie</div>
+  <table id="typo"><thead><tr><th>Rôle</th><th>Famille</th><th>Usage</th></tr></thead><tbody></tbody></table>
+
+  <div class="sec">Merch<span>fichiers d'impression, PNG transparents 4000 px</span></div>
+  <div class="cards" id="merch"></div>
+
+  <div class="notes">
+    <p><b>Choisir un fichier de merch, c'est regarder la couleur du textile.</b> Sur un vêtement
+      jaune, le mark en couleur se noie — son disque et le fond se confondent ; sur un vêtement
+      foncé, il perd son cerne et son ombre, qui sont en encre. Les versions monochromes gardent
+      le décalage parce que c'est le <b>vide</b> entre le disque et l'anneau qui le porte.</p>
+    <p><b>Le mark tient jusqu'à 16 px.</b> En dessous de 32, l'anneau décalé devient un cheveu :
+      la variante <b>compacte</b> est là pour les surfaces rognées en cercle — avatar, pastille.</p>
+    <p><b>Spreadshirt</b> : PNG (seul format à porter la transparence), 200 dpi, 4000 × 4000 px
+      maximum, 10 Mo maximum. Les dimensions de la zone d'impression en centimètres dépendent du
+      produit — leur outil les affiche au téléversement, s'y fier plutôt qu'à une cote recopiée.</p>
+    <p>Version de cette charte : <code id="v"></code>. Source de vérité :
+      <code>oto-studio/brand/</code>.</p>
+  </div>
+</div>
+
+<script type="module">
+const $ = s => document.querySelector(s);
+try {
+  const r = await fetch('/brand/api');
+  const b = await r.json();
+  if (!r.ok) throw new Error(b.error || `erreur ${r.status}`);
+  $('#v').textContent = b.version;
+
+  for (const l of b.logos) {
+    const el = document.createElement('article');
+    el.className = 'c';
+    el.innerHTML = `<div class="vue ${l.fond === 'sombre' ? 'sombre' : ''}"><img alt="${l.nom}" src="${l.svg}"></div>` +
+      `<div class="bas"><div class="n">${l.nom}</div><div class="no">${l.note}</div><div class="px">` +
+      `<a class="fort" href="${l.svg}" download="otomata-${l.clef}.svg">SVG</a>` +
+      l.png.map(p => `<a href="${p.url}" download="otomata-${l.clef}-${p.taille}.png">${p.taille}</a>`).join('') +
+      `</div></div>`;
+    $('#logos').append(el);
+  }
+
+  for (const g of b.palette) {
+    const el = document.createElement('div');
+    el.className = 'pg';
+    el.innerHTML = `<h3>${g.titre}</h3><div class="tons">` + g.tons.map(t =>
+      `<div class="ton"><div class="sw" style="background:${t.hex}"></div><b>${t.nom}</b><code>${t.hex}</code></div>`).join('') + `</div>`;
+    $('#palette').append(el);
+  }
+
+  $('#typo tbody').innerHTML = b.typo.map(t =>
+    `<tr><td><b>${t.role}</b></td><td>${t.famille}</td><td style="color:var(--mute)">${t.usage}</td></tr>`).join('');
+
+  for (const m of b.merch) {
+    const el = document.createElement('article');
+    el.className = 'c';
+    el.innerHTML = `<div class="vue ${m.fond === 'sombre' ? 'sombre' : m.fond === 'saffran' ? 'saffran' : ''}">` +
+      `<img alt="${m.id}" src="${m.url}"></div>` +
+      `<div class="bas"><div class="n">${m.id}</div><div class="no">${m.sur}</div>` +
+      `<div class="px"><a class="fort" href="${m.url}" download="otomata-${m.id}.png">PNG ${m.taille}</a></div></div>`;
+    $('#merch').append(el);
+  }
+} catch (e) {
+  $('#logos').innerHTML = `<p class="err">${e.message}</p>`;
+}
+</script>
+</body></html>

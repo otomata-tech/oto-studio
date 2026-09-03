@@ -148,6 +148,7 @@ node service/server.mjs          # → http://127.0.0.1:8100 (STUDIO_PORT, STUDI
 | `service/templates.mjs` | registre des gabarits : manifeste de champs + construction de l'HTML + validation. **Ajouter un gabarit = ajouter une entrée ici**, rien n'est découvert dynamiquement. |
 | `service/server.mjs` | API REST + service des fichiers + IHM statique. |
 | `service/web/index.html` | l'IHM : formulaire **dérivé du manifeste**, aperçu, galerie des rendus avec leur statut. |
+| `service/brand.mjs` + `web/brand.html` | la page **`/brand`** : la charte en accès **public** (mark, palette lue dans `brand/theme/theme.css`, typo, fichiers d'impression du merch). Préfixe unique pour qu'un seul bypass Cloudflare Access l'ouvre sans ouvrir le générateur. |
 | `service/kit.mjs` + `web/kit.html` | la page **`/kit`** : les visuels FIXES de la marque (un par emplacement LinkedIn), rendus au premier accès puis gardés en cache sous une empreinte des sources. L'IHM est un générateur ; le kit, un endroit où retrouver. |
 
 **API** — `GET /api/templates` · `GET /api/templates/:id` (manifeste + `example`) · `GET /api/kit` ·

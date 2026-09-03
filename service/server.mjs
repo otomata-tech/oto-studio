@@ -10,6 +10,7 @@ import * as templates from './templates.mjs';
 import { openapi } from './openapi.mjs';
 import { render } from './render.mjs';
 import * as kit from './kit.mjs';
+import * as brand from './brand.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '..');
@@ -161,6 +162,30 @@ const routes = [
     const buf = readFileSync(p);
     res.writeHead(200, { 'Content-Type': MIME[extname(p)] || 'application/octet-stream',
       'Content-Length': buf.length });
+    res.end(buf);
+  }],
+
+  /* ---------- la charte, en accès PUBLIC ----------
+     Un seul préfixe `/brand` : une politique Cloudflare Access en bypass suffit à
+     l'ouvrir, et le reste du studio — générateur, rendus, galerie — reste fermé. */
+  ['GET', /^\/brand$/, (_a, _b, res) => serveWeb('brand.html', res)],
+  ['GET', /^\/brand\/api$/, () => brand.etat()],
+  ['GET', /^\/brand\/logo\/([a-z-]+)\.svg$/, ([clef], _b, res) => {
+    const buf = readFileSync(brand.logoSvg(clef));
+    res.writeHead(200, { 'Content-Type': MIME['.svg'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+  ['GET', /^\/brand\/logo\/([a-z-]+?)-(\d{1,4})\.png$/, async ([clef, taille], _b, res) => {
+    const buf = readFileSync(await brand.logoPng(clef, Number(taille)));
+    res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+  ['GET', /^\/brand\/merch\/([a-z0-9-]+)\.png$/, async ([id], _b, res) => {
+    const buf = readFileSync(await brand.merch(id));
+    res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
     res.end(buf);
   }],
 

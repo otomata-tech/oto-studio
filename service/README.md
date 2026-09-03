@@ -32,6 +32,29 @@ réseau privé.
 gabarits, valeurs d'énumération comprises. Un gabarit ajouté s'y décrit tout seul — il n'y a
 pas de documentation à tenir à jour en parallèle.
 
+### La page `/brand` — la charte, en accès PUBLIC
+
+`GET /brand` : le mark et ses déclinaisons, la palette, la typographie, les fichiers d'impression
+du merch. Tout y est téléchargeable. C'est la page qu'on donne à un imprimeur, un presta ou un
+partenaire — elle remplace l'envoi d'un PDF de charte par pièce jointe.
+
+- `GET /brand/api` — le même en JSON.
+- `GET /brand/logo/<variante>.svg` et `-<taille>.png` — le mark, servi depuis `brand/logos/otomata/`.
+- `GET /brand/merch/<pièce>.png` — un fichier d'impression, rastérisé à la demande et transparent.
+
+**Un seul préfixe, et c'est le point** : une politique Cloudflare Access en **bypass** sur
+`studio.oto.zone/brand` ouvre la charte au public en laissant le reste du studio fermé — le
+générateur, les rendus, la galerie, l'API. Poser le bypass sur autre chose que ce préfixe
+ouvrirait le pilote de rendu.
+
+⚠️ **Une fois public, un anonyme peut déclencher un rendu** (le premier accès à un PNG le
+fabrique). C'est borné : les identifiants sont une liste fermée — une pièce ou une taille hors
+liste répond 404 sans rien rendre — et chaque fichier n'est produit qu'une fois, ensuite c'est
+du cache. Le pire cas est douze rendus.
+
+La palette et la typo sont **lues dans `brand/theme/theme.css`**, pas recopiées : la page publique
+dit forcément la même chose que les tokens que les sites importent.
+
 ### La page `/kit` — les visuels fixes de la marque
 
 L'IHM de la racine est un **générateur** : on remplit, on rend, et le rendu part dans une
