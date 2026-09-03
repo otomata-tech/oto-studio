@@ -1,12 +1,16 @@
 # merch — les fichiers d'impression
 
 ```bash
-node brand/merch/build-merch.mjs      # → out/merch/otomata-<pièce>.png
+node brand/merch/build-merch.mjs      # → brand/merch/print/otomata-<pièce>.png (à commiter)
 ```
 
-Huit fichiers, tous en **PNG transparent**, côté long **4000 px**. Ils sont générés, donc
-absents du dépôt (`out/` est gitignoré) : on les refait en une commande, et le studio les sert
-en ligne sur **`/brand`**.
+Huit fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print/`.
+
+⚠️ **Ils sont versionnés, et c'est délibéré.** Un fichier d'impression ne change jamais : le
+faire fabriquer à la demande par la box, à 16 Mpx, l'a fait suffoquer le 2026-09-03 — plus de
+SSH pendant le préchauffage, alors que le service est calibré pour du 1200×1500. Le poste les
+génère (28 cœurs, deux secondes), git les transporte, le studio les sert tels quels sur
+**`/brand`**. 1,5 Mo au total pour huit fichiers.
 
 *(Les anciens designs — `tshirt-design`, `tshirt-otomata` et leurs planches — ont été supprimés
 le 2026-09-03 : ils étaient sur la palette anthracite `#2c3e50` abandonnée en mai 2026 et

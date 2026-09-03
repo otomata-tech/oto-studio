@@ -5,17 +5,23 @@
 // D'où le préfixe unique `/brand` : une seule politique Cloudflare Access à poser en
 // bypass, et le reste du studio (le générateur, les rendus, la galerie) reste fermé.
 import { createHash } from 'node:crypto';
-import { readFileSync, existsSync, mkdirSync, renameSync, rmSync, readdirSync } from 'node:fs';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { render } from './render.mjs';
 import { LOGOS, logoSvg, logoPng } from './kit.mjs';
-import { PIECES, page as pageMerch } from '../brand/merch/pieces.mjs';
+import { PIECES } from '../brand/merch/pieces.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CACHE = join(ROOT, 'out', 'brand');
 const THEME = join(ROOT, 'brand/theme/theme.css');
+const PHOTOS_DIR = join(ROOT, 'brand/photos');
+
+// Les portraits publiés au nom d'Otomata — déjà servis par otomata.tech/equipe/.
+// `sources/` (les photos d'origine, avant harmonisation) n'est PAS exposé : ce sont
+// des originaux de travail, pas des livrables.
+const PHOTOS = [
+  { slug: 'alexis-laporte', nom: 'Alexis Laporte', role: 'Président' },
+  { slug: 'sarah-soumahoro', nom: 'Sarah Soumahoro', role: 'RAF' },
+];
 
 /** La palette vient de brand/theme/theme.css, jamais d'une copie : c'est le fichier
  *  que les consommateurs importent, et la page publique doit dire la même chose. */
@@ -46,6 +52,7 @@ const empreinte = () => {
   const h = createHash('sha1').update(readFileSync(THEME));
   for (const l of Object.values(LOGOS)) h.update(readFileSync(join(ROOT, 'brand/logos/otomata', l.fichier)));
   h.update(JSON.stringify(PIECES.map(p => [p.id, p.w, p.h, p.mark, p.mot, p.ombre, p.sur])));
+  for (const ph of PHOTOS) h.update(readFileSync(join(PHOTOS_DIR, `${ph.slug}.jpg`)));
   return h.digest('hex').slice(0, 8);
 };
 
@@ -60,6 +67,7 @@ export function etat() {
     })),
     palette: palette(),
     typo: TYPO,
+    photos: PHOTOS.map(ph => ({ ...ph, url: `/brand/photo/${ph.slug}.jpg?v=${v}` })),
     merch: PIECES.map(p => ({
       id: p.id, sur: p.sur, taille: `${p.w}×${p.h}`,
       url: `/brand/merch/${p.id}.png?v=${v}`,
@@ -70,27 +78,26 @@ export function etat() {
 
 export { logoSvg, logoPng };
 
-const enCours = new Map();
+/** Un fichier d'impression, servi tel quel depuis brand/merch/print/.
+ *  Il n'est PAS rendu à la demande : 4000×4000 fait 16 Mpx, et faire fabriquer ça à
+ *  une box d'un vCPU pour un fichier qui ne change jamais, c'est la faire suffoquer
+ *  (constaté le 2026-09-03 : plus de SSH pendant le préchauffage). Le poste les
+ *  génère avec `node brand/merch/build-merch.mjs`, git les transporte. */
+/** Un portrait publié, servi depuis brand/photos/. Liste fermée : un slug inconnu
+ *  répond 404 plutôt que d'ouvrir le dossier — `sources/` reste privé. */
+export function photo(slug) {
+  if (!PHOTOS.some(p => p.slug === slug))
+    throw Object.assign(new Error(`portrait inconnu : ${slug}`), { status: 404 });
+  return join(PHOTOS_DIR, `${slug}.jpg`);
+}
 
-/** Un fichier d'impression, rastérisé à la demande. Transparent, évidemment : un PNG
- *  de merch avec un fond blanc pose un rectangle sur le vêtement. */
 export function merch(id) {
   const p = PIECES.find(x => x.id === id);
   if (!p) throw Object.assign(new Error(`pièce inconnue : ${id}`), { status: 404 });
-  const v = empreinte();
-  const png = join(CACHE, `merch-${id}-${v}.png`);
-  if (existsSync(png)) return Promise.resolve(png);
-  if (!enCours.has(png)) enCours.set(png, produire(p, png, v).finally(() => enCours.delete(png)));
-  return enCours.get(png).then(() => png);
-}
-
-async function produire(p, png, v) {
-  const travail = join(CACHE, `.travail-${p.id}`);
-  mkdirSync(CACHE, { recursive: true });
-  await render({ html: pageMerch(p), dir: travail, width: p.w, height: p.h,
-    formats: ['png'], transparent: true });
-  renameSync(join(travail, 'visuel.png'), png);
-  rmSync(travail, { recursive: true, force: true });
-  for (const f of readdirSync(CACHE))
-    if (f.endsWith('.png') && !f.includes(`-${v}`)) rmSync(join(CACHE, f), { force: true });
+  const png = join(ROOT, 'brand/merch/print', `otomata-${id}.png`);
+  if (!existsSync(png))
+    throw Object.assign(new Error(
+      `fichier d'impression absent : ${id} — le régénérer avec « node brand/merch/build-merch.mjs » et le commiter`),
+      { status: 404 });
+  return Promise.resolve(png);
 }

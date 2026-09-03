@@ -29,6 +29,10 @@ h1 .d{color:var(--terra)}
 .px a{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--soft);
   border:1px solid var(--hair);border-radius:7px;padding:3px 8px;background:var(--surface)}
 .px a.fort{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+.gens{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.p{background:var(--bg);border:1px solid var(--hair);border-radius:14px;overflow:hidden;width:220px;box-shadow:0 12px 34px rgba(44,33,18,.08)}
+.p img{width:100%;display:block;aspect-ratio:1;object-fit:cover;background:#e7dcc0}
+.p .bas{padding:11px 13px 13px;border-top:1px solid var(--hair)}
 .pal{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
 .pg{background:var(--bg);border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
 .pg h3{font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.14em;color:var(--mute);margin-bottom:9px}
@@ -61,6 +65,9 @@ tr:last-child td{border-bottom:0}
   <div class="sec">La typographie</div>
   <table id="typo"><thead><tr><th>Rôle</th><th>Famille</th><th>Usage</th></tr></thead><tbody></tbody></table>
 
+  <div class="sec">Les portraits<span>publiés au nom d'Otomata, fond commun</span></div>
+  <div class="gens" id="photos"></div>
+
   <div class="sec">Merch<span>fichiers d'impression, PNG transparents 4000 px</span></div>
   <div class="cards" id="merch"></div>
 
@@ -74,6 +81,9 @@ tr:last-child td{border-bottom:0}
     <p><b>Spreadshirt</b> : PNG (seul format à porter la transparence), 200 dpi, 4000 × 4000 px
       maximum, 10 Mo maximum. Les dimensions de la zone d'impression en centimètres dépendent du
       produit — leur outil les affiche au téléversement, s'y fier plutôt qu'à une cote recopiée.</p>
+    <p><b>Les portraits forment une série</b> : même fond, même lumière, même cadrage, obtenus par
+      la procédure d'harmonisation de <code>brand/photos/</code>. Un portrait ajouté sans y passer
+      casse la série — deux photos de deux studios ne se ressemblent jamais.</p>
     <p>Version de cette charte : <code id="v"></code>. Source de vérité :
       <code>oto-studio/brand/</code>.</p>
   </div>
@@ -108,6 +118,15 @@ try {
 
   $('#typo tbody').innerHTML = b.typo.map(t =>
     `<tr><td><b>${t.role}</b></td><td>${t.famille}</td><td style="color:var(--mute)">${t.usage}</td></tr>`).join('');
+
+  for (const ph of b.photos) {
+    const el = document.createElement('article');
+    el.className = 'p';
+    el.innerHTML = `<img alt="${ph.nom}" src="${ph.url}">` +
+      `<div class="bas"><div class="n">${ph.nom}</div><div class="no">${ph.role}</div>` +
+      `<div class="px"><a class="fort" href="${ph.url}" download="otomata-${ph.slug}.jpg">JPG 1024</a></div></div>`;
+    $('#photos').append(el);
+  }
 
   for (const m of b.merch) {
     const el = document.createElement('article');

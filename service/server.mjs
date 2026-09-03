@@ -182,6 +182,12 @@ const routes = [
       'Cache-Control': 'public, max-age=86400' });
     res.end(buf);
   }],
+  ['GET', /^\/brand\/photo\/([a-z-]+)\.jpg$/, ([slug], _b, res) => {
+    const buf = readFileSync(brand.photo(slug));
+    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
   ['GET', /^\/brand\/merch\/([a-z0-9-]+)\.png$/, async ([id], _b, res) => {
     const buf = readFileSync(await brand.merch(id));
     res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,

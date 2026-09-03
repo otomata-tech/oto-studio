@@ -11,7 +11,8 @@ import { PIECES, page } from './pieces.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '../..');
-const OUT = join(ROOT, 'out/merch');
+// versionné : ce sont des livrables stables, pas des rendus jetables
+const OUT = join(DIR, 'print');
 const GEN = join(ROOT, '.gen');
 
 mkdirSync(OUT, { recursive: true });
