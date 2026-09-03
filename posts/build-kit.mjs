@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FORMATS, CLES, livre } from './identite-formats.mjs';
+import { FORMATS, CLES, livre } from './identite-formats-DEFAUT-INJECTE.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '..');
