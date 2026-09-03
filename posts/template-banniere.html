@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  /* __FONTS__ */
+  /* Bannière 1584×396 — le format des couvertures LinkedIn, et des cinq images du
+     DIAPORAMA de profil (option Premium : 5 maximum).
+     Deux zones à ne pas remplir, et elles ne se devinent pas :
+       - la photo de profil recouvre le bas-gauche → rien d'important avant x≈300 ;
+       - le rognage mobile mange les côtés → le porteur reste vers le centre.
+     Aucune animation : pas de __seek, donc png seul. */
+  :root { --bg: #fefcf5; --ink: #2c2112; --mute: #6c5e44; --primary: #f0b41e; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: #fff; }
+  body {
+    position: relative; width: 1584px; height: 396px; overflow: hidden;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    color: var(--ink); font-family: "Hanken Grotesk", sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    gap: 56px; padding: 0 96px 0 306px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07; mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0; left: 120px; top: -300px;
+    width: 760px; height: 760px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.30), rgba(240,180,30,0.08) 55%, transparent 72%);
+  }
+  .mark { flex: none; width: 176px; height: 176px; z-index: 1; }
+  .mark svg { width: 100%; height: 100%; display: block; }
+  .mark:empty { display: none; }
+  .copy { z-index: 1; max-width: 900px; }
+  .kicker {
+    font-family: "JetBrains Mono", monospace; text-transform: uppercase;
+    letter-spacing: 0.24em; font-size: 20px; font-weight: 700; margin-bottom: 18px;
+  }
+  .titre {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto; font-variation-settings: "wdth" 90;
+    font-weight: 600; letter-spacing: -0.025em;
+    font-size: 62px; line-height: 1.06;
+    text-shadow: 6px 6px 0 var(--primary);
+  }
+  .pied {
+    margin-top: 22px; font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase; letter-spacing: 0.16em; font-size: 19px;
+    color: var(--mute);
+  }
+  .pied b { color: var(--ink); font-weight: 700; }
+</style>
+
+<div class="sun"></div>
+<div class="mark"><!--__MARK__--></div>
+<div class="copy">
+  <div class="kicker"></div>
+  <div class="titre"></div>
+  <div class="pied"></div>
+</div>
+<div class="grain"></div>
+
+<!--__DATA__-->
+<script>
+  // Le titre décide de sa taille : une phrase longue sur deux lignes ne doit pas
+  // sortir du cadre, et une phrase courte n'a aucune raison d'être rapetissée.
+  const D = window.__BAN || {};
+  const q = s => document.querySelector(s);
+  for (const [cls, val] of Object.entries({ kicker: D.kicker, titre: D.titre, pied: D.pied })) {
+    const el = q('.' + cls);
+    if (val) el.innerHTML = val; else el.remove();
+  }
+  const titre = q('.titre');
+  if (titre) {
+    // 176 px de mark + 56 de gap + les marges : il reste ~950 px, et 236 px de haut.
+    let taille = 62;
+    while (taille > 34 && (titre.scrollHeight > 210 || titre.scrollWidth > 950)) {
+      taille -= 2;
+      titre.style.fontSize = taille + 'px';
+    }
+    titre.style.textShadow = `${Math.max(3, Math.round(taille * 0.097))}px ${Math.max(3, Math.round(taille * 0.097))}px 0 var(--primary)`;
+  }
+</script>

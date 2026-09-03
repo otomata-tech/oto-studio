@@ -41,6 +41,9 @@ il ne se remplit pas, il ne change pas, et il doit rester à la même adresse. D
 - `GET /kit` — la page : un visuel par emplacement LinkedIn, sa cote livrée, son PNG à télécharger.
 - `GET /api/kit` — le même en JSON (formats, cotes, URL, ce qui est déjà en cache).
 - `GET /kit/<format>.png` — le visuel plein format ; `-apercu.png` sa version réduite (900 px).
+- `GET /kit/logo/<variante>.svg` — le mark, servi **depuis `brand/`** (pas de copie) : `mark`, `compact`, `mono-encre`, `mono-blanc`.
+- `GET /kit/logo/<variante>-<taille>.png` — le même rastérisé et **transparent**, aux tailles déclarées dans `LOGOS` (une taille hors liste est refusée en 404 plutôt que rendue au hasard).
+- `GET /kit/diapo/<1-5>.png` — les cinq images du **diaporama de profil** (option Premium ; `-apercu.png` idem).
 
 Le kit rend **à la demande au premier accès** (quelques secondes par format, sérialisées par
 la file du moteur), puis sert depuis `out/kit/`. Les fichiers portent une **empreinte des
@@ -54,9 +57,17 @@ premier visiteur qui paie le rendu. C'est voulu — un binaire généré n'a pas
 dépôt — mais ça veut dire qu'il ne faut pas s'étonner du délai au premier chargement après
 chaque `git pull`.
 
-Le favicon (`service/web/favicon.svg`) est le disque du kit réduit à ce qui survit à 16 px :
-la lettre en réserve y est un anneau dessiné, pas du texte — un favicon qui dépend d'une fonte
-ne s'affiche pas.
+Le favicon (`service/web/favicon.svg`) est la variante **compacte** du mark : sous 32 px, l'anneau
+décalé devient un cheveu et l'ombre un épaississement.
+
+⚠️ **Un PNG de logo doit être transparent**, sinon il n'est posable que sur du blanc. D'où l'option
+`transparent` du moteur (`Emulation.setDefaultBackgroundColorOverride`) — et **elle vit sur la
+session Chrome, pas sur le rendu** : `render.mjs` la remet à zéro à la fin, faute de quoi les
+visuels suivants sortiraient troués. Vérifié par un test qui rend un visuel juste après un logo.
+
+⚠️ **Le diaporama est une option Premium du PROFIL personnel** (5 images, 1584×396, PNG, 8 Mo
+chacune), pas de la page entreprise — qui garde sa couverture unique en 4200×700. Les cinq
+défilent en boucle : chacune tient seule et répète l'adresse, personne n'attend l'image suivante.
 
 ### Les gabarits
 
@@ -71,6 +82,7 @@ sans une ligne de front ni de documentation à écrire à côté.
 | `carte-cas-usage` | 1080×1080 | une demande en langage courant, les outils qu'oto enchaîne, le résultat |
 | `affiche-recul` | 1200×1500 | le pattern validé : la scène occupe tout, puis **recule** pour laisser monter la chute |
 | `kit-identite` | 6 formats | la carte de visite de la marque : post 4:5, carré, aperçu de lien, couvertures de profil et de page, avatar |
+| `banniere` | 1584×396 | une couverture, ou l'une des cinq images du diaporama Premium : un mark, une phrase, une adresse |
 
 **Un gabarit peut porter plusieurs tailles.** `kit-identite` déclare `sizes` (valeur du
 champ → `{width, height, scale}`) et `size_field` (le champ enum qui choisit) ; le serveur rend

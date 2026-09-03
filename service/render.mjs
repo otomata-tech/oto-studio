@@ -101,7 +101,7 @@ export function render(job) {
   return chain;
 }
 
-async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1 }) {
+async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1, transparent = false }) {
   await chrome();
   mkdirSync(dir, { recursive: true });
   const htmlPath = `${dir}/page.html`;
@@ -109,6 +109,11 @@ async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1
 
   const started = Date.now();
   await ss('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile: false });
+  // Un PNG de logo doit être détourable : sans cet override, Chrome peint un fond
+  // blanc opaque sous la page. À REMETTRE À null ensuite (l'override vit sur la
+  // session, pas sur le rendu) — sinon les visuels suivants sortent troués.
+  if (transparent)
+    await ss('Emulation.setDefaultBackgroundColorOverride', { color: { r: 0, g: 0, b: 0, a: 0 } });
   await ss('Page.navigate', { url: `file://${htmlPath}?capture=1` });
   await sleep(900);
   await evalJs('document.fonts.ready.then(()=>1)', true);
@@ -166,6 +171,8 @@ async function doRender({ html, dir, width, height, fps = 25, formats, scale = 1
     rmSync(fdir, { recursive: true, force: true });
     if (!formats.includes('mp4')) { rmSync(mp4, { force: true }); delete files.mp4; }
   }
+
+  if (transparent) await ss('Emulation.setDefaultBackgroundColorOverride', {});
 
   rmSync(htmlPath, { force: true });
   return { files, ms: Date.now() - started };

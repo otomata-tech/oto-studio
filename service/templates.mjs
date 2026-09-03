@@ -190,7 +190,51 @@ const identite = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite]]);
+/* ---------- bannière 1584×396 (couverture, et images du diaporama Premium) ---------- */
+
+// Les marks vivent dans brand/ : on les INJECTE inline, sans copie dans le gabarit.
+const MARKS = {
+  otomata: 'brand/logos/otomata/otomata-mark.svg',
+  oto: 'brand/logos/oto/oto-dashboard-mark.svg',
+};
+
+const banniere = {
+  id: 'banniere',
+  label: 'Bannière LinkedIn',
+  description: 'Format 1584×396 : couverture de profil, et les cinq images du diaporama Premium. ' +
+    'Une idée par bannière — un mark, une phrase, une adresse.',
+  size: { width: 1584, height: 396 },
+  sizes: { standard: { width: 1584, height: 396, scale: 2, cible: 'couverture / diaporama de profil' } },
+  fps: 25,
+  formats: ['png'],
+  fields: [
+    { key: 'mark', label: 'Mark', type: 'enum', options: ['otomata', 'oto', 'aucun'], required: true,
+      hint: 'otomata = le disque saffran ; oto = l\'open O du produit ; aucun = la phrase seule, plus grande' },
+    { key: 'kicker', label: 'Sur-titre', type: 'text', required: false,
+      hint: 'court, en capitales mono au-dessus du titre — ex. le nom de la marque' },
+    { key: 'titre', label: 'La phrase', type: 'text', required: true,
+      hint: 'UNE idée ; la taille s\'ajuste seule, de 62 à 34 px, selon la longueur' },
+    { key: 'pied', label: 'Pied', type: 'text', required: false,
+      hint: 'l\'adresse, en mono ; <b>…</b> autorisé' }
+  ],
+  example: {
+    mark: 'otomata',
+    kicker: 'Otomata',
+    titre: 'Studio IA basé à Marseille.',
+    pied: '<b>otomata.tech</b>'
+  },
+  build(data) {
+    const tpl = read('posts/template-banniere.html');
+    const mark = data.mark && data.mark !== 'aucun' ? read(MARKS[data.mark]) : '';
+    const body = tpl
+      .replace('<!--__MARK__-->', mark)
+      .replace('<!--__DATA__-->', `<script>window.__BAN=${inScript(data)};</script>`)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`Otomata — ${data.titre}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(

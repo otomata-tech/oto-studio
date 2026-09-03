@@ -50,6 +50,7 @@ node posts/build-post.mjs <slug>   # rend posts/<slug>.html → out/<slug>.mp4 +
 - `posts/cinq-questions.html` — post rentrée : cinq questions à poser avant de signer avec un vendeur d'agent IA (accès, traçabilité, mémoire des méthodes, droits, silence sur échec)
 - `posts/zero-absence.html` — post donnée manquante codée en zéro (API Recherche Entreprises, cas Norauto) vs donnée absente déclarée
 - `posts/open-data-fr.html` — post catalogue : 8 domaines d'open data FR servis par oto (tuiles → bandeau d'icônes par morph, comme `connectors.html`, mais suit le pattern « scène qui recule »), puis une requête qui croise 4 sources
+- `posts/template-banniere.html` — **bannière 1584×396** : la couverture de profil, et les cinq images du **diaporama Premium**. Le titre s'ajuste seul (62 → 34 px) selon sa longueur ; le mark est injecté depuis `brand/` (Otomata ou l'open O d'oto). Statique, servi par le gabarit `banniere` du studio.
 - `posts/template-identite.html` — **kit d'identité** (la carte de visite de la société) : disque saffran cerné d'encre, `OTOMATA` en encrage décalé. **Statique et multi-formats** — aucun `__seek`, un fragment unique dont le format vient des données, rendu par `build-kit.mjs` ou par le service (gabarit `kit-identite`), jamais par `build-post.mjs`.
 - Même pattern que les cartes : `window.__seek(t)` déterministe (styles calculés depuis t, pas de transitions CSS) + capture CDP + ffmpeg
 - Affiche statique one-shot : `google-chrome-stable --headless=new --screenshot --window-size=1200,1500 --force-device-scale-factor=2`

@@ -170,6 +170,28 @@ const routes = [
      accès, puis servis depuis le cache (cf. kit.mjs). */
   ['GET', /^\/kit$/, (_a, _b, res) => serveWeb('kit.html', res)],
   ['GET', /^\/api\/kit$/, () => kit.etat()],
+  // Le logo : SVG servi depuis brand/ (source de vérité, pas de copie), PNG rastérisés
+  // à la demande et transparents.
+  ['GET', /^\/kit\/diapo\/(\d)(-apercu)?\.png$/, async ([n, apercu], _b, res) => {
+    const buf = readFileSync(await kit.diapo(Number(n), { apercu: !!apercu }));
+    res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+
+  ['GET', /^\/kit\/logo\/([a-z-]+)\.svg$/, ([clef], _b, res) => {
+    const buf = readFileSync(kit.logoSvg(clef));
+    res.writeHead(200, { 'Content-Type': MIME['.svg'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+  ['GET', /^\/kit\/logo\/([a-z-]+?)-(\d{1,4})\.png$/, async ([clef, taille], _b, res) => {
+    const buf = readFileSync(await kit.logoPng(clef, Number(taille)));
+    res.writeHead(200, { 'Content-Type': MIME['.png'], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
+  }],
+
   ['GET', /^\/kit\/([a-z0-9]+?)(-apercu)?\.png$/, async ([format, apercu], _b, res) => {
     const p = await kit.visuel(format, { apercu: !!apercu });
     const buf = readFileSync(p);
