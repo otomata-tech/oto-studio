@@ -48,12 +48,18 @@ partenaire — elle remplace l'envoi d'un PDF de charte par pièce jointe.
 générateur, les rendus, la galerie, l'API. Poser le bypass sur autre chose que ce préfixe
 ouvrirait le pilote de rendu.
 
-⚠️ **Le merch n'est PAS rendu à la demande.** Il l'a été une demi-journée, et le préchauffage
-de huit PNG de 4000×4000 (16 Mpx pièce, contre 1,8 pour un visuel de post) a fait suffoquer la
-box — SSH injoignable pendant plusieurs minutes le 2026-09-03. Les fichiers d'impression ne
-changent jamais : ils sont **générés sur le poste et versionnés** dans `brand/merch/print/`.
-Restent rendus à la demande les seuls PNG de logo, plafonnés à 1024 px (1 Mpx), sur une liste
-fermée de tailles — une taille hors liste répond 404 sans rien fabriquer.
+⚠️ **Le merch n'est PAS rendu à la demande.** Un PNG de 4000×4000 fait 16 Mpx, contre 1,8 pour
+un visuel de post : c'est neuf fois le travail pour lequel le service est dimensionné, et le
+résultat ne change jamais. Les fichiers d'impression sont donc **générés sur le poste et
+versionnés** dans `brand/merch/print/`. Restent rendus à la demande les seuls PNG de logo,
+plafonnés à 1024 px (1 Mpx), sur une liste fermée de tailles — une taille hors liste répond 404
+sans rien fabriquer.
+
+*(Le 2026-09-03, une panne de SSH survenue pendant un préchauffage a d'abord été mise sur le dos
+de ces rendus. À tort : le jeton Cloudflare Access du tunnel avait expiré — `~/.cloudflared/`
+n'avait plus que le `.lock`. Se méfier de « la box souffre » quand le symptôme est un timeout au
+banner exchange : c'est le signe d'un ProxyCommand qui attend une authentification, pas d'une
+machine chargée.)*
 
 La palette et la typo sont **lues dans `brand/theme/theme.css`**, pas recopiées : la page publique
 dit forcément la même chose que les tokens que les sites importent.

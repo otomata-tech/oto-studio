@@ -7,10 +7,14 @@ node brand/merch/build-merch.mjs      # → brand/merch/print/otomata-<pièce>.p
 Huit fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print/`.
 
 ⚠️ **Ils sont versionnés, et c'est délibéré.** Un fichier d'impression ne change jamais : le
-faire fabriquer à la demande par la box, à 16 Mpx, l'a fait suffoquer le 2026-09-03 — plus de
-SSH pendant le préchauffage, alors que le service est calibré pour du 1200×1500. Le poste les
-génère (28 cœurs, deux secondes), git les transporte, le studio les sert tels quels sur
-**`/brand`**. 1,5 Mo au total pour huit fichiers.
+faire fabriquer à la demande par la box coûte 16 Mpx par image, là où le service est calibré
+pour du 1200×1500 (1,8 Mpx) — un travail lourd, répété, pour un résultat identique. Le poste
+les génère (deux secondes), git les transporte, le studio les sert tels quels sur **`/brand`**.
+1,5 Mo au total pour huit fichiers.
+
+*(Rectification : une version de ce paragraphe attribuait à ces rendus une panne SSH de la box
+le 2026-09-03. C'était faux — le jeton Cloudflare Access du tunnel avait expiré, la box n'a
+jamais été en cause. La raison de versionner tient sans cet argument.)*
 
 *(Les anciens designs — `tshirt-design`, `tshirt-otomata` et leurs planches — ont été supprimés
 le 2026-09-03 : ils étaient sur la palette anthracite `#2c3e50` abandonnée en mai 2026 et
