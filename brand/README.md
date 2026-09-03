@@ -40,10 +40,10 @@ support : c'est le mark, et c'est cette version-là qui a été retenue contre l
 de dessin imposé : ombre, anneau, disque. *(Une version antérieure de ce README, le même jour,
 affirmait le contraire — corrigé.)*
 
-**Le décalage se brouille sous 32 px** : en dessous, l'anneau devient un cheveu et l'ombre un
-épaississement. D'où `otomata-mark-compact.svg`, le disque cerné seul, réservé aux favicons et
-aux surfaces qui rognent en cercle. Ce n'est pas un second logo, c'est la version petite taille
-du même.
+**Le mark complet tient jusqu'à 16 px** — vérifié en planche : l'ombre porte le relief, l'anneau
+reste perceptible. C'est donc lui le favicon. `otomata-mark-compact.svg` (le disque cerné seul) ne
+sert que là où le support **rogne en cercle** — un avatar LinkedIn, une pastille ronde : l'ombre et
+l'anneau y tomberaient hors du visible. Ce n'est pas un second logo, c'est la version rognable.
 
 **Le violet `#863bff` n'est plus le mark de la société — et il n'était déjà affiché nulle part.**
 Vérifié le 2026-09-03 : `otomata-logo-violet.svg` n'est référencé par aucun site ni front (seulement

@@ -57,8 +57,9 @@ premier visiteur qui paie le rendu. C'est voulu — un binaire généré n'a pas
 dépôt — mais ça veut dire qu'il ne faut pas s'étonner du délai au premier chargement après
 chaque `git pull`.
 
-Le favicon (`service/web/favicon.svg`) est la variante **compacte** du mark : sous 32 px, l'anneau
-décalé devient un cheveu et l'ombre un épaississement.
+Le favicon (`service/web/favicon.svg`) est **le mark complet** : vérifié à 16 px, l'ombre porte le
+relief et l'anneau reste perceptible. La variante compacte ne sert qu'aux surfaces **rognées en
+cercle** (l'avatar du kit), où l'ombre et l'anneau tomberaient hors du visible.
 
 ⚠️ **Un PNG de logo doit être transparent**, sinon il n'est posable que sur du blanc. D'où l'option
 `transparent` du moteur (`Emulation.setDefaultBackgroundColorOverride`) — et **elle vit sur la
