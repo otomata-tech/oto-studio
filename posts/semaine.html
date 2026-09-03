@@ -76,21 +76,6 @@
   }
   .hero .sub b { color: var(--ink); }
 
-  /* ---- les connecteurs ajoutés : des logos, pas des mots ---- */
-  .conns { margin-top: 40px; z-index: 1; }
-  .conns-label { font-size: 15px; color: var(--mute); margin-bottom: 16px; letter-spacing: 0.16em; }
-  .conns-row { display: flex; flex-wrap: wrap; gap: 18px; max-width: 730px; }
-  .conns-row .c {
-    width: 169px; height: 169px; flex: none;
-    background: var(--surface);
-    border: 2px solid var(--ink);
-    box-shadow: 7px 7px 0 rgba(44,33,18,0.85);
-    display: flex; align-items: center; justify-content: center;
-    transform-origin: 50% 50%;
-  }
-  .conns-row .c img { max-width: 96px; max-height: 96px; display: block; }
-  .conns-row .c svg { width: 92px; height: 92px; display: block; }
-
   /* ---- les tampons ---- */
   .stamps {
     z-index: 1;
@@ -142,13 +127,15 @@
 
   <div class="stamps">
     <span class="new" id="s0">12 672 → 85 163</span>
-    <span id="s1">28 agents actifs</span>
-    <span id="s2">un seul branchement MCP</span>
-  </div>
-
-  <div class="conns">
-    <div class="conns-label mono">Connecteurs ajoutés depuis</div>
-    <div class="conns-row" id="conns"></div>
+    <span id="s1">recherche web</span>
+    <span id="s2">écriture tableaux</span>
+    <span id="s3">annuaire dirigeants FR</span>
+    <span id="s4">fiches entreprise FR</span>
+    <span id="s5">scraping web</span>
+    <span id="s6">procédures</span>
+    <span id="s7">file de travail</span>
+    <span id="s8">28 agents actifs</span>
+    <span id="s9">un seul branchement MCP</span>
   </div>
 
   <div class="phrase">
@@ -172,43 +159,20 @@
 
   const TOTAL = 85163;
   const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f');
-  const N = 3;
+  const N = 10;
   const stamps = Array.from({ length: N }, (_, i) => $('s' + i));
-  const rot = [-1.5, 1.2, -0.8];
+  const rot = [-1.5, 1.2, -0.8, 1.6, -1.1, 0.9, -1.4, 1.1, -0.7, 1.3];
 
-  /* Les connecteurs ajoutés depuis le post « 12 672 » : quatre annoncés dans ce
-     post-là (Sellsy, Lusha, Firecrawl, Apify), quatre dans le suivant (Salesforce,
-     LightOn, Reddit, Zoho). Les fichiers sont LOCAUX : le rendu ne doit pas dépendre
-     d'un CDN, et un token d'API n'a rien à faire dans un dépôt public. */
-  const CONNS = [
-    ['Sellsy', '../assets/logos/logo_sellsy.png'],
-    ['Lusha', '../assets/logos/logo_lusha.png'],
-    ['Firecrawl', '../assets/logos/logo_firecrawl.png'],
-    ['Apify', '../assets/logos/logo_apify.png'],
-    ['Salesforce', '../assets/logos/logo_salesforce.svg'],
-    ['LightOn', '../assets/logos/logo_lighton.svg'],
-    ['Reddit', '../assets/logos/logo_reddit.svg'],
-    ['Zoho', '../assets/logos/logo_zoho.svg'],
-  ];
-  const conns = CONNS.map(([nom, src]) => {
-    const el = document.createElement('span');
-    el.className = 'c';
-    el.innerHTML = `<img src="${src}" alt="${nom}">`;
-    $('conns').appendChild(el);
-    return el;
-  });
-  const rotC = [-2, 1.6, -1.2, 2.1, -1.7, 1.3, -2.2, 1.5];
 
   const T = {
     hero: 250,
     count: 550, countDur: 1750,
     shadow: 2450,
     stamp: i => 2900 + i * 330, stampDur: 380,
-    conn: i => 4100 + i * 190, connDur: 420,
-    phrase: 6100,
-    fadeOut: 9000
+    phrase: 6500,
+    fadeOut: 8900
   };
-  const LOOP = 9550;
+  const LOOP = 9450;
   window.__DURATION = LOOP;
 
   function render(t) {
@@ -245,14 +209,6 @@
       const e = eob(p);
       el.style.opacity = clamp(p * 3);
       el.style.transform = `rotate(${rot[i] * (2 - e)}deg) scale(${1.45 - 0.45 * e})`;
-    });
-
-    // les connecteurs tombent l'un après l'autre, avec le même rebond que les tampons
-    conns.forEach((el, i) => {
-      const p = io(T.conn(i), T.connDur, t);
-      const e = eob(p);
-      el.style.opacity = clamp(p * 3);
-      el.style.transform = `rotate(${rotC[i] * (2 - e)}deg) scale(${1.4 - 0.4 * e})`;
     });
 
     const pp = eoc(io(T.phrase, 600, t));
