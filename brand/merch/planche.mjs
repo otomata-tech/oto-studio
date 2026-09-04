@@ -57,10 +57,14 @@ export const planche = img => {
       <feColorMatrix type="saturate" values="0"/></filter>
      <rect width="220" height="220" filter="url(#g)" opacity="0.5"/></svg>`)}`;
 
-  const vetement = (titre, textile, tirage, note, avant, arriere) => `
+  // Le devant porte deux impressions : la ligne au cœur, et la bande le long de l'ourlet.
+  const bandeGauche = b => `<image href="${b}" x="57" y="146" width="13" height="64"
+      preserveAspectRatio="xMidYMid meet"/>`;
+
+  const vetement = (titre, textile, tirage, note, avant, arriere, bande) => `
     <section class="rang">
       <div class="pieces">
-        ${piece('tshirtDevant', textile, img[avant])}
+        ${piece('tshirtDevant', textile, img[avant], bandeGauche(img[bande]))}
         ${piece('tshirtDos', textile, img[arriere])}
       </div>
       <div class="dit">
@@ -119,15 +123,15 @@ export const planche = img => {
 
 ${vetement('T-shirt crème', CREME, 'Impression une passe · fichier couleur',
   'L\'adresse devant, la phrase derrière. Sur du clair, le mark garde son cerne d\'encre et son ombre : c\'est la version complète.',
-  'ligne-couleur', 'dos-couleur')}
+  'ligne-couleur', 'dos-couleur', 'bande-couleur')}
 
 ${vetement('T-shirt encre', ENCRE, 'Impression une passe · fichier blanc',
   'Sur du foncé, le mark passe en blanc plein. Il perd son cerne, et c\'est le vide entre le disque et l\'anneau qui porte le décalage.',
-  'ligne-blanc', 'dos-blanc')}
+  'ligne-blanc', 'dos-blanc', 'bande-blanc')}
 
 ${vetement('T-shirt saffran', SAFFRAN, 'Impression une passe · fichier encre',
   'Sur du jaune, le mark en couleur se noierait — disque et textile se confondent. D\'où la version encre. C\'est aussi le fichier du sweat à capuche jaune citron.',
-  'ligne-encre', 'dos-encre')}
+  'ligne-encre', 'dos-encre', 'bande-encre')}
 
 <div class="objets">
   <h2>Et à côté</h2>

@@ -96,11 +96,13 @@ Supprimés : `otomata-logo-violet.svg`, `otomata-mark-orange.svg`, `otomata-deck
 Les portraits publiés au nom d'Otomata (`alexis-laporte.jpg`, `sarah-soumahoro.jpg`, 1024×1024, fond bleu nuit commun) + leurs sources d'origine, et surtout **la procédure pour harmoniser un nouveau portrait** avec la série : `harmonise-portrait.py` (retouche du décor par modèle d'image — remplacement de fond, élargissement du cadre) et son mode d'emploi dans `photos/README.md`, dont les contrôles à faire avant publication. Servis en ligne depuis `oto-websites/sites/otomata.tech/public/equipe/`.
 
 ### `merch/` — les fichiers d'impression
-`build-merch.mjs` produit onze PNG transparents dont le côté long fait 4000 px, **recadrés au
+`build-merch.mjs` produit quatorze PNG transparents dont le côté long fait 4000 px, **recadrés au
 contenu** — une marge transparente se paierait en centimètres de visuel perdus à l'impression.
 **L'adresse devant, la phrase derrière** : quatre poses (`ligne` = mark + `otomata.tech` pour la
 poitrine et le mug ; `dos` = mark en grand + OTOMATA + « LA BOÎTE À OUTILS DES AGENTS » ; le mark
-ou le nom seuls), chacune en version claire, encre ou blanche. **Quel fichier prendre
+ou le nom seuls ; `bande` = le **glyphe colonne**, cinq disques dont l'anneau décalé pivote, dessiné
+pour les zones hautes et étroites où aucun texte ne tient), chacune en version claire, encre ou
+blanche. **Quel fichier prendre
 dépend de la couleur du textile**, et c'est ce que dit `merch/README.md` : sur un vêtement jaune
 le mark en couleur se noie, sur un vêtement foncé il perd son cerne. La table des pièces vit dans
 `merch/pieces.mjs`, partagée avec le studio ; `build-planche.mjs` monte les mêmes fichiers sur des

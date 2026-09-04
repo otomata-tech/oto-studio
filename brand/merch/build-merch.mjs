@@ -46,7 +46,10 @@ function rendre(p, echelle, sortie) {
   ], { stdio: 'ignore' });
   if (r.status !== 0 || !existsSync(sortie)) throw new Error(`${p.id} — rendu`);
   // `-trim` s'appuie sur le canal alpha : l'ombre à 85 % d'opacité en fait partie.
-  const m = spawnSync('magick', [sortie, '-trim', '+repage', sortie], { stdio: 'inherit' });
+  // La rotation vient AVANT la mesure : c'est elle qui décide quel côté est le long, et
+  // donc ce que la passe suivante doit ramener à 4000 px. Un quart de tour est sans perte.
+  const m = spawnSync('magick', [sortie, '-trim', '+repage',
+    ...(p.rotation ? ['-rotate', String(p.rotation)] : []), sortie], { stdio: 'inherit' });
   if (m.status !== 0) throw new Error(`${p.id} — recadrage`);
   const dim = spawnSync('identify', ['-format', '%w %h', sortie], { encoding: 'utf8' }).stdout;
   const [w2, h2] = dim.split(' ').map(Number);

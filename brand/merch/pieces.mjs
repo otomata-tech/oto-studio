@@ -28,8 +28,35 @@ const RATIO_PHRASE = 21.1;
 // l'ombre déborde en bas. Un lockup calé sur la boîte penche visuellement.
 const RECENTRE = 0.031;
 
+/** Le glyphe COLONNE — inventé le 2026-09-04, pour les endroits hauts et étroits (bas de
+ *  vêtement, couture latérale) où ni le mark ni une ligne de texte ne tiennent : le texte
+ *  tourné y donnait un ruban de 21:1, illisible.
+ *
+ *  Cinq disques cernés dont l'anneau décalé pivote d'un cinquième de tour à chaque étage —
+ *  un automate qui tourne. Les proportions sont celles du mark (anneau 3 % plus grand que
+ *  le disque, décalé de 15,6 % de son rayon, cerne à 6,4 %), pas des valeurs inventées.
+ *
+ *  ⚠️ Ce n'est PAS le mark et il ne le remplace jamais : le mark a une ombre dure et une
+ *  seule occurrence. La colonne est un motif, au même titre qu'une trame. */
+const colonne = (disque, cerne, anneau) => {
+  const n = 5, r = 35, pas = 84, d = r * 0.156, trait = r * 0.064;
+  const etages = [];
+  for (let i = 0; i < n; i++) {
+    const y = 45 + i * pas;
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    etages.push(
+      `<circle cx="${(50 + d * Math.cos(a)).toFixed(2)}" cy="${(y + d * Math.sin(a)).toFixed(2)}" r="${r}"
+         fill="none" stroke="${anneau}" stroke-width="${trait.toFixed(2)}"/>`,
+      `<circle cx="50" cy="${y}" r="${(r * 0.968).toFixed(2)}" fill="${disque}"` +
+        (cerne ? ` stroke="${cerne}" stroke-width="${trait.toFixed(2)}"/>` : '/>'));
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 ${45 + (n - 1) * pas + 45}"
+    role="img" aria-label="Otomata">${etages.join('')}</svg>`;
+};
+
 // Une entrée = un fichier d'impression.
-//   `pose`  — dos (mark, nom, phrase), ligne (mark + adresse), mark seul, nom seul
+//   `pose`  — dos (mark, nom, phrase), ligne (mark + adresse), bande (le glyphe colonne,
+//             pour un ourlet), mark seul, nom seul
 //   `sur`   — sur QUELLE couleur de textile le fichier va : la seule chose qui compte
 //             au moment de téléverser.
 // Les dimensions ne sont pas ici : le build recadre au contenu puis ramène le côté long
@@ -48,6 +75,13 @@ export const PIECES = [
     sur: 'textiles saffran ou jaunes — poitrine (cœur)' },
   { id: 'ligne-blanc', pose: 'ligne', mark: 'otomata-mark-mono-blanc.svg', encre: CREME, ombre: null,
     sur: 'textiles foncés — poitrine (cœur)' },
+
+  { id: 'bande-couleur', pose: 'bande', glyphe: [SAFFRAN, ENCRE, SAFFRAN],
+    sur: 'textiles clairs — bas de vêtement à la verticale (ourlet, couture latérale)' },
+  { id: 'bande-encre', pose: 'bande', glyphe: [ENCRE, null, ENCRE],
+    sur: 'textiles saffran ou jaunes — bas de vêtement à la verticale' },
+  { id: 'bande-blanc', pose: 'bande', glyphe: [CREME, null, CREME],
+    sur: 'textiles foncés — bas de vêtement à la verticale' },
 
   { id: 'mark-couleur', pose: 'mark', mark: 'otomata-mark.svg',
     sur: 'textiles clairs (blanc, crème, gris clair) — sticker rond, broderie' },
@@ -69,6 +103,9 @@ const U = 1000;
 const CANEVAS = {
   dos:   { w: 1.8, h: 2.1 },
   ligne: { w: 4.6, h: 1.5 },
+  // La bande est verticale par construction : le glyphe colonne fait 1:5, prêt à poser le
+  // long d'un ourlet.
+  bande: { w: 0.5, h: 2.6 },
   mark:  { w: 1.2, h: 1.2 },
   mot:   { w: 4.6, h: 1.6 },
 };
@@ -83,6 +120,7 @@ export const page = (p, echelle = 1) => {
   const u = U * echelle;
   const px = n => `${Math.round(n)}px`;
 
+  const bande = p.pose === 'bande';
   const ligne = p.pose === 'ligne', dos = p.pose === 'dos';
   const texte = ligne ? ADRESSE : (dos || p.pose === 'mot') ? NOM : '';
   // Le nom règle la largeur de la pièce du dos ; la phrase et le filet s'alignent dessus.
@@ -99,6 +137,8 @@ export const page = (p, echelle = 1) => {
   body{display:flex;flex-direction:${ligne ? 'row' : 'column'};align-items:center;justify-content:center;
        gap:${px(u * (ligne ? 0.18 : 0.02))}}
   .m{width:${px(u)};height:${px(u)};display:${p.mark ? 'block' : 'none'};flex:none}
+  .g{width:${px(u * 0.5)};display:${p.glyphe ? 'block' : 'none'}}
+  .g svg{width:100%;height:auto;display:block}
   .m svg{width:100%;height:100%;display:block}
   .mot{display:${texte ? 'block' : 'none'};white-space:nowrap;
     font-family:"Bricolage Grotesque",sans-serif;font-optical-sizing:auto;
@@ -115,6 +155,7 @@ export const page = (p, echelle = 1) => {
     font-size:${px(large / RATIO_PHRASE)};color:${p.encre};text-indent:.16em}
 </style></head><body>
   <div class="m">${p.mark ? svg(p.mark) : ''}</div>
+  <div class="g">${p.glyphe ? colonne(...p.glyphe) : ''}</div>
   <div class="mot">${texte}</div>
   <div class="filet"></div>
   <div class="phrase">${PHRASE}</div>

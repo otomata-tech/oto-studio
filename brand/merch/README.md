@@ -5,7 +5,7 @@ node brand/merch/build-merch.mjs      # → brand/merch/print/otomata-<pièce>.p
 node brand/merch/build-planche.mjs    # → .gen/merch-planche.png (la planche à montrer, jetable)
 ```
 
-Onze fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print/`.
+Quatorze fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print/`.
 
 ## Ce que le merch dit — arrêté le 2026-09-04
 
@@ -15,6 +15,7 @@ Onze fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print
 |---|---|---|
 | **ligne** | le mark, puis **`otomata.tech`** | poitrine (cœur), mug, casquette |
 | **dos** | le mark en grand, **OTOMATA**, un filet, puis **`LA BOÎTE À OUTILS DES AGENTS`** | dos de t-shirt, tote bag |
+| **bande** | le **glyphe colonne**, vertical | bas de vêtement, couture latérale, ourlet |
 | **mark** | le mark seul | sticker rond, broderie |
 | **mot** | **OTOMATA** seul | bandeau (gourde, casquette) |
 
@@ -25,13 +26,26 @@ La phrase du dos est **descriptive à dessein**. Dans le dos d'un inconnu, un cl
 C'est la **forme de la zone** qui décide de la pose, pas le goût : une poitrine est large et
 basse, la pièce du dos y deviendrait un timbre-poste ; un dos est carré, la ligne s'y perdrait.
 
+### Le glyphe colonne
+
+Une zone haute et étroite ne prend ni le mark ni une ligne de texte : `otomata.tech` tourné d'un
+quart de tour y donne un ruban de 6:1 acceptable, la phrase du dos un ruban de **21:1**, illisible.
+D'où un motif dessiné pour cette forme-là — **cinq disques cernés dont l'anneau décalé pivote d'un
+cinquième de tour à chaque étage**, un automate qui tourne. Ses proportions sont celles du mark
+(anneau 3 % plus grand que le disque, décalé de 15,6 % de son rayon, cerne à 6,4 %), pas des
+valeurs inventées.
+
+⚠️ **Ce n'est pas le mark et il ne le remplace jamais.** Le mark a une ombre dure et n'existe qu'en
+une occurrence ; la colonne est un motif, au même titre qu'une trame. Elle vit dans `pieces.mjs` —
+si elle sert ailleurs qu'au merch, c'est à `brand/logos/otomata/` qu'elle devra déménager.
+
 ## Choisir le fichier : c'est la couleur du textile qui décide
 
-| Textile | Poitrine (cœur) | Dos / grande face | Mark seul | Nom seul |
-|---|---|---|---|---|
-| **clair** — blanc, crème, gris clair | `otomata-ligne-couleur.png` | `otomata-dos-couleur.png` | `otomata-mark-couleur.png` | `otomata-mot-couleur.png` |
-| **saffran ou jaune** — le hoodie jaune citron | `otomata-ligne-encre.png` | `otomata-dos-encre.png` | `otomata-mark-encre.png` | — |
-| **foncé** — noir, encre, marine | `otomata-ligne-blanc.png` | `otomata-dos-blanc.png` | `otomata-mark-blanc.png` | `otomata-mot-blanc.png` |
+| Textile | Poitrine (cœur) | Dos / grande face | Bas, vertical | Mark seul | Nom seul |
+|---|---|---|---|---|---|
+| **clair** — blanc, crème, gris clair | `otomata-ligne-couleur.png` | `otomata-dos-couleur.png` | `otomata-bande-couleur.png` | `otomata-mark-couleur.png` | `otomata-mot-couleur.png` |
+| **saffran ou jaune** — le hoodie jaune citron | `otomata-ligne-encre.png` | `otomata-dos-encre.png` | `otomata-bande-encre.png` | `otomata-mark-encre.png` | — |
+| **foncé** — noir, encre, marine | `otomata-ligne-blanc.png` | `otomata-dos-blanc.png` | `otomata-bande-blanc.png` | `otomata-mark-blanc.png` | `otomata-mot-blanc.png` |
 
 Pour les objets : **mug** → `ligne` (la surface s'enroule, la pièce du dos n'y tient pas) ·
 **tote** → `dos` · **sticker rond** → `mark` · **sticker rectangle** → `ligne` · **gourde** → `mot`.
@@ -62,8 +76,8 @@ intention.
 ⚠️ **Les fichiers sont versionnés, et c'est délibéré.** Un fichier d'impression ne change jamais :
 le faire fabriquer à la demande par la box coûte jusqu'à 16 Mpx par image, là où le service est
 calibré pour du 1200×1500 (1,8 Mpx) — un travail lourd, répété, pour un résultat identique. Le
-poste les génère, git les transporte, le studio les sert tels quels sur **`/brand`**. 3 Mo au
-total pour onze fichiers.
+poste les génère, git les transporte, le studio les sert tels quels sur **`/brand`**. 4 Mo au
+total pour quatorze fichiers.
 
 *(Rectification : une version de ce paragraphe attribuait à ces rendus une panne SSH de la box
 le 2026-09-03. C'était faux — le jeton Cloudflare Access du tunnel avait expiré, la box n'a
