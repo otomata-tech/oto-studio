@@ -98,8 +98,9 @@ Les portraits publiés au nom d'Otomata (`alexis-laporte.jpg`, `sarah-soumahoro.
 ### `merch/` — les fichiers d'impression
 `build-merch.mjs` produit onze PNG transparents dont le côté long fait 4000 px, **recadrés au
 contenu** — une marge transparente se paierait en centimètres de visuel perdus à l'impression.
-Trois poses (le mark et le nom en ligne pour la poitrine et le mug, empilés pour le dos et le
-tote, l'un des deux seul), chacune en version claire, encre ou blanche. **Quel fichier prendre
+**L'adresse devant, la phrase derrière** : quatre poses (`ligne` = mark + `otomata.tech` pour la
+poitrine et le mug ; `dos` = mark en grand + OTOMATA + « LA BOÎTE À OUTILS DES AGENTS » ; le mark
+ou le nom seuls), chacune en version claire, encre ou blanche. **Quel fichier prendre
 dépend de la couleur du textile**, et c'est ce que dit `merch/README.md` : sur un vêtement jaune
 le mark en couleur se noie, sur un vêtement foncé il perd son cerne. La table des pièces vit dans
 `merch/pieces.mjs`, partagée avec le studio ; `build-planche.mjs` monte les mêmes fichiers sur des

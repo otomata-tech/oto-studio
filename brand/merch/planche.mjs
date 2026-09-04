@@ -19,7 +19,7 @@ export const SUPPORTS = {
     forme: c => `<path d="M38,24 L4,58 L32,86 L48,72 L48,224 L152,224 L152,72 L168,86 L196,58 L162,24
       L138,14 C138,26 122,32 100,32 C78,32 62,26 62,14 Z" fill="${c}" stroke="${ENCRE}" stroke-width="2.5"
       stroke-linejoin="round"/>`,
-    zone: { x: 60, y: 62, w: 80, h: 100 },
+    zone: { x: 56, y: 58, w: 88, h: 108 },
   },
   tote: {
     vb: '0 0 200 232',
@@ -118,35 +118,35 @@ export const planche = img => {
 </header>
 
 ${vetement('T-shirt crème', CREME, 'Impression une passe · fichier couleur',
-  'Le mark et le nom, rien d\'autre. Sur du clair, le mark garde son cerne d\'encre et son ombre : c\'est la version complète.',
-  'ligne-couleur', 'otomata-couleur')}
+  'L\'adresse devant, la phrase derrière. Sur du clair, le mark garde son cerne d\'encre et son ombre : c\'est la version complète.',
+  'ligne-couleur', 'dos-couleur')}
 
 ${vetement('T-shirt encre', ENCRE, 'Impression une passe · fichier blanc',
   'Sur du foncé, le mark passe en blanc plein. Il perd son cerne, et c\'est le vide entre le disque et l\'anneau qui porte le décalage.',
-  'ligne-blanc', 'otomata-blanc')}
+  'ligne-blanc', 'dos-blanc')}
 
 ${vetement('T-shirt saffran', SAFFRAN, 'Impression une passe · fichier encre',
   'Sur du jaune, le mark en couleur se noierait — disque et textile se confondent. D\'où la version encre. C\'est aussi le fichier du sweat à capuche jaune citron.',
-  'ligne-encre', 'otomata-encre')}
+  'ligne-encre', 'dos-encre')}
 
 <div class="objets">
   <h2>Et à côté</h2>
   <div class="objet">
-    ${piece('tote', '#efe6cd', img['otomata-couleur'])}
+    ${piece('tote', '#efe6cd', img['dos-couleur'])}
     <h3>Tote bag</h3>
     <p>Une seule face, une seule encre : la pièce la moins chère et celle où le visuel du dos rend le mieux.</p>
   </div>
   <div class="objet">
     ${piece('mug', CREME, img['ligne-couleur'])}
     <h3>Mug</h3>
-    <p>La surface s'enroule : c'est le lockup en ligne qui tient, pas l'empilé.</p>
+    <p>La surface s'enroule : c'est la ligne du devant qui tient, pas la pièce du dos.</p>
   </div>
   <div class="objet">
     ${piece('sticker', CREME, null, `
       <image href="${img['mark-couleur']}" x="30" y="45" width="64" height="60" preserveAspectRatio="xMidYMid meet"/>
       <image href="${img['ligne-couleur']}" x="126" y="66" width="52" height="18" preserveAspectRatio="xMidYMid meet"/>`)}
     <h3>Stickers</h3>
-    <p>Deux découpes : le mark seul en rond, le nom en ligne. Blanc mat, comme ceux d'avril.</p>
+    <p>Deux découpes : le mark seul en rond, l'adresse en ligne. Blanc mat, comme ceux d'avril.</p>
   </div>
 </div>
 

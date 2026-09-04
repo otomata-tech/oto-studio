@@ -18,7 +18,7 @@ mkdirSync(GEN, { recursive: true });
 // d'autres fichiers locaux, et les réduire d'abord évite un HTML de plusieurs Mo.
 const img = {};
 for (const id of ['mark-couleur', 'ligne-couleur', 'ligne-encre', 'ligne-blanc',
-                  'otomata-couleur', 'otomata-encre', 'otomata-blanc']) {
+                  'dos-couleur', 'dos-encre', 'dos-blanc']) {
   const r = spawnSync('magick', [join(DIR, 'print', `otomata-${id}.png`), '-resize', '900x900', 'png:-'],
     { maxBuffer: 64 * 1024 * 1024 });
   if (r.status !== 0) { console.error(`✗ ${id}`); process.exit(1); }

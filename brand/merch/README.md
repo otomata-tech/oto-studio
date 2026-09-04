@@ -7,24 +7,34 @@ node brand/merch/build-planche.mjs    # → .gen/merch-planche.png (la planche �
 
 Onze fichiers, tous en **PNG transparent**, côté long **4000 px**, dans `print/`.
 
-## Trois poses, un seul dessin
+## Ce que le merch dit — arrêté le 2026-09-04
 
-Le merch ne porte que **le mark et le nom**. Ce qui change d'une pièce à l'autre, c'est la
-façon dont ils sont posés — et c'est la forme du support qui décide, pas le goût :
+**L'adresse devant, la phrase derrière.**
 
-| Pose | À quoi elle sert | Pourquoi |
+| Pose | Ce qu'elle porte | Où elle va |
 |---|---|---|
-| **ligne** — mark, puis le nom à sa droite | poitrine (cœur), mug, casquette | une zone large et basse ; l'empilé y devient minuscule |
-| **vertical** — mark au-dessus du nom | dos de t-shirt, tote bag | une zone carrée : c'est la pièce principale |
-| **mark seul** / **mot seul** | sticker rond, gourde, bandeau | quand le support ne laisse la place qu'à l'un des deux |
+| **ligne** | le mark, puis **`otomata.tech`** | poitrine (cœur), mug, casquette |
+| **dos** | le mark en grand, **OTOMATA**, un filet, puis **`LA BOÎTE À OUTILS DES AGENTS`** | dos de t-shirt, tote bag |
+| **mark** | le mark seul | sticker rond, broderie |
+| **mot** | **OTOMATA** seul | bandeau (gourde, casquette) |
+
+La phrase du dos est **descriptive à dessein**. Dans le dos d'un inconnu, un clin d'œil interne
+(« un seul branchement ») ne se comprend pas ; un fait, si. Les trois textes vivent en tête de
+`pieces.mjs` — les changer les change partout, y compris sur la planche.
+
+C'est la **forme de la zone** qui décide de la pose, pas le goût : une poitrine est large et
+basse, la pièce du dos y deviendrait un timbre-poste ; un dos est carré, la ligne s'y perdrait.
 
 ## Choisir le fichier : c'est la couleur du textile qui décide
 
-| Textile | Ligne (poitrine) | Vertical (dos) | Mark seul | Nom seul |
+| Textile | Poitrine (cœur) | Dos / grande face | Mark seul | Nom seul |
 |---|---|---|---|---|
-| **clair** — blanc, crème, gris clair | `otomata-ligne-couleur.png` | `otomata-otomata-couleur.png` | `otomata-mark-couleur.png` | `otomata-mot-couleur.png` |
-| **saffran ou jaune** — le hoodie jaune citron | `otomata-ligne-encre.png` | `otomata-otomata-encre.png` | `otomata-mark-encre.png` | — |
-| **foncé** — noir, encre, marine | `otomata-ligne-blanc.png` | `otomata-otomata-blanc.png` | `otomata-mark-blanc.png` | `otomata-mot-blanc.png` |
+| **clair** — blanc, crème, gris clair | `otomata-ligne-couleur.png` | `otomata-dos-couleur.png` | `otomata-mark-couleur.png` | `otomata-mot-couleur.png` |
+| **saffran ou jaune** — le hoodie jaune citron | `otomata-ligne-encre.png` | `otomata-dos-encre.png` | `otomata-mark-encre.png` | — |
+| **foncé** — noir, encre, marine | `otomata-ligne-blanc.png` | `otomata-dos-blanc.png` | `otomata-mark-blanc.png` | `otomata-mot-blanc.png` |
+
+Pour les objets : **mug** → `ligne` (la surface s'enroule, la pièce du dos n'y tient pas) ·
+**tote** → `dos` · **sticker rond** → `mark` · **sticker rectangle** → `ligne` · **gourde** → `mot`.
 
 ⚠️ **Sur un textile jaune, le mark en couleur se noie** : son disque saffran et le fond se
 confondent, il ne reste que le cerne. C'est pour ça que la version encre existe — pas par goût.
@@ -91,9 +101,12 @@ exactement le cas où le mark en couleur ne tient pas.
 ## Ajouter une pièce
 
 Une entrée dans `PIECES` (`pieces.mjs`) : sa **pose**, quel SVG de `brand/logos/otomata/` elle
-prend, si elle porte le nom, et **sur quel textile elle va**. Aucune dimension à donner — le build
+prend, sa couleur d'encre, et **sur quel textile elle va**. Aucune dimension à donner — le build
 s'en charge. Les marks ne sont jamais recopiés ici : ils sont lus dans `brand/logos/otomata/`,
 qui fait autorité.
+
+*(`otomata-otomata-*.png` a été renommé `otomata-dos-*.png` le 2026-09-04, en même temps que ces
+pièces ont gagné la phrase : le doublon dans le nom ne disait rien, et « dos » dit où ça va.)*
 
 *(Les anciens designs — `tshirt-design`, `tshirt-otomata` et leurs planches — ont été supprimés
 le 2026-09-03 : ils étaient sur la palette anthracite `#2c3e50` abandonnée en mai 2026 et
