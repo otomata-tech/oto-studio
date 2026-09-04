@@ -96,11 +96,14 @@ Supprimés : `otomata-logo-violet.svg`, `otomata-mark-orange.svg`, `otomata-deck
 Les portraits publiés au nom d'Otomata (`alexis-laporte.jpg`, `sarah-soumahoro.jpg`, 1024×1024, fond bleu nuit commun) + leurs sources d'origine, et surtout **la procédure pour harmoniser un nouveau portrait** avec la série : `harmonise-portrait.py` (retouche du décor par modèle d'image — remplacement de fond, élargissement du cadre) et son mode d'emploi dans `photos/README.md`, dont les contrôles à faire avant publication. Servis en ligne depuis `oto-websites/sites/otomata.tech/public/equipe/`.
 
 ### `merch/` — les fichiers d'impression
-`build-merch.mjs` produit huit PNG transparents de 4000 px (mark seul, mark + nom, nom seul —
-chacun en version claire, encre ou blanche). **Quel fichier prendre dépend de la couleur du
-textile**, et c'est ce que dit `merch/README.md` : sur un vêtement jaune le mark en couleur se
-noie, sur un vêtement foncé il perd son cerne. La table des pièces vit dans `merch/pieces.mjs`,
-partagée avec le studio.
+`build-merch.mjs` produit onze PNG transparents dont le côté long fait 4000 px, **recadrés au
+contenu** — une marge transparente se paierait en centimètres de visuel perdus à l'impression.
+Trois poses (le mark et le nom en ligne pour la poitrine et le mug, empilés pour le dos et le
+tote, l'un des deux seul), chacune en version claire, encre ou blanche. **Quel fichier prendre
+dépend de la couleur du textile**, et c'est ce que dit `merch/README.md` : sur un vêtement jaune
+le mark en couleur se noie, sur un vêtement foncé il perd son cerne. La table des pièces vit dans
+`merch/pieces.mjs`, partagée avec le studio ; `build-planche.mjs` monte les mêmes fichiers sur des
+silhouettes pour la planche qu'on montre avant de commander.
 
 ### `charte-doc/` — documentation
 - `DESIGN-BRIEF.md` — **le *pourquoi* de la direction artistique** (« Manuscrit chaud », direction « 2a » : sidebar encre, cartes chaudes, rayons 8px/pill, Lucide, Familjen Grotesk + Spline Sans Mono). Ses §0-3 font autorité ; ses §4-8 inventorient le design system du dashboard de 2026 et sont de l'histoire.

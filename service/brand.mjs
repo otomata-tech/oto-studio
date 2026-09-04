@@ -48,10 +48,23 @@ const TYPO = [
   { role: 'Mono', famille: 'JetBrains Mono', usage: 'eyebrows, étiquettes, adresses — capitales, letter-spacing 0.16em' },
 ];
 
+/** Dimensions réelles d'un PNG : l'en-tête IHDR, aux octets 16→24. La table des pièces
+ *  ne les porte plus — le build recadre au contenu, donc seul le fichier sait ce qu'il
+ *  mesure, et la page publique doit annoncer le fichier, pas une intention. */
+function dimensionsPng(chemin) {
+  if (!existsSync(chemin))
+    throw new Error(`fichier d'impression absent : ${chemin} — le régénérer avec « node brand/merch/build-merch.mjs » et le commiter`);
+  const t = readFileSync(chemin).subarray(16, 24);
+  return `${t.readUInt32BE(0)}×${t.readUInt32BE(4)}`;
+}
+
+const pngMerch = id => join(ROOT, 'brand/merch/print', `otomata-${id}.png`);
+
 const empreinte = () => {
   const h = createHash('sha1').update(readFileSync(THEME));
   for (const l of Object.values(LOGOS)) h.update(readFileSync(join(ROOT, 'brand/logos/otomata', l.fichier)));
-  h.update(JSON.stringify(PIECES.map(p => [p.id, p.w, p.h, p.mark, p.mot, p.ombre, p.sur])));
+  h.update(JSON.stringify(PIECES.map(p => [p.id, p.pose, p.mark, p.mot, p.ombre, p.sur])));
+  for (const p of PIECES) h.update(dimensionsPng(pngMerch(p.id)));
   for (const ph of PHOTOS) h.update(readFileSync(join(PHOTOS_DIR, `${ph.slug}.jpg`)));
   return h.digest('hex').slice(0, 8);
 };
@@ -69,7 +82,7 @@ export function etat() {
     typo: TYPO,
     photos: PHOTOS.map(ph => ({ ...ph, url: `/brand/photo/${ph.slug}.jpg?v=${v}` })),
     merch: PIECES.map(p => ({
-      id: p.id, sur: p.sur, taille: `${p.w}×${p.h}`,
+      id: p.id, sur: p.sur, taille: dimensionsPng(pngMerch(p.id)),
       url: `/brand/merch/${p.id}.png?v=${v}`,
       fond: /blanc/.test(p.id) ? 'sombre' : /encre/.test(p.id) ? 'saffran' : 'clair',
     })),
@@ -79,10 +92,10 @@ export function etat() {
 export { logoSvg, logoPng };
 
 /** Un fichier d'impression, servi tel quel depuis brand/merch/print/.
- *  Il n'est PAS rendu à la demande : 4000×4000 fait 16 Mpx, et faire fabriquer ça à
- *  une box d'un vCPU pour un fichier qui ne change jamais, c'est la faire suffoquer
- *  (constaté le 2026-09-03 : plus de SSH pendant le préchauffage). Le poste les
- *  génère avec `node brand/merch/build-merch.mjs`, git les transporte. */
+ *  Il n'est PAS rendu à la demande : 4000 px de côté long font jusqu'à 16 Mpx, là où le
+ *  service est calibré pour du 1200×1500 — un travail lourd, répété, pour un fichier qui
+ *  ne change jamais. Le poste les génère avec `node brand/merch/build-merch.mjs`, git les
+ *  transporte. */
 /** Un portrait publié, servi depuis brand/photos/. Liste fermée : un slug inconnu
  *  répond 404 plutôt que d'ouvrir le dossier — `sources/` reste privé. */
 export function photo(slug) {
@@ -94,7 +107,7 @@ export function photo(slug) {
 export function merch(id) {
   const p = PIECES.find(x => x.id === id);
   if (!p) throw Object.assign(new Error(`pièce inconnue : ${id}`), { status: 404 });
-  const png = join(ROOT, 'brand/merch/print', `otomata-${id}.png`);
+  const png = pngMerch(id);
   if (!existsSync(png))
     throw Object.assign(new Error(
       `fichier d'impression absent : ${id} — le régénérer avec « node brand/merch/build-merch.mjs » et le commiter`),
