@@ -137,7 +137,20 @@ Ces emplacements **implémentent** la charte définie ici. Une évolution part d
 | `oto-dashboard/frontend/src/assets/console.css` | les tokens dashboard *vivants* (`:root`), consommés en `var(--…)` par les vues console | `theme/dashboard-tokens/` |
 | Drive `otomata-shared/identite/` | la charte formelle diffusée aux tiers | `charte/` |
 | `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
+| Drive `admin/legal/templates/` | les **gabarits PDF** des contrats et propositions (md2pdf : pandoc + weasyprint) — mark inliné, palette d'impression, Hanken/Bricolage embarquées en `@font-face` avec leur `OFL.txt` | `logos/otomata/`, `theme/` |
 | `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
+
+⚠️ **Sur un support imprimé, la charte ne s'applique pas telle quelle** (arrêté le 2026-09-06 avec
+la session legal, sur les gabarits de contrat) : le fond reste **blanc**, jamais le crème `#fefcf5`
+— un aplat de fond sur un document imprimé et signé coûte de l'encre et grise les photocopies. Et
+le saffran `#f0b41e` ne sert **qu'en aplat** : en texte sur blanc il tombe à ~1,9:1 de contraste,
+l'accent lisible est `#5a3b03`. Le reste — mark complet, formes dures sans dégradé ni radius,
+encre `#2c2112`, filets `#dccfa8` — s'applique à l'identique.
+
+⚠️ **Une webfont n'existe pas pour un moteur d'impression** : weasyprint ne va rien chercher en
+ligne. Une police de charte doit être embarquée (`@font-face` + `--base-url`) ou installée sur le
+poste, sinon le document sort en repli **sans que rien ne le signale**. C'était le cas des gabarits
+legal, qui déclaraient `'Inter'` — installée nulle part — depuis le début.
 
 Vérifier la dérive — **sur les valeurs**, au 2026-08-27 : aucune.
 
