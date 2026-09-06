@@ -58,9 +58,21 @@ PROMPTS = {
         + INTACT +
         "Only EXTEND the frame outwards (outpaint) so that the crop becomes head-and-shoulders "
         "with the same generous margin as the first image: reveal more of the studio backdrop "
-        "above the head and on both sides, and continue the shoulders and clothing naturally. "
+        "above the head and on both sides, EXTEND DOWNWARDS to reveal more of the chest and "
+        "torso below the shoulders, and continue the shoulders and clothing naturally. "
         "Keep the same seamless backdrop, the same soft studio lighting and colour grading. "
         "Square 1:1. Photorealistic, sharp, high detail. No text, no logo, no border."
+    ),
+    # Reculer d'un cran quand il n'existe plus, dans la série, de portrait plus large
+    # pour servir de référence : c'est ce qu'`outpaint` ne peut pas faire, faute de cible.
+    "recul": (
+        "Zoom out this corporate headshot: keep the subject identical and centred, and reveal "
+        "about 25 % more of the same smooth, seamless studio backdrop on all four sides — and "
+        "BELOW in priority, showing more of the chest, torso and clothing. "
+        + INTACT +
+        "Do not crop, do not re-frame the head off-centre, keep the same backdrop colour, the "
+        "same soft studio lighting and colour grading. Square 1:1. Photorealistic, sharp, high "
+        "detail. No text, no logo, no border."
     ),
     "recolor": (
         "Change ONLY the studio backdrop colour of this corporate headshot. Replace the "

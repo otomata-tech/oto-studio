@@ -28,6 +28,12 @@ pas au reste de la série — essayé le 2026-09-01, jeté le jour même.
 ```bash
 PY=~/.local/share/pipx/venvs/oto-cli/bin/python   # l'interpréteur qui porte oto.config
 
+# 0. reculer d'un cran quand le cadrage est trop serré et qu'AUCUN portrait de la série
+#    n'est plus large — outpaint a besoin d'une cible, `recul` n'en a pas besoin
+$PY harmonise-portrait.py recul \
+    --photo /tmp/portrait.png \
+    --out /tmp/portrait-recule.png
+
 # 1. le nouveau venu prend le fond et la lumière d'un portrait déjà publié
 $PY harmonise-portrait.py backdrop \
     --photo sources/nouveau-source.png \
@@ -55,6 +61,22 @@ peut de toute façon pas être desserrée. Le mode `outpaint` fait l'inverse —
 prolonge le décor, les épaules et le vêtement de la photo trop serrée. C'est ce
 qui a permis de rapprocher les cadrages d'Alexis (visage plein cadre) et de
 Sarah (plan buste) sans dégrader ni l'un ni l'autre.
+
+⚠️ **`outpaint` n'étendait pas vers le BAS** — son prompt ne demandait du décor
+qu'au-dessus de la tête et sur les côtés. Un portrait coupé sous les épaules ne
+pouvait donc pas gagner de buste, quel que soit le nombre de passes. Corrigé le
+2026-09-06 : le prompt réclame maintenant explicitement le torse sous les épaules.
+Si un cadrage vous paraît « manquer un peu en bas » après un outpaint, c'était ça.
+
+**`recul` est l'outil de dernier recours** : `outpaint` a besoin d'un portrait plus
+large comme cible, et il arrive qu'il n'y en ait plus dans la série. `recul` recule
+d'environ 25 % sans référence. Deux mises en garde :
+- **il ne s'applique pas uniformément à toute une série.** Reculer les deux portraits
+  le 2026-09-06 a EMPIRÉ leur accord : celui qui était déjà en plan buste est parti
+  bien plus loin que l'autre. Ce qui compte est que les têtes fassent la même taille,
+  pas que tout le monde subisse le même traitement.
+- **chaque passe régénère l'image entière** : le grain de peau se lisse et le contraste
+  monte à chaque fois. Deux passes se voient. Enchaîner sans regarder, non.
 
 ### Ce qu'il faut vérifier avant de publier
 
@@ -92,10 +114,19 @@ pendant quelques secondes, ce qui fait conclure à tort que la permission n'est 
 délégable — elle l'est (vérifié le 2026-09-01, purge acceptée 15 s après création).
 D'où les essais espacés.
 
-### Fond
+### Fond — le saffran, depuis le 2026-09-06
 
-Le fond retenu est le bleu nuit du portrait d'Alexis (`#2a4562` environ), qui
-sert de référence à toute la série. Le saffran de la charte (`#f0b41e`) a été
-essayé le 2026-09-01 : il fonctionne, mais le camel du pull s'y détache mal et
-la retombée de lumière jaune verdit les cheveux foncés. Le mode `recolor` du
-script permet de rejouer un fond de couleur si le besoin revient.
+Le fond retenu est le **saffran de la charte `#f0b41e`**, sur toute la série.
+
+⚠️ **La note qui précédait ici était fausse et a coûté un aller-retour.** Elle
+affirmait, d'un essai du 2026-09-01, que « le camel du pull se détache mal » sur le
+saffran et que « la lumière jaune verdit les cheveux foncés ». Remesuré le 2026-09-06
+en montant les trois fonds côte à côte : c'est sur l'**ocre** (`#cc7722`) que le pull
+camel se fond — il est à deux doigts de la couleur du fond —, et sur le saffran qu'il
+ressort le mieux. Le verdissement des cheveux n'a été constaté sur aucun des deux.
+
+Leçon générale, pas seulement sur les photos : **une comparaison de couleurs se refait
+en montant les candidats côte à côte**, pas de mémoire ni sur une note. Le mode
+`recolor` du script est là pour ça, il coûte deux minutes.
+
+Le bleu nuit (`#2a4562`) reste dans l'historique git si le besoin revient.
