@@ -234,7 +234,51 @@ const banniere = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere]]);
+/* ---------- faux output d'agent ---------- */
+
+const output = {
+  id: 'output-agent',
+  label: 'Faux output d\'agent',
+  description: 'Format LinkedIn 4:5. Une capture d\'agent à la charte : la demande, puis la réponse. '
+    + 'Rien d\'autre — pas de titre ni de chute, c\'est le post qui les porte. La taille du texte '
+    + 'descend toute seule jusqu\'à ce que le pavé tienne.',
+  size: { width: 1200, height: 1500, scale: 2 },
+  fps: 25,
+  formats: ['png'],
+  fields: [
+    { key: 'fenetre', label: 'Barre de titre', type: 'text', required: false,
+      hint: 'à droite de la fenêtre, ex. « claude — opus-5 — ~/projets/app »' },
+    { key: 'demande', label: 'La demande', type: 'textarea', required: true,
+      hint: 'la ligne tapée par la personne, précédée d\'un chevron saffran ; <b>…</b> autorisé' },
+    { key: 'meta', label: 'Ligne d\'état', type: 'text', required: false,
+      hint: 'sous la demande, ex. « ✻ Thinking… (4m 12s · 63 tool uses) » — laisser vide pour l\'omettre' },
+    { key: 'reponse', label: 'La réponse', type: 'textarea', required: true,
+      hint: 'UNE LIGNE = UN PARAGRAPHE ; <b>…</b> et <i>…</i> autorisés. La puce se pose seule sur le premier.' }
+  ],
+  // Exemple neutre à dessein : cet exemple part sur un dépôt PUBLIC, il ne peut pas
+  // porter le texte d'un post qui n'est pas encore paru.
+  example: {
+    fenetre: 'claude — opus-5 — ~/projets/app',
+    demande: 'renomme la colonne « statut » en « état »',
+    meta: '✻ Thinking… (2m 04s · 31 tool uses · 44.8k tokens)',
+    reponse: 'Deux choses avant de renommer, dont une qui change la demande.\n'
+      + '<b>La colonne s\'appelle déjà « état » en base.</b> C\'est la vue qui affiche « statut », '
+      + 'depuis un alias posé en mars. Renommer la colonne ne changerait donc rien à l\'écran.\n'
+      + '<b>Trois exports la lisent par son nom.</b> Deux sont à nous, le troisième est le fichier '
+      + 'que le client reçoit chaque lundi — il casserait sans que rien ne le signale avant mardi.\n'
+      + 'Ce que je peux faire sans risque : changer l\'alias de la vue. Une ligne, réversible.\n'
+      + '<i>Dis-moi si c\'est l\'écran que tu voulais changer, ou la base.</i>'
+  },
+  build(data) {
+    const tpl = read('posts/template-output.html');
+    const body = tpl
+      .replace('<!--__DATA__-->', `<script>window.__OUT=${inScript(data)};</script>`)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`oto — ${data.demande.replace(/<[^>]+>/g, '').slice(0, 60)}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere], [output.id, output]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(
