@@ -29,7 +29,9 @@
   .sun { position:absolute; z-index:0; right:-160px; top:-180px; width:820px; height:820px;
     background:radial-gradient(closest-side, rgba(240,180,30,.34), rgba(240,180,30,.09) 55%, transparent 72%); }
 
-  .win { position:relative; z-index:1; width:1092px; height:1372px; background:var(--surface);
+  /* hauteur AUTO : une capture courte est une petite fenêtre, pas une grande fenêtre aux
+     deux tiers vide. Le plafond est posé par le script, qui réduit le texte s'il dépasse. */
+  .win { position:relative; z-index:1; width:1092px; background:var(--surface);
     border:3px solid var(--ink); box-shadow:16px 16px 0 rgba(44,33,18,.88);
     display:flex; flex-direction:column; overflow:hidden; }
 
@@ -81,15 +83,18 @@
   // La longueur du texte n'est pas connue à l'avance : on descend la taille jusqu'à ce
   // que le pavé tienne dans la fenêtre. Sans ça, le dernier paragraphe se fait couper —
   // et c'est celui-là qui porte la chute.
-  const corps = $('corps'), win = corps.parentElement;
-  const dispo = () => win.clientHeight - corps.offsetTop;
+  const HAUT_MAX = 1372;
+  const win = $('corps').parentElement;
   for (var px = 22; px > 11; px -= 0.4) {
-    corps.style.fontSize = px + 'px';
-    corps.style.lineHeight = 1.54;
+    $('corps').style.fontSize = px + 'px';
+    $('corps').style.lineHeight = 1.54;
     $('demande').style.fontSize = (px * 1.15) + 'px';
     $('meta').style.fontSize = (px * 0.82) + 'px';
-    if (corps.scrollHeight <= dispo()) break;
+    if (win.offsetHeight <= HAUT_MAX) break;
   }
+  // Un texte si long qu'il déborde même au plus petit corps : on plafonne pour garder un
+  // cadre net plutôt que de laisser la fenêtre sortir du visuel.
+  if (win.offsetHeight > HAUT_MAX) win.style.height = HAUT_MAX + 'px';
   document.title = 'prêt';
 </script>
 </body>

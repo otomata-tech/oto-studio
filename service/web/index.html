@@ -347,6 +347,11 @@ for (const t of templates) sel.append(new Option(t.label, t.id));
 sel.onchange = async () => {
   manifest = await api(`/api/templates/${sel.value}`);
   $('#tpl-desc').textContent = manifest.description;
+  // Changer de gabarit remet le panneau à zéro : sans ça, l'aperçu et le « terminé en
+  // X s » du gabarit PRÉCÉDENT restent affichés à côté du nouveau formulaire — on lit
+  // le temps d'une carte animée en croyant que c'est celui de l'image qu'on prépare.
+  $('#view').removeAttribute('src');
+  say('');
   for (const k of Object.keys(state)) delete state[k];
   // Pré-remplissage par l'exemple du gabarit : on montre la forme attendue plutôt
   // que de la décrire. Copie profonde — la liste d'outils est éditée en place.
