@@ -38,7 +38,7 @@
 
   .corps { z-index:2; margin-top:auto; }
   .sur { font-size:19px; color:var(--mute); margin-bottom:16px; }
-  h1 { font-size:96px; line-height:.98; text-transform:uppercase; }
+  h1 { font-size:132px; line-height:.98; text-transform:uppercase; }
   h1 b { color:var(--primary); font-weight:600; text-shadow:5px 5px 0 rgba(44,33,18,.9); }
   .sous { margin-top:26px; font-size:33px; line-height:1.28; font-weight:600; max-width:1000px; }
   .sous i { font-style:normal; color:var(--mute); font-weight:400; }
@@ -131,7 +131,7 @@
   // Le titre est ce qui varie le plus : il descend jusqu'à tenir en trois lignes, sinon
   // il pousse les logos et les informations hors du cadre.
   const t = $('titre');
-  if (D.titre) for (var px = 96; px > 44; px -= 2) {
+  if (D.titre) for (var px = 132; px > 44; px -= 2) {
     t.style.fontSize = px + 'px';
     if (t.offsetHeight <= px * 0.98 * 3 + 6) break;
   }
