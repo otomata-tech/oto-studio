@@ -2,7 +2,7 @@
 // Un gabarit = un manifeste de champs + une fonction qui rend l'HTML complet.
 // Ajouter un gabarit = ajouter une entrée ici. Rien n'est découvert dynamiquement :
 // un gabarit qu'on ne peut pas décrire en champs n'a rien à faire dans le studio.
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FORMATS, CLES, livre } from '../posts/identite-formats.mjs';
@@ -278,7 +278,88 @@ const output = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere], [output.id, output]]);
+/* ---------- annonce (adhésion, événement, partenariat) ---------- */
+
+// Les logos de TIERS vivent dans assets/partenaires/. Le dossier est lu au démarrage :
+// ajouter un partenaire = y déposer un fichier, pas modifier ce code. Le champ reste
+// décrit en enum, donc l'IHM sait toujours l'afficher.
+const PARTENAIRES = Object.fromEntries(
+  readdirSync(join(ROOT, 'assets/partenaires'))
+    .filter(f => /\.(svg|png)$/i.test(f))
+    .sort()
+    .map(f => [f.replace(/\.(svg|png)$/i, ''), `assets/partenaires/${f}`]));
+
+// Un logo tiers est posé tel quel, en data-URI : on ne le recolore pas, on ne le
+// recompose pas — c'est la marque de quelqu'un d'autre.
+const dataUri = rel => {
+  const bin = readFileSync(join(ROOT, rel));
+  const mime = rel.endsWith('.svg') ? 'image/svg+xml' : 'image/png';
+  return `data:${mime};base64,${bin.toString('base64')}`;
+};
+
+const annonce = {
+  id: 'annonce',
+  label: 'Annonce (adhésion, événement)',
+  description: 'Format LinkedIn 4:5. Un titre énorme dont un mot porte le saffran, le mark qui déborde du cadre, '
+    + 'les logos des tiers sur cartes, et les informations pratiques en lignes à pictos. Statique.',
+  size: { width: 1200, height: 1500, scale: 2 },
+  fps: 25,
+  formats: ['png'],
+  fields: [
+    { key: 'eyebrow', label: 'Bandeau haut', type: 'text', required: false,
+      hint: 'en capitales mono à gauche, ex. « Studio IA · Marseille »' },
+    { key: 'badge', label: 'Badge daté', type: 'text', required: false,
+      hint: 'pastille encre en haut à droite, ex. « Sept. 2026 »' },
+    { key: 'sur', label: 'Sur-titre', type: 'text', required: false,
+      hint: 'une ligne mono au-dessus du titre' },
+    { key: 'titre', label: 'Le titre', type: 'text', required: true,
+      hint: 'affiché EN CAPITALES ; mettre <b>…</b> autour du ou des mots à passer en saffran' },
+    { key: 'sous', label: 'Sous-titre', type: 'textarea', required: false,
+      hint: 'deux lignes maximum ; <i>…</i> pour la partie secondaire' },
+    { key: 'partenaires', label: 'Logos partenaires', type: 'list', required: false, max: 3,
+      hint: 'les logos de tiers, posés sur cartes blanches',
+      item: [
+        { key: 'logo', label: 'Logo', type: 'enum', options: Object.keys(PARTENAIRES), required: true },
+        { key: 'fond', label: 'Fond de la carte', type: 'text', required: false,
+          hint: 'couleur hex ; blanc par défaut. INDISPENSABLE pour un logo blanc sur transparent, '
+            + 'qui disparaîtrait sinon — prendre alors la couleur de la marque concernée.' }
+      ] },
+    { key: 'lignes', label: 'Informations', type: 'list', required: false, max: 4,
+      hint: 'date, lieu, qui — une ligne par information, avec son picto',
+      item: [
+        { key: 'icone', label: 'Picto', type: 'enum', options: ICON_KEYS, required: true },
+        { key: 'texte', label: 'Texte', type: 'text', required: true, hint: '<b>…</b> autorisé' }
+      ] },
+    { key: 'mot', label: 'Nom en pied', type: 'text', required: false, hint: 'par défaut OTOMATA' },
+    { key: 'sig', label: 'Signature', type: 'text', required: false, hint: 'sous le nom, en mono' },
+    { key: 'url', label: 'Adresse', type: 'text', required: false, hint: 'en bas à droite' }
+  ],
+  example: {
+    eyebrow: 'Studio IA · Marseille',
+    badge: 'Sept. 2026',
+    sur: 'Nouvelle étape',
+    titre: 'On rejoint <b>la bande</b>.',
+    sous: 'Cadrage, formation, outils concrets. <i>Pour les PME et les ETI de la région.</i>',
+    lignes: [
+      { icone: 'map-pin', texte: '<b>Marseille</b>, 55 rue Grignan' },
+      { icone: 'users', texte: 'Alexis Laporte &amp; Sarah Soumahoro' }
+    ],
+    mot: 'OTOMATA', sig: 'Studio IA · Marseille', url: 'otomata.tech'
+  },
+  build(data) {
+    const tpl = read('posts/template-annonce.html');
+    const d = { ...data,
+      partenaires: (data.partenaires || []).map(p => ({ src: dataUri(PARTENAIRES[p.logo]), fond: p.fond })) };
+    const inject = `<script>window.__ICONS=${inScript(ICONS)};window.__ANN=${inScript(d)};</script>`;
+    const body = tpl
+      .replace('<!--__MARK__-->', read('brand/logos/otomata/otomata-mark.svg'))
+      .replace('<!--__DATA__-->', inject)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`Otomata — ${data.titre.replace(/<[^>]+>/g, '')}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere], [output.id, output], [annonce.id, annonce]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(

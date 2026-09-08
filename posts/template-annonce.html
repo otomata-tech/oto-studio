@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>/* __FONTS__ */</style>
+<style>
+  /* Gabarit « annonce » — une nouvelle qui se lit de loin : un titre énorme dont UN mot
+     porte le saffran, le mark en grand qui déborde du cadre, et le strict nécessaire en
+     dessous. Fait pour une adhésion, une présence à un événement, un partenariat.
+
+     Composition reprise du visuel de Sarah (09/2026) : bandeau mono + badge daté, mark
+     débordant en haut à droite, titre en capitales, filet, pied à deux colonnes. Ce n'est
+     pas l'affiche-recul — rien ne s'anime, tout est posé d'un coup, comme un carton.
+
+     Rien n'est imprimé en dur, ni marque ni adresse : le pied vient des données. */
+  :root { --bg:#fefcf5; --surface:#fff; --paper2:#f4ecd2; --ink:#2c2112; --ink-soft:#4a3a23;
+          --mute:#6c5e44; --hair:#dccfa8; --primary:#f0b41e; --brun:#5a3b03; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:1500px; overflow:hidden; }
+  body { position:relative; background:var(--bg); color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    display:flex; flex-direction:column; padding:64px 72px 60px; }
+  .grain { position:absolute; inset:0; z-index:40; pointer-events:none; opacity:.07; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>"); }
+  .sun { position:absolute; z-index:0; right:-260px; top:-300px; width:1150px; height:1150px;
+    background:radial-gradient(closest-side, rgba(240,180,30,.30), rgba(240,180,30,.08) 58%, transparent 74%); }
+  /* Le mark DÉBORDE : coupé par le cadre, il devient une matière, pas un tampon. */
+  .mk { position:absolute; z-index:0; top:-132px; right:-186px; width:722px; height:722px; }
+  .mk svg { width:100%; height:100%; display:block; }
+
+  .mono { font-family:"JetBrains Mono",monospace; text-transform:uppercase; letter-spacing:.16em; }
+  .display { font-family:"Bricolage Grotesque",sans-serif; font-optical-sizing:auto;
+    font-variation-settings:"wdth" 90; font-weight:600; letter-spacing:-.03em; }
+
+  header { z-index:2; display:flex; align-items:center; font-size:16px; color:var(--mute); }
+  header .badge { margin-left:auto; background:var(--ink); color:var(--bg);
+    padding:9px 16px 8px; font-size:15px; }
+
+  .corps { z-index:2; margin-top:auto; }
+  .sur { font-size:19px; color:var(--mute); margin-bottom:16px; }
+  h1 { font-size:96px; line-height:.98; text-transform:uppercase; }
+  h1 b { color:var(--primary); font-weight:600; text-shadow:5px 5px 0 rgba(44,33,18,.9); }
+  .sous { margin-top:26px; font-size:33px; line-height:1.28; font-weight:600; max-width:1000px; }
+  .sous i { font-style:normal; color:var(--mute); font-weight:400; }
+
+  /* Les logos des tiers : posés sur une carte blanche cernée, jamais fondus dans le papier. */
+  .logos { z-index:2; margin-top:40px; display:flex; align-items:stretch; gap:24px; justify-content:flex-start; }
+  /* PAS d'ombre portée ici, contrairement au reste de la charte : la charte d'usage de la
+     marque French Tech interdit d'appliquer un effet graphique (ombre, flou) à ses logos.
+     Un cadre net, un aplat, rien d'autre. */
+  .carte { background:var(--surface); border:3px solid var(--ink);
+    padding:30px 44px; display:flex; align-items:center; justify-content:center; min-height:242px;
+    flex:0 0 auto; min-width:330px; max-width:100%; }
+  .carte img { max-width:100%; max-height:176px; display:block; }
+
+  .lignes { z-index:2; margin-top:40px; display:flex; flex-direction:column; gap:18px; }
+  .l { display:flex; align-items:center; gap:20px; }
+  .l .ic { width:58px; height:58px; flex:none; background:var(--paper2);
+    border:2.5px solid var(--ink); display:flex; align-items:center; justify-content:center; }
+  .l .ic svg { width:29px; height:29px; fill:none; stroke:var(--ink); stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round; }
+  .l .tx { font-size:29px; line-height:1.2; }
+  .l .tx b { font-weight:700; }
+
+  footer { z-index:2; margin-top:44px; padding-top:24px; border-top:3px solid var(--ink);
+    display:flex; align-items:flex-end; }
+  footer .mot { font-family:"Bricolage Grotesque",sans-serif; font-variation-settings:"wdth" 90;
+    font-weight:600; font-size:52px; letter-spacing:-.035em; line-height:.9;
+    text-shadow:4px 4px 0 var(--primary); }
+  footer .sig { font-size:13px; color:var(--mute); margin-top:9px; }
+  footer .url { margin-left:auto; font-size:16px; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="sun"></div>
+<div class="mk"><!--__MARK__--></div>
+<header>
+  <span class="mono" id="eyebrow"></span>
+  <span class="badge mono" id="badge"></span>
+</header>
+<div class="corps">
+  <div class="sur mono" id="sur"></div>
+  <h1 class="display" id="titre"></h1>
+  <div class="sous" id="sous"></div>
+  <div class="logos" id="logos"></div>
+  <div class="lignes" id="lignes"></div>
+</div>
+<footer>
+  <div>
+    <div class="mot" id="mot"></div>
+    <div class="sig mono" id="sig"></div>
+  </div>
+  <div class="url mono" id="url"></div>
+</footer>
+<div class="grain"></div>
+<!--__DATA__-->
+<script>
+  const D = window.__ANN, ICONS = window.__ICONS;
+  const $ = id => document.getElementById(id);
+  const pose = (id, v, html) => {
+    const el = $(id);
+    if (!v) { el.style.display = 'none'; return; }
+    el[html ? 'innerHTML' : 'textContent'] = v;
+  };
+  pose('eyebrow', D.eyebrow); pose('badge', D.badge); pose('sur', D.sur);
+  pose('titre', D.titre, true); pose('sous', D.sous, true);
+  pose('mot', D.mot || 'OTOMATA'); pose('sig', D.sig); pose('url', D.url);
+
+  // Les logos partenaires arrivent en data-URI : le gabarit ne lit aucun fichier.
+  const logos = $('logos');
+  // Un logo blanc sur transparent (celui du Grand Bain) disparaît sur notre papier : la
+  // carte prend alors la couleur de SA marque, pas la nôtre.
+  for (const p of (D.partenaires || [])) {
+    const d = document.createElement('div');
+    d.className = 'carte';
+    if (p.fond) d.style.background = p.fond;
+    d.innerHTML = `<img src="${p.src}" alt="">`;
+    logos.append(d);
+  }
+  if (!logos.children.length) logos.style.display = 'none';
+
+  const lignes = $('lignes');
+  for (const l of (D.lignes || [])) {
+    const el = document.createElement('div');
+    el.className = 'l';
+    el.innerHTML = `<div class="ic"><svg viewBox="0 0 24 24">${ICONS[l.icone] || ''}</svg></div>`
+      + `<div class="tx">${l.texte}</div>`;
+    lignes.append(el);
+  }
+  if (!lignes.children.length) lignes.style.display = 'none';
+
+  // Le titre est ce qui varie le plus : il descend jusqu'à tenir en trois lignes, sinon
+  // il pousse les logos et les informations hors du cadre.
+  const t = $('titre');
+  if (D.titre) for (var px = 96; px > 44; px -= 2) {
+    t.style.fontSize = px + 'px';
+    if (t.offsetHeight <= px * 0.98 * 3 + 6) break;
+  }
+  // Contrôle final : si l'ensemble déborde, c'est qu'on a demandé trop de lignes — mieux
+  // vaut le dire que livrer un visuel rogné.
+  const trop = document.body.scrollHeight > 1500;
+  document.title = trop ? 'DEBORDE' : 'prêt';
+</script>
+</body>
+</html>
