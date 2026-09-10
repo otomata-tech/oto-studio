@@ -19,3 +19,8 @@ gallery.html
 
 # profils chrome de rendu
 /tmp/oto-build-chrome/
+
+# Notes d'agent : locales, jamais versionnées.
+# Motif ciblé, pas `.claude/` en bloc : `.claude/skills/` doit rester versionnable.
+**/.claude/agent-memory/
+**/.claude/worktrees/
