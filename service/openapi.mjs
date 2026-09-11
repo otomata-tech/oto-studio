@@ -21,10 +21,19 @@ const champs = (fields, indent = '  ') => fields.map(f => {
 
 // La taille livrée d'un gabarit multi-formats dépend d'un champ : l'annoncer en une
 // seule cote ferait produire un 4:5 à qui demande une couverture. On donne la table.
-const taille = t => t.sizes
-  ? `Taille selon \`${t.size_field}\` : ` + Object.entries(t.sizes)
-      .map(([k, s]) => `${k} → ${s.width * (s.scale || 1)}×${s.height * (s.scale || 1)}`).join(', ') + '.'
-  : `Taille : ${t.size.width}×${t.size.height}.`;
+// La taille ANNONCÉE à un agent est celle du fichier livré : dimensions × échelle. Sans
+// l'échelle, le contrat promettait du 1200×1500 pour un PNG qui sort en 2400×3000.
+const px = s => `${s.width * (s.scale || 1)}×${s.height * (s.scale || 1)}`;
+const taille = t => {
+  if (!t.sizes) return `Taille : ${px(t.size)}.`;
+  const tailles = Object.entries(t.sizes);
+  // Une seule taille déclarée : aucun champ ne choisit, il n'y a rien à dire « selon ».
+  // (La bannière affichait « Taille selon `undefined` » dans le contrat des agents.)
+  if (tailles.length === 1) return `Taille : ${px(tailles[0][1])}.`;
+  if (!t.size_field)
+    throw new Error(`gabarit ${t.id} : plusieurs tailles déclarées sans size_field pour choisir`);
+  return `Taille selon \`${t.size_field}\` : ` + tailles.map(([k, s]) => `${k} → ${px(s)}`).join(', ') + '.';
+};
 
 export function openapi() {
   const list = templates.list();

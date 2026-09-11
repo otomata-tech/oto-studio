@@ -299,9 +299,11 @@ const dataUri = rel => {
 
 const annonce = {
   id: 'annonce',
-  label: 'Annonce (adhésion, événement)',
-  description: 'Format LinkedIn 4:5. Un titre énorme dont un mot porte le saffran, le mark qui déborde du cadre, '
-    + 'les logos des tiers sur cartes, et les informations pratiques en lignes à pictos. Statique.',
+  label: 'Annonce — adhésion, événement, installation',
+  description: 'Format LinkedIn 4:5, pour une nouvelle qui se lit de loin : adhésion, événement, installation, '
+    + 'partenariat. Un titre énorme dont un mot porte le saffran, le mark qui déborde du cadre, les informations '
+    + 'pratiques en lignes à pictos, et les partenaires en pied — par leur logo, ou par leur nom s\'il n\'est '
+    + 'pas dans nos fichiers. Statique.',
   size: { width: 1200, height: 1500, scale: 2 },
   fps: 25,
   formats: ['png'],

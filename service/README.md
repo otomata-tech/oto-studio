@@ -32,6 +32,13 @@ réseau privé.
 gabarits, valeurs d'énumération comprises. Un gabarit ajouté s'y décrit tout seul — il n'y a
 pas de documentation à tenir à jour en parallèle.
 
+**Les agents le trouvent par une procédure d'org, `visuel-otomata`** (org Otomata, posée le
+11/09/2026) : c'est ce qu'un agent consulte en premier (`oto_procedure op=list`), dans n'importe
+quel projet. Avant elle, le studio n'était documenté que dans le projet « Contenu LinkedIn » — et
+un Claude qui travaillait ailleurs a refait un visuel en HTML à la main, hors charte. Un gabarit
+ajouté apparaît seul dans le contrat ; le tableau « quel gabarit pour quoi » de la procédure, lui,
+se complète à la main.
+
 ### La page `/brand` — la charte, en accès PUBLIC
 
 `GET /brand` : le mark et ses déclinaisons, la palette, la typographie, les fichiers d'impression
