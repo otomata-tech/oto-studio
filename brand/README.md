@@ -137,7 +137,7 @@ Ces emplacements **implémentent** la charte définie ici. Une évolution part d
 | `oto-dashboard/frontend/src/assets/console.css` | les tokens dashboard *vivants* (`:root`), consommés en `var(--…)` par les vues console | `theme/dashboard-tokens/` |
 | Drive `otomata-shared/identite/` | la charte formelle diffusée aux tiers | `charte/` |
 | `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
-| Drive `admin/legal/templates/` | les **gabarits PDF** des contrats et propositions (md2pdf : pandoc + weasyprint) — mark inliné, palette d'impression, Hanken/Bricolage embarquées en `@font-face` avec leur `OFL.txt` | `logos/otomata/`, `theme/` |
+| Drive `admin/legal/templates/` | les **gabarits PDF** de md2pdf (pandoc + weasyprint), sur un socle commun `otomata.css` — mark inliné, palette d'impression, Hanken/Bricolage embarquées en `@font-face` avec leur `OFL.txt`. Depuis le 11/09/2026, un gabarit **`oto`** à l'identité du produit : l'open O au lieu du disque, décor saffran en fond de page, JetBrains Mono embarquée. **Une évolution de l'open O s'y reporte aussi** : il y est inliné, pas lu dans `logos/oto/` | `logos/otomata/`, `logos/oto/`, `theme/` |
 | `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
 
 ⚠️ **Sur un support imprimé, la charte ne s'applique pas telle quelle** (arrêté le 2026-09-06 avec
