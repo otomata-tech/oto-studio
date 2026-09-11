@@ -79,7 +79,8 @@ textarea{resize:vertical;min-height:56px}
           moyen de sortir de la charte, c'est voulu.</li>
         <li><b>Remplissez.</b> Le formulaire s'ouvre sur un exemple : il est là pour montrer
           le ton et la longueur attendus — remplacez-le.</li>
-        <li><b>Aperçu</b> pour vérifier la composition. C'est immédiat, ça ne lance aucun rendu.</li>
+        <li><b>L'aperçu s'affiche dès le choix du gabarit.</b> Après vos modifications,
+          cliquez sur « Aperçu » pour vérifier la composition.</li>
         <li><b>Générez.</b> Comptez une minute pour une image fixe, deux à trois pour une
           animation. Vous pouvez fermer l'onglet : le visuel apparaît dans « Produits
           récemment » quand il est prêt.</li>
@@ -123,6 +124,8 @@ const api = async (path, opts) => {
 const say = (msg, isErr) => { const s = $('#status'); s.textContent = msg; s.classList.toggle('err', !!isErr); };
 
 let manifest = null;
+let selectionRequest = 0;
+let previewRequest = 0;
 const state = {};   // valeurs du formulaire, par clé de champ
 
 /* ---------- rendu du formulaire depuis le manifeste ---------- */
@@ -235,19 +238,24 @@ const formats = () => [...document.querySelectorAll('.fmt')].filter(c => c.check
 
 /* ---------- aperçu et génération ---------- */
 
-$('#preview').onclick = async () => {
+async function preview() {
+  if (!manifest) return;
+  const request = ++previewRequest;
   try {
     say('aperçu…');
     const { url } = await api('/api/previews', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ template: manifest.id, data: state })
     });
+    if (request !== previewRequest) return;
     $('#view').src = url;
     say('aperçu à jour.');
-  } catch (e) { say(e.message, true); }
-};
+  } catch (e) { if (request === previewRequest) say(e.message, true); }
+}
+$('#preview').onclick = preview;
 
 $('#go').onclick = async () => {
+  if (!manifest) return say('choisis un gabarit chargé.', true);
   const f = formats();
   if (!f.length) return say('choisis au moins un format.', true);
   $('#go').disabled = true;
@@ -345,18 +353,31 @@ const { templates } = await api('/api/templates');
 const sel = $('#tpl');
 for (const t of templates) sel.append(new Option(t.label, t.id));
 sel.onchange = async () => {
-  manifest = await api(`/api/templates/${sel.value}`);
-  $('#tpl-desc').textContent = manifest.description;
+  const request = ++selectionRequest;
+  ++previewRequest;
+  manifest = null;
+  $('#preview').disabled = true;
+  $('#form').textContent = '';
+  $('#formats').textContent = '';
+  $('#tpl-desc').textContent = '';
   // Changer de gabarit remet le panneau à zéro : sans ça, l'aperçu et le « terminé en
   // X s » du gabarit PRÉCÉDENT restent affichés à côté du nouveau formulaire — on lit
   // le temps d'une carte animée en croyant que c'est celui de l'image qu'on prépare.
   $('#view').removeAttribute('src');
-  say('');
+  say('chargement du gabarit…');
   for (const k of Object.keys(state)) delete state[k];
-  // Pré-remplissage par l'exemple du gabarit : on montre la forme attendue plutôt
-  // que de la décrire. Copie profonde — la liste d'outils est éditée en place.
-  if (manifest.example) Object.assign(state, structuredClone(manifest.example));
-  buildForm();
+  try {
+    const loaded = await api(`/api/templates/${sel.value}`);
+    // Une sélection plus récente a priorité, même si sa réponse arrive avant.
+    if (request !== selectionRequest) return;
+    manifest = loaded;
+    $('#tpl-desc').textContent = manifest.description;
+    // Copie profonde : la liste d'outils est éditée en place.
+    if (manifest.example) Object.assign(state, structuredClone(manifest.example));
+    buildForm();
+    $('#preview').disabled = false;
+    await preview();
+  } catch (e) { if (request === selectionRequest) say(e.message, true); }
 };
 await sel.onchange();
 await gallery();
