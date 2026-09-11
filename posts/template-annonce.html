@@ -51,6 +51,13 @@
      d'appliquer un effet graphique à ses logos. */
   .carte { display:flex; align-items:center; justify-content:center; padding:14px 20px; flex:none; }
   .carte img { max-height:142px; max-width:300px; display:block; }
+  /* Un partenaire sans logo dans nos fichiers — un lieu, une petite structure — se cite en
+     toutes lettres dans un cadre fin, plutôt que par un logo approximatif ou recopié à la main. */
+  .carte.texte { border:2.5px solid var(--ink); padding:16px 26px 14px; flex-direction:column;
+    align-items:flex-end; gap:7px; }
+  .carte.texte .n { font-family:"Bricolage Grotesque",sans-serif; font-variation-settings:"wdth" 90;
+    font-weight:700; font-size:40px; letter-spacing:-.02em; line-height:.9; text-transform:uppercase; }
+  .carte.texte .s { font-size:13px; color:var(--mute); }
 
   .lignes { z-index:2; margin-top:40px; display:flex; flex-direction:column; gap:18px; }
   .l { display:flex; align-items:center; gap:20px; }
@@ -67,6 +74,10 @@
     font-weight:600; font-size:52px; letter-spacing:-.035em; line-height:.9;
     text-shadow:4px 4px 0 var(--primary); }
   footer .sig { font-size:13px; color:var(--mute); margin-top:9px; }
+  /* Le mark en pied, à côté du nom : sans lui, « OTOMATA » seul n'est qu'un mot. */
+  footer .sign { display:flex; align-items:center; gap:18px; }
+  footer .pmk { width:66px; height:66px; flex:none; }
+  footer .pmk svg { width:100%; height:100%; display:block; }
   footer .url { font-size:16px; color:var(--mute); align-self:flex-end; padding-bottom:6px; }
 </style>
 </head>
@@ -84,9 +95,12 @@
   <div class="lignes" id="lignes"></div>
 </div>
 <footer>
-  <div>
-    <div class="mot" id="mot"></div>
-    <div class="sig mono" id="sig"></div>
+  <div class="sign">
+    <div class="pmk" id="pmk"></div>
+    <div>
+      <div class="mot" id="mot"></div>
+      <div class="sig mono" id="sig"></div>
+    </div>
   </div>
   <div class="logos" id="logos"></div>
   <div class="url mono" id="url"></div>
@@ -104,6 +118,7 @@
   pose('eyebrow', D.eyebrow); pose('badge', D.badge); pose('sur', D.sur);
   pose('titre', D.titre, true); pose('sous', D.sous, true);
   pose('mot', D.mot || 'OTOMATA'); pose('sig', D.sig); pose('url', D.url);
+  $('pmk').append(document.querySelector('.mk svg').cloneNode(true));
 
   // Les logos partenaires arrivent en data-URI : le gabarit ne lit aucun fichier.
   const logos = $('logos');
@@ -111,9 +126,16 @@
   // carte prend alors la couleur de SA marque, pas la nôtre.
   for (const p of (D.partenaires || [])) {
     const d = document.createElement('div');
-    d.className = 'carte';
-    if (p.fond) d.style.background = p.fond;
-    d.innerHTML = `<img src="${p.src}" alt="">`;
+    if (p.src) {
+      d.className = 'carte';
+      if (p.fond) d.style.background = p.fond;
+      d.innerHTML = `<img src="${p.src}" alt="">`;
+    } else {
+      d.className = 'carte texte';
+      d.innerHTML = `<div class="n"></div><div class="s mono"></div>`;
+      d.querySelector('.n').textContent = p.nom;
+      d.querySelector('.s').textContent = p.sous || '';
+    }
     logos.append(d);
   }
   if (!logos.children.length) logos.style.display = 'none';

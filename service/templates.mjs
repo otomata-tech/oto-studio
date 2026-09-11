@@ -316,10 +316,15 @@ const annonce = {
       hint: 'affiché EN CAPITALES ; mettre <b>…</b> autour du ou des mots à passer en saffran' },
     { key: 'sous', label: 'Sous-titre', type: 'textarea', required: false,
       hint: 'deux lignes maximum ; <i>…</i> pour la partie secondaire' },
-    { key: 'partenaires', label: 'Logos partenaires', type: 'list', required: false, max: 3,
-      hint: 'les logos de tiers, posés sur cartes blanches',
+    { key: 'partenaires', label: 'Partenaires', type: 'list', required: false, max: 3,
+      hint: 'en pied, à droite de notre nom. Un LOGO s\'il est dans assets/partenaires/, sinon un NOM en toutes lettres',
       item: [
-        { key: 'logo', label: 'Logo', type: 'enum', options: Object.keys(PARTENAIRES), required: true },
+        { key: 'logo', label: 'Logo', type: 'enum', options: Object.keys(PARTENAIRES), required: false,
+          hint: 'laisser vide pour citer le partenaire par son nom' },
+        { key: 'nom', label: 'Nom (sans logo)', type: 'text', required: false,
+          hint: 'ex. « Now » — affiché en capitales dans un cadre fin' },
+        { key: 'sous', label: 'Sous le nom', type: 'text', required: false,
+          hint: 'ex. « Coworking · Marseille »' },
         { key: 'fond', label: 'Fond de la carte', type: 'text', required: false,
           hint: 'couleur hex ; blanc par défaut. INDISPENSABLE pour un logo blanc sur transparent, '
             + 'qui disparaîtrait sinon — prendre alors la couleur de la marque concernée.' }
@@ -348,8 +353,15 @@ const annonce = {
   },
   build(data) {
     const tpl = read('posts/template-annonce.html');
+    // Un partenaire, c'est un logo OU un nom. Ni l'un ni l'autre : on refuse plutôt que de
+    // poser un cadre vide dans le pied.
+    const vides = (data.partenaires || []).filter(p => !p.logo && !p.nom);
+    if (vides.length)
+      throw Object.assign(new Error('partenaire sans logo ni nom : renseigner l\'un des deux'), { status: 400 });
     const d = { ...data,
-      partenaires: (data.partenaires || []).map(p => ({ src: dataUri(PARTENAIRES[p.logo]), fond: p.fond })) };
+      partenaires: (data.partenaires || []).map(p => p.logo
+        ? { src: dataUri(PARTENAIRES[p.logo]), fond: p.fond }
+        : { nom: p.nom, sous: p.sous }) };
     const inject = `<script>window.__ICONS=${inScript(ICONS)};window.__ANN=${inScript(d)};</script>`;
     const body = tpl
       .replace('<!--__MARK__-->', read('brand/logos/otomata/otomata-mark.svg'))
