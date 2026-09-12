@@ -24,9 +24,9 @@ git.
 
 | | **Otomata** (société) | **Oto** (produit / assistant) |
 |---|---|---|
-| Sites | otomata.tech | oto.ninja, oto.zone, dashboard |
+| Sites | otomata.tech | oto.cx (ex-oto.ninja), docs.oto.cx, oto.zone, dashboards |
 | Couleur d'identité | **saffran `#f0b41e`** (le violet a été retiré le 2026-09-03) | **saffran `#f0b41e`** |
-| Mark | **`otomata-mark.svg`** — disque saffran cerné d'encre, **ombre dure** en bas-droite et **anneau saffran décalé** en haut-gauche. Arrêté le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »** — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; déclinaison 4-couleurs (oto.ninja) ; disque olive (oto.zone). **Inchangé** : l'open O reste le mark d'oto |
+| Mark | **`otomata-mark.svg`** — disque saffran cerné d'encre, **ombre dure** en bas-droite et **anneau saffran décalé** en haut-gauche. Arrêté le **2026-09-03** ; avant : glyphe violet (éclair/zigzag), et plus tôt disque orange dégradé | **« open O »**, le rond cassé jaune — anneau ouvert, ouverture en haut-droite, caps arrondis (`OtoMark`, états breathe/think/talk) ; **seul mark d'oto sur toutes ses surfaces** (oto.cx, docs.oto.cx, dashboards, page de connexion) ; disque olive (oto.zone). L'anneau quatre couleurs est **retiré** depuis le 2026-09-13 |
 
 ⚠️ Ne pas confondre : la **charte produit `@otomata/ui`** (fond crème + saffran, ci-dessous) est le socle commun.
 
@@ -86,11 +86,33 @@ Supprimés : `otomata-logo-violet.svg`, `otomata-mark-orange.svg`, `otomata-deck
 `otomata-og.jpg`, `icon.svg`, `favicon.svg`. Aucun n'était référencé ailleurs que par ce README.
 
 ### `logos/oto/` — marque produit
-- `oto-mark-4colors.svg` — mark 4 couleurs (oto.ninja) : safran/terracotta/olive/cobalt
-- `oto-dashboard-mark.svg` — **« open O » saffran** (mark canonique, dashboard)
-- `oto-mark-512.png` — mark rasterisé 512px
+**Le mark d'oto est l'open O, le rond cassé jaune, partout** : oto.cx, docs.oto.cx, les
+dashboards, la page de connexion. Un seul dessin, `oto-dashboard-mark.svg` ; tous les rasters en
+sont **rendus**, jamais retouchés à la main.
+- `oto-dashboard-mark.svg` — **« open O » saffran** : LE mark, source de tout ce qui suit
+- `oto-mark-16.png`, `oto-mark-32.png`, `oto-mark-48.png` — favicons, fond transparent ; l'ouverture reste lisible à 16 px (vérifié en planche, fond clair et fond sombre)
+- `oto-mark.ico` — les trois mêmes en un favicon multi-taille 16/32/48
+- `oto-mark-apple-touch-180.png` — apple-touch-icon, **fond crème `#fefcf5` opaque** : iOS remplit la transparence en noir
+- `oto-mark-192.png`, `oto-mark-512.png` — icônes du webmanifest (Android, PWA), fond transparent
 - `oto-zone-mark.svg` — disque olive (oto.zone)
 - `oto-icons-sprite.svg` — sprite d'icônes des sites oto
+
+Régénérer après une évolution du mark — Inkscape, car ImageMagick délègue le SVG à
+`rsvg-convert`, absent du poste :
+
+```bash
+cd brand/logos/oto
+for s in 16 32 48 192 512; do inkscape oto-dashboard-mark.svg --export-type=png --export-filename=oto-mark-$s.png --export-width=$s --export-height=$s; done
+inkscape oto-dashboard-mark.svg --export-type=png --export-filename=oto-mark-apple-touch-180.png --export-width=180 --export-height=180 --export-background='#fefcf5' --export-background-opacity=1
+magick oto-mark-16.png oto-mark-32.png oto-mark-48.png oto-mark.ico
+```
+
+**2026-09-13 — l'anneau quatre couleurs est retiré.** `oto-mark-4colors.svg` (quatre quartiers
+dégradés safran/terracotta/olive/cobalt, dit « mark oto.ninja ») était encore le favicon d'oto.cx et
+de docs.oto.cx — donc aussi le logo de la page de connexion, qui lit `https://oto.cx/favicon.svg`.
+Supprimé : hors de ce README, aucun fichier ne le référençait par son chemin. C'est le dessin qui
+part ; terracotta, olive et cobalt restent des tokens des sites. L'ancien `oto-mark-512.png`
+n'était pas un rendu du SVG (ouverture et caps décalés) : il a été re-rendu avec les autres.
 
 ### `photos/` — portraits de l'équipe
 Les portraits publiés au nom d'Otomata (`alexis-laporte.jpg`, `sarah-soumahoro.jpg`, 1024×1024, fond bleu nuit commun) + leurs sources d'origine, et surtout **la procédure pour harmoniser un nouveau portrait** avec la série : `harmonise-portrait.py` (retouche du décor par modèle d'image — remplacement de fond, élargissement du cadre) et son mode d'emploi dans `photos/README.md`, dont les contrôles à faire avant publication. Servis en ligne depuis `oto-websites/sites/otomata.tech/public/equipe/`.
@@ -137,6 +159,9 @@ Ces emplacements **implémentent** la charte définie ici. Une évolution part d
 | `oto-dashboard/frontend/src/assets/console.css` | les tokens dashboard *vivants* (`:root`), consommés en `var(--…)` par les vues console | `theme/dashboard-tokens/` |
 | Drive `otomata-shared/identite/` | la charte formelle diffusée aux tiers | `charte/` |
 | `oto-websites/sites/*/public/`, `oto-cli/logo.svg` | logos en production | `logos/` |
+| `oto-websites/web/public/` (oto.cx), `oto-websites/sites/docs.oto.cx/public/`, `oto-dashboard/frontend/public/` | favicons d'oto, **copies à l'octet** : `favicon.svg` ← `oto-dashboard-mark.svg`, `favicon-NxN.png` ← `oto-mark-N.png`, `apple-touch-icon.png` ← `oto-mark-apple-touch-180.png`, `android-chrome-NxN.png` ← `oto-mark-N.png`. Seul écart connu : l'apple-touch du dashboard est sur fond transparent | `logos/oto/` |
+| `auth.oto.cx` (Logto, page de connexion) | logo et favicon = l'**URL** `https://oto.cx/favicon.svg` : suit oto.cx sans copie | `logos/oto/oto-dashboard-mark.svg` |
+| `oto-backend/oto_mcp/brand.py` | l'open O **inliné** à l'octet (pages auto-portées, `/favicon.svg` et `/favicon.ico` de mcp.oto.cx) : une évolution du mark s'y reporte à la main | `logos/oto/oto-dashboard-mark.svg` |
 | Drive `admin/legal/templates/` | les **gabarits PDF** de md2pdf (pandoc + weasyprint), sur un socle commun `otomata.css` — mark inliné, palette d'impression, Hanken/Bricolage embarquées en `@font-face` avec leur `OFL.txt`. Depuis le 11/09/2026, un gabarit **`oto`** à l'identité du produit : l'open O au lieu du disque, décor saffran en fond de page, JetBrains Mono embarquée. **Une évolution de l'open O s'y reporte aussi** : il y est inliné, pas lu dans `logos/oto/` | `logos/otomata/`, `logos/oto/`, `theme/` |
 | `otomata-tech/slider/chartes/` | chartes de slides — **ne contient que `blank`, aucune charte Otomata à ce jour** | — |
 
