@@ -95,6 +95,7 @@ sont **rendus**, jamais retouchés à la main.
 - `oto-mark-apple-touch-180.png` — apple-touch-icon, **fond crème `#fefcf5` opaque** : iOS remplit la transparence en noir
 - `oto-mark-192.png`, `oto-mark-512.png` — icônes du webmanifest (Android, PWA), fond transparent
 - `oto-zone-mark.svg` — disque olive (oto.zone)
+- `oto-infra-mark.svg` — **« oto infra »** (13/09/2026) : l'open O saffran et un tracé de pouls vert `#a8c926` sur une pastille encre `#2c2112`. Il représente la supervision et l'exploitation, pas le produit. C'est le seul mark d'oto qui porte son fond, et c'est ce qui le garde lisible sur fond clair comme sombre (planche vérifiée : net à 32 px ; à 16 px l'anneau tient, le pouls devient une tache verte). Déclinaisons rendues : `oto-infra-mark.ico` (16/32/48), `-32`, `-192`, `-512`, `-apple-touch-180` et `-carre-1024`, carrés pleins sans arrondi (`rx="0"`), car iOS et Slack appliquent le leur. Consommateurs : l'administration Kuma `uptime.tuls.me`, servie par nginx (`infra/scripts/uptime-tuls-me/deployer-marque.sh`), et l'app Slack des alertes `#status-sla`
 - `oto-icons-sprite.svg` — sprite d'icônes des sites oto
 
 Régénérer après une évolution du mark — Inkscape, car ImageMagick délègue le SVG à
