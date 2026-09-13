@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 28px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  .stage { position: relative; flex: 1; z-index: 1; }
+  .scene { position: relative; width: 1024px; height: 1010px; transform-origin: 50% 0%; }
+
+  .card {
+    position: absolute;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+
+  /* ---- le navigateur ---- */
+  .browser { left: 0; top: 0; width: 1024px; height: 730px; }
+  .urlbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--ink);
+    background: var(--bg);
+  }
+  .dots { display: flex; gap: 8px; }
+  .dots i { width: 13px; height: 13px; border: 1.5px solid var(--ink); display: block; }
+  .url {
+    position: relative; flex: 1; height: 46px;
+    border: 1.5px solid var(--hair);
+    background: var(--surface);
+  }
+  .url span {
+    position: absolute; left: 16px; top: 12px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 19px;
+    white-space: nowrap;
+  }
+  .url .u1 { color: var(--mute); }
+  .url .u2 { color: var(--ink); font-weight: 500; }
+
+  .view { position: relative; height: 656px; overflow: hidden; }
+
+  /* acte 1 : le mur */
+  .deny { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; }
+  .deny .code { font-size: 210px; line-height: 0.9; letter-spacing: -0.04em; }
+  .deny .msg { font-family: "JetBrains Mono", monospace; font-size: 24px; color: var(--mute); }
+  .deny .who {
+    font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    padding: 10px 15px; transform: rotate(-2deg);
+  }
+
+  /* acte 2 : le document */
+  .doc { position: absolute; inset: 0; padding: 38px 44px; }
+  .doc .kind {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary); border: 1.5px solid var(--ink);
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85);
+    padding: 7px 10px; margin-bottom: 22px;
+  }
+  .doc h1 { font-size: 40px; line-height: 1.15; margin-bottom: 8px; }
+  .doc .id { font-family: "JetBrains Mono", monospace; font-size: 17px; color: var(--mute); margin-bottom: 26px; }
+  .doc p { font-size: 21px; line-height: 1.5; color: var(--ink); margin-bottom: 14px; }
+  .doc .src {
+    position: absolute; left: 44px; right: 44px; bottom: 34px;
+    border-top: 1.5px solid var(--hair); padding-top: 18px;
+    font-family: "JetBrains Mono", monospace; font-size: 15px; color: var(--mute);
+    display: flex; justify-content: space-between;
+  }
+
+  /* ---- la preuve : identifiant inventé → 404 ---- */
+  .proof {
+    left: 0; top: 800px; width: 1024px; padding: 26px 30px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .proof .lbl { font-family: "JetBrains Mono", monospace; font-size: 18px; color: var(--mute); flex: 1; }
+  .proof .lbl b { color: var(--ink); font-weight: 500; }
+  .proof .out {
+    font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700;
+    background: var(--primary-soft); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    padding: 12px 18px; white-space: nowrap;
+  }
+
+  .chute { position: absolute; left: 0; bottom: 0; width: 1024px; }
+  .chute p { font-size: 78px; line-height: 1.06; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; margin-top: 30px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url2 { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Sources citables</div>
+  </header>
+
+  <div class="stage">
+    <div class="scene" id="scene">
+
+      <div class="card browser" id="browser">
+        <div class="urlbar">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span class="url">
+            <span class="u1" id="u1">https://source-officielle.fr/accord/ACCOTEXT000046433631</span>
+            <span class="u2" id="u2">https://data.oto.zone/acco/ACCOTEXT000046433631</span>
+          </span>
+        </div>
+        <div class="view">
+          <div class="deny" id="deny">
+            <div class="code display">403</div>
+            <div class="msg">les robots ne passent pas</div>
+            <div class="who" id="who">votre agent est ici</div>
+          </div>
+          <div class="doc" id="doc">
+            <span class="kind">accord d’entreprise</span>
+            <h1>Avenant à l’accord collectif — régime de couverture santé des salariés</h1>
+            <div class="id">ACCOTEXT000046433631 · signé le 30/08/2022 · en vigueur</div>
+            <p>Le présent avenant a pour objet de mettre en conformité le régime de
+               couverture santé au regard des évolutions réglementaires intervenues
+               depuis la conclusion de l’accord initial.</p>
+            <p>Il précise le périmètre des bénéficiaires, le caractère obligatoire de
+               l’adhésion et le maintien des garanties en cas de suspension du contrat
+               de travail.</p>
+            <p>Les stipulations non modifiées par le présent avenant demeurent
+               applicables dans leur rédaction en vigueur. L’avenant est déposé auprès
+               de l’autorité administrative compétente et fait l’objet d’une publicité
+               dans les conditions prévues par le code du travail.</p>
+            <p>Il prend effet au lendemain de son dépôt et se substitue, pour les
+               dispositions concernées, à celles de l’accord initial.</p>
+            <div class="src">
+              <span>texte intégral · sans compte, sans clé</span>
+              <span>source · DILA — Licence Ouverte Etalab</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card proof" id="proof">
+        <span class="lbl">identifiant inventé · <b>/acco/ACCOTEXT000000000000</b></span>
+        <span class="out">404 — n’existe pas</span>
+      </div>
+    </div>
+
+    <div class="chute">
+      <p class="display" id="ph">Un lien qu’on ne peut pas<br>vérifier n’est pas<br>une source.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata</div>
+    <div class="url2 mono">data.oto.zone</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const T = {
+    browser: 200, browserDur: 550,
+    deny: 900, denyDur: 500,
+    who: 1700,
+    retype: 3000, retypeDur: 700,
+    doc: 3400, docDur: 550,
+    proof: 5000, proofDur: 500,
+    zoomOut: 6100, zoomDur: 900,
+    phrase: 6350, phraseDur: 600,
+    fadeOut: 8900
+  };
+  const ZOOM = 0.72;
+  const LOOP = 9600;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    const pb = eoc(io(T.browser, T.browserDur, t));
+    $('browser').style.opacity = pb;
+    $('browser').style.transform = `translateY(${28 * (1 - pb)}px)`;
+
+    // acte 1 : la source officielle claque la porte
+    const pd = eoc(io(T.deny, T.denyDur, t));
+    const swap = eoc(io(T.doc, T.docDur, t));
+    const deny = $('deny');
+    deny.style.opacity = pd * (1 - swap);
+    deny.style.transform = `scale(${0.94 + 0.06 * pd})`;
+    const pw = io(T.who, 380, t), ew = eob(pw);
+    $('who').style.opacity = clamp(pw * 3) * (1 - clamp(swap * 2));
+    $('who').style.transform = `rotate(${-2 - 5 * (1 - ew)}deg) scale(${1.4 - 0.4 * ew})`;
+
+    // l’adresse se réécrit : même identifiant, autre porte
+    const pr = eoc(io(T.retype, T.retypeDur, t));
+    $('u1').style.opacity = 1 - clamp(pr * 2.2);
+    $('u2').style.opacity = clamp((pr - 0.15) / 0.5);
+    $('u2').style.clipPath = `inset(0 ${100 * (1 - pr)}% 0 0)`;
+
+    // acte 2 : le document, servi
+    $('doc').style.opacity = swap;
+    $('doc').style.transform = `translateY(${20 * (1 - swap)}px)`;
+
+    // acte 3 : la preuve qu’un lien faux se voit
+    const pp = eoc(io(T.proof, T.proofDur, t));
+    $('proof').style.opacity = pp;
+    $('proof').style.transform = `translateY(${22 * (1 - pp)}px)`;
+
+    const pz = eoc(io(T.zoomOut, T.zoomDur, t));
+    $('scene').style.transform = `scale(${1 - (1 - ZOOM) * pz})`;
+
+    const pf = eoc(io(T.phrase, T.phraseDur, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pf;
+    ph.style.transform = `translateY(${40 * (1 - pf)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>

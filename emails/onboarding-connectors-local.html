@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 480px; height: 106px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .mono {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+
+  .row { display: flex; align-items: flex-start; gap: 20px; position: relative; z-index: 1; }
+  .cluster { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .chips { display: flex; gap: 9px; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 40px; }
+  .chip {
+    width: 34px; height: 34px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    background: var(--surface);
+  }
+  .chip.on { background: var(--primary); }
+  .name { font-size: 9.5px; color: var(--mute); text-align: center; line-height: 1.1; white-space: nowrap; }
+  .caption { font-size: 10px; margin-top: 2px; }
+  .arrow { font-size: 22px; font-weight: 700; color: var(--ink); margin-top: 15px; }
+</style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="row">
+    <div class="cluster">
+      <div class="chips">
+        <div class="item"><div class="chip"></div><div class="name">Registre</div></div>
+        <div class="item"><div class="chip"></div><div class="name">Dirigeants</div></div>
+        <div class="item"><div class="chip"></div><div class="name">Open data</div></div>
+        <div class="item"><div class="chip"></div><div class="name">LinkedIn</div></div>
+      </div>
+      <div class="caption mono">0 actif</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="cluster">
+      <div class="chips">
+        <div class="item"><div class="chip on"></div><div class="name">Registre</div></div>
+        <div class="item"><div class="chip on"></div><div class="name">Dirigeants</div></div>
+        <div class="item"><div class="chip on"></div><div class="name">Open data</div></div>
+        <div class="item"><div class="chip"></div><div class="name">LinkedIn</div></div>
+      </div>
+      <div class="caption mono">3 actifs</div>
+    </div>
+  </div>
+</body>
+</html>

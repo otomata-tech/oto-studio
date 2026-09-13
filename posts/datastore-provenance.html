@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 28px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  /* la scène occupe toute la hauteur, puis recule pour laisser monter la chute */
+  .stage { position: relative; flex: 1; z-index: 1; }
+  .scene { width: 1024px; transform-origin: 50% 0%; }
+
+  .table {
+    width: 1024px;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: 30px 38px;
+  }
+  .thead {
+    display: flex; align-items: center; gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .otag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary);
+    border: 1.5px solid var(--ink);
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85);
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+  .thead code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 19px;
+    background: var(--primary-soft);
+    padding: 3px 9px;
+  }
+  .thead .count { font-size: 16px; color: var(--mute); flex: 1; text-align: right; }
+
+  .cells, .cols, .annrow { display: flex; align-items: center; gap: 20px; }
+  .cols {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 16px 10px 12px;
+  }
+  .trow { border-top: 1px solid var(--hair); }
+  .trow:first-of-type { border-top: 1.5px solid var(--hair); }
+  .cells { padding: 34px 10px; }
+  .c1 { flex: 1; font-size: 25px; }
+  .c2 { width: 320px; font-size: 20px; font-family: "JetBrains Mono", monospace; color: var(--mute); }
+  .c3 { width: 258px; font-size: 21px; }
+  .cells em { font-style: normal; padding: 5px 9px; margin: -5px -9px; }
+
+  /* annotation : accrochée SOUS SA CELLULE, la ligne s’ouvre pour la loger */
+  .ann { height: 0; overflow: hidden; }
+  .annrow { padding: 0 10px 26px; align-items: flex-start; }
+  /* la colonne d’annotation ne doit jamais pousser son étiquette hors du cadre */
+  .annrow .c2, .annrow .c3 { display: flex; align-items: flex-start; }
+  .hook {
+    display: inline-block; width: 15px; height: 15px;
+    border-left: 1.6px solid var(--ink);
+    border-bottom: 1.6px solid var(--ink);
+    margin: -10px 11px 0 2px;
+    vertical-align: middle;
+  }
+  .tag {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px; letter-spacing: 0.01em;
+    padding: 8px 12px;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  .tag.src { background: var(--primary-soft); border: 1.5px solid var(--ink); }
+  .tag.guess { background: var(--bg); border: 1.5px dashed var(--mute); color: var(--mute); }
+  .tag.note { background: var(--surface); border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--primary); }
+
+  /* ---- chute ---- */
+  .chute { position: absolute; left: 0; bottom: 0; width: 1024px; }
+  .chute p { font-size: 90px; line-height: 1.05; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; margin-top: 30px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Tableaux</div>
+  </header>
+
+  <div class="stage">
+    <div class="scene" id="scene">
+      <div class="table" id="table">
+        <div class="thead">
+          <span class="otag">tableau</span><code>prospects-solaire</code>
+          <span class="count">1 240 lignes</span>
+        </div>
+        <div class="cols"><span class="c1">entreprise</span><span class="c2">email</span><span class="c3">effectif ↓</span></div>
+
+        <div class="trow" id="tr0">
+          <div class="cells">
+            <span class="c1">Ferme du Grand Clos</span>
+            <span class="c2"><em id="k0">contact@grandclos.fr</em></span>
+            <span class="c3">200 et plus</span>
+          </div>
+          <div class="ann" id="an0">
+            <div class="annrow">
+              <span class="c1"></span>
+              <span class="c2"><span class="hook"></span><span class="tag src" id="g0">origine · site officiel</span></span>
+              <span class="c3"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trow" id="tr1">
+          <div class="cells">
+            <span class="c1">Coop Vents d’Ouest</span>
+            <span class="c2"><em>accueil@vents-ouest.fr</em></span>
+            <span class="c3">100 à 199</span>
+          </div>
+        </div>
+
+        <div class="trow" id="tr2">
+          <div class="cells">
+            <span class="c1">SCEA des Trois Chênes</span>
+            <span class="c2"><em id="k1">j.martin@3chenes.fr</em></span>
+            <span class="c3"><em id="k2">50 à 99</em></span>
+          </div>
+          <div class="ann" id="an1">
+            <div class="annrow">
+              <span class="c1"></span>
+              <span class="c2"><span class="hook"></span><span class="tag guess" id="g1">origine · déduit</span></span>
+              <span class="c3"><span class="hook"></span><span class="tag note" id="g2">note · à confirmer</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trow" id="tr3">
+          <div class="cells">
+            <span class="c1">Toitures Morel</span>
+            <span class="c2"><em>contact@toitures-morel.fr</em></span>
+            <span class="c3">20 à 49</span>
+          </div>
+        </div>
+
+        <div class="trow" id="tr4">
+          <div class="cells">
+            <span class="c1">Domaine de la Brie</span>
+            <span class="c2"><em>direction@labrie.fr</em></span>
+            <span class="c3"><em id="k3">10 à 19</em></span>
+          </div>
+          <div class="ann" id="an2">
+            <div class="annrow">
+              <span class="c1"></span>
+              <span class="c2"></span>
+              <span class="c3"><span class="hook"></span><span class="tag src" id="g3">origine · INSEE</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trow" id="tr5">
+          <div class="cells">
+            <span class="c1">Hangars Bertin</span>
+            <span class="c2"><em>contact@hangars-bertin.fr</em></span>
+            <span class="c3">6 à 9</span>
+          </div>
+        </div>
+
+        <div class="trow" id="tr6">
+          <div class="cells">
+            <span class="c1">Charpentes Vasseur</span>
+            <span class="c2"><em>accueil@vasseur.fr</em></span>
+            <span class="c3">3 à 5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chute">
+      <p class="display" id="ph">Chaque valeur dit<br>d’où elle vient.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const rows = [0,1,2,3,4,5,6].map(i => $('tr'+i));
+
+  const T = {
+    table: 250, tableDur: 550,
+    row: i => 800 + i * 170, rowDur: 320,
+    // une annotation = { boîte qui s’ouvre, étiquette qui tombe, cellule qui s’allume }
+    ann: [
+      { box: 'an0', h: 74, tags: [{ el: 'g0', at: 2620, cell: 'k0' }], open: 2500 },
+      { box: 'an1', h: 74, tags: [{ el: 'g1', at: 3420, cell: 'k1' }, { el: 'g2', at: 3720, cell: 'k2' }], open: 3300 },
+      { box: 'an2', h: 74, tags: [{ el: 'g3', at: 4520, cell: 'k3' }], open: 4400 }
+    ],
+    annDur: 420, tagDur: 340,
+    zoomOut: 5250, zoomDur: 900,
+    phrase: 5500, phraseDur: 600,
+    fadeOut: 8100
+  };
+  const ZOOM = 0.83;
+  const LOOP = 8800;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    const pb = eoc(io(T.table, T.tableDur, t));
+    $('table').style.opacity = pb;
+    $('table').style.transform = `translateY(${28 * (1 - pb)}px)`;
+
+    rows.forEach((row, i) => {
+      const p = io(T.row(i), T.rowDur, t);
+      row.style.opacity = clamp(p * 3);
+      row.style.transform = `translateY(${12 * (1 - eoc(p))}px)`;
+    });
+
+    T.ann.forEach(a => {
+      const po = eoc(io(a.open, T.annDur, t));
+      $(a.box).style.height = `${a.h * po}px`;
+      a.tags.forEach(tag => {
+        const p = io(tag.at, T.tagDur, t), e = eob(p);
+        const el = $(tag.el);
+        el.style.opacity = clamp(p * 3);
+        el.style.transform = `translateY(${-10 * (1 - e)}px) scale(${0.82 + 0.18 * e})`;
+        // la cellule annotée s’allume, puis garde son encrage : l’annotation
+        // tient à LA CELLULE, pas à la ligne
+        const flash = clamp(io(tag.at - 200, 260, t)) * (1 - clamp(io(tag.at + 60, 520, t)));
+        const held = clamp(p * 2);
+        $(tag.cell).style.background = `rgba(251, 231, 168, ${0.5 * held + 0.5 * flash})`;
+      });
+    });
+
+    const pz = eoc(io(T.zoomOut, T.zoomDur, t));
+    $('scene').style.transform = `scale(${1 - (1 - ZOOM) * pz})`;
+
+    const pp = eoc(io(T.phrase, T.phraseDur, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>

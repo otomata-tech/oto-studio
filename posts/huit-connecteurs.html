@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  /* Post « huit connecteurs de plus ». Une idée, une phrase : les huit logos se
+     posent, la scène recule, la chute monte. Pas de morph ni de carte conversation —
+     posts/connectors.html fait ça pour QUATRE et prédate le pattern validé. */
+  :root { --bg:#fefcf5; --surface:#fff; --ink:#2c2112; --mute:#6c5e44; --hair:#dccfa8; --primary:#f0b41e; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:1500px; overflow:hidden; }
+  body {
+    position:relative; background:var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,.03) 1px, transparent 1px);
+    background-size:64px 64px;
+    color:var(--ink); font-family:"Hanken Grotesk",sans-serif;
+    display:flex; flex-direction:column; padding:80px 88px 84px;
+  }
+  .grain { position:absolute; inset:0; z-index:40; pointer-events:none; opacity:.07; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>"); }
+  .sun { position:absolute; z-index:0; right:-140px; top:-160px; width:900px; height:900px;
+    background:radial-gradient(closest-side, rgba(240,180,30,.38), rgba(240,180,30,.10) 55%, transparent 72%); }
+  .fade { position:absolute; inset:0; z-index:30; pointer-events:none; background:var(--bg); opacity:0; }
+
+  .mono { font-family:"JetBrains Mono",monospace; text-transform:uppercase; letter-spacing:.16em; }
+  .display { font-family:"Bricolage Grotesque",sans-serif; font-optical-sizing:auto;
+    font-variation-settings:"wdth" 90; font-weight:600; letter-spacing:-.02em; }
+
+  header { display:flex; justify-content:space-between; align-items:baseline;
+    font-size:14px; color:var(--mute); z-index:1; margin-bottom:26px; }
+  header .brand { color:var(--ink); font-weight:700; font-size:16px; }
+  .hero { z-index:1; margin-bottom:34px; }
+  .hero .num { font-size:322px; line-height:.92; letter-spacing:-.04em;
+    font-variant-numeric:tabular-nums; transform-origin:0% 50%; }
+  .hero .sub { font-size:28px; color:var(--mute); margin-top:10px; }
+  .hero .sub b { color:var(--ink); font-weight:700; }
+
+  /* la scène occupe TOUTE la hauteur, puis recule pour laisser monter la chute */
+  .stage { position:relative; width:1024px; height:820px; z-index:1; }
+  .scene { position:absolute; inset:0; transform-origin:50% 0%;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:26px; align-content:center; }
+  .t { display:flex; flex-direction:column; align-items:center; gap:14px; transform-origin:50% 50%; }
+  .t .box { width:100%; aspect-ratio:1; background:var(--surface); border:2px solid var(--ink);
+    box-shadow:7px 7px 0 rgba(44,33,18,.85); display:flex; align-items:center; justify-content:center; }
+  .t .box img { max-width:62%; max-height:56%; display:block; }
+  .t .n { font-family:"JetBrains Mono",monospace; font-size:15px; letter-spacing:.08em;
+    color:var(--ink); font-weight:700; text-align:center; }
+
+  .phrase { position:absolute; left:0; right:0; bottom:0; z-index:2; }
+  .phrase p { font-size:78px; line-height:1.06; }
+  .phrase .kick { display:inline-block; }
+
+  footer { display:flex; justify-content:space-between; align-items:baseline;
+    border-top:1.5px solid var(--ink); padding-top:22px; font-size:14px; color:var(--mute);
+    margin-top:auto; z-index:1; }
+  footer .url { color:var(--ink); font-weight:700; font-size:16px; }
+</style>
+</head>
+<body>
+  <div class="sun" id="sun"></div>
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">nouveaux connecteurs · septembre 2026</div>
+  </header>
+  <div class="hero">
+    <div class="num display" id="num">+8</div>
+    <div class="sub">connecteurs de plus dans le catalogue, <b>depuis le mois dernier</b></div>
+  </div>
+
+  <div class="stage">
+    <div class="scene" id="scene"></div>
+    <div class="phrase">
+      <p class="display" id="ph">Un seul branchement.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mono">Otomata · open source</div>
+    <div class="url mono">oto.cx</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  // Les quatre premiers ont été annoncés avec les 12 672 appels, les quatre suivants
+  // dans le post d'après. Les logos sont LOCAUX (assets/logos/) : pas de CDN au rendu.
+  const CONNS = [
+    ['Sellsy', 'logo_sellsy.png'], ['Lusha', 'logo_lusha.png'],
+    ['Firecrawl', 'logo_firecrawl.png'], ['Apify', 'logo_apify.png'],
+    ['Salesforce', 'logo_salesforce.svg'], ['LightOn', 'logo_lighton.svg'],
+    ['Reddit', 'logo_reddit.svg'], ['Zoho', 'logo_zoho.svg'],
+  ];
+  const rot = [-1.6, 1.2, -0.9, 1.5, -1.2, 0.8, -1.5, 1.1];
+  const tiles = CONNS.map(([nom, f]) => {
+    const el = document.createElement('div');
+    el.className = 't';
+    el.innerHTML = `<div class="box"><img src="../assets/logos/${f}" alt="${nom}"></div><div class="n">${nom}</div>`;
+    $('scene').appendChild(el);
+    return el;
+  });
+
+  const T = { hero: 200, heroDur: 620, tile: i => 900 + i * 260, tileDur: 460,
+              zoomOut: 3300, zoomDur: 950, phrase: 4350, fadeOut: 7300 };
+  const ZOOM = 0.76;
+  const LOOP = 7800;
+  window.__DURATION = LOOP;
+  // l'image fixe est prise une fois la chute posée, avant le fondu
+  window.__STILL = 6600;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    // le héros arrive en premier et rebondit une fois, comme le compteur de « semaine »
+    const phh = io(T.hero, T.heroDur, t);
+    const num = $('num');
+    num.style.opacity = clamp(phh * 3);
+    num.style.transform = `scale(${0.86 + 0.14 * eob(phh)})`;
+    num.style.textShadow = `${11 * eoc(phh)}px ${11 * eoc(phh)}px 0 #f0b41e`;
+
+    tiles.forEach((el, i) => {
+      const p = io(T.tile(i), T.tileDur, t);
+      const e = eob(p);
+      el.style.opacity = clamp(p * 3);
+      el.style.transform = `rotate(${rot[i] * (2 - e)}deg) scale(${1.35 - 0.35 * e})`;
+    });
+
+    // ⚠️ la chute n'apparaît qu'APRÈS la fin complète du recul : sinon un aperçu
+    // tronqué tombe sur une scène encore grande ET une chute déjà là.
+    const pz = eoc(io(T.zoomOut, T.zoomDur, t));
+    $('scene').style.transform = `scale(${1 - (1 - ZOOM) * pz})`;
+
+    const pp = eoc(io(T.phrase, 600, t));
+    const ph = $('ph');
+    ph.style.opacity = pp;
+    ph.style.transform = `translateY(${40 * (1 - pp)}px)`;
+    ph.style.textShadow = `${6 * pp}px ${6 * pp}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 500, t);
+  }
+
+  window.__seek = t => render(t);
+  render(0);
+  if (!new URLSearchParams(location.search).has('capture')) {
+    const t0 = performance.now();
+    const loop = () => { render(performance.now() - t0); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+</script>
+</body>
+</html>

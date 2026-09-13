@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #fefcf5;
+    --surface: #ffffff;
+    --ink: #2c2112;
+    --mute: #6c5e44;
+    --hair: #dccfa8;
+    --primary: #f0b41e;
+    --primary-soft: #fbe7a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44, 33, 18, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44, 33, 18, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    color: var(--ink);
+    font-family: "Hanken Grotesk", sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 88px 84px;
+  }
+  .grain {
+    position: absolute; inset: 0; z-index: 40; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+  }
+  .sun {
+    position: absolute; z-index: 0;
+    right: -140px; top: -160px;
+    width: 900px; height: 900px;
+    background: radial-gradient(closest-side, rgba(240,180,30,0.38), rgba(240,180,30,0.10) 55%, transparent 72%);
+  }
+  .fade { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: var(--bg); opacity: 0; }
+
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; letter-spacing: 0.16em; }
+  .display {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 90;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--mute); z-index: 1; margin-bottom: 28px;
+  }
+  header .brand { color: var(--ink); font-weight: 700; font-size: 16px; }
+
+  .stage { position: relative; flex: 1; z-index: 1; }
+  .scene { position: relative; width: 1024px; height: 1010px; transform-origin: 50% 0%; }
+
+  .card {
+    position: absolute;
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+
+  /* ---- la fiche servie par l'API publique ---- */
+  .fiche { left: 0; top: 0; width: 1024px; height: 748px; padding: 46px 46px; }
+  .fiche .kind {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary); border: 1.5px solid var(--ink);
+    box-shadow: 2.5px 2.5px 0 rgba(44,33,18,0.85);
+    padding: 7px 10px; margin-bottom: 24px;
+  }
+  .fiche h1 { font-size: 58px; line-height: 1.1; margin-bottom: 10px; }
+  .fiche .id {
+    font-family: "JetBrains Mono", monospace; font-size: 17px;
+    color: var(--mute); margin-bottom: 34px;
+  }
+
+  .line {
+    position: relative;
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-top: 1.5px solid var(--hair);
+    padding: 54px 0 48px;
+  }
+  .line .k {
+    font-family: "JetBrains Mono", monospace; font-size: 19px;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--mute);
+  }
+  .line .v { font-family: "JetBrains Mono", monospace; font-weight: 700; }
+
+  .line.zero { border-top-width: 2px; border-top-color: var(--ink); }
+  .line.zero .v {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-variation-settings: "wdth" 90; font-weight: 600;
+    font-size: 146px; line-height: 0.92; letter-spacing: -0.03em;
+  }
+  .line.net .v { font-size: 52px; }
+
+  .stamp {
+    position: absolute; left: 318px; top: 86px;
+    font-family: "JetBrains Mono", monospace; font-size: 17px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--primary); border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    padding: 12px 17px;
+  }
+
+  .fiche .src {
+    position: absolute; left: 46px; right: 46px; bottom: 32px;
+    border-top: 1.5px solid var(--hair); padding-top: 18px;
+    font-family: "JetBrains Mono", monospace; font-size: 15px; color: var(--mute);
+    display: flex; justify-content: space-between;
+  }
+
+  /* ---- ce que la donnée devrait dire ---- */
+  .proof {
+    left: 0; top: 822px; width: 1024px; padding: 26px 30px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .proof .lbl { font-family: "JetBrains Mono", monospace; font-size: 18px; color: var(--mute); flex: 1; }
+  .proof .lbl b { color: var(--ink); font-weight: 500; }
+  .proof .out {
+    font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700;
+    background: var(--primary-soft); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    padding: 12px 18px; white-space: nowrap;
+  }
+
+  .chute { position: absolute; left: 0; bottom: 0; width: 1024px; }
+  .chute p { font-size: 78px; line-height: 1.06; }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1.5px solid var(--ink);
+    padding-top: 24px; margin-top: 30px; font-size: 14px; color: var(--mute); z-index: 1;
+  }
+  footer .url2 { color: var(--ink); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+
+  <div class="sun" id="sun"></div>
+
+  <header>
+    <div class="brand mono">oto.cx</div>
+    <div class="mono">Données publiques</div>
+  </header>
+
+  <div class="stage">
+    <div class="scene" id="scene">
+
+      <div class="card fiche" id="fiche">
+        <span class="kind">api publique · recherche entreprises</span>
+        <h1>NORAUTO FRANCE</h1>
+        <div class="id">SIREN 480 470 152 · exercice 2024</div>
+
+        <div class="line zero">
+          <span class="k">chiffre d’affaires</span>
+          <span class="v display" id="zero">0 €</span>
+          <span class="stamp" id="stamp">la donnée manque</span>
+        </div>
+
+        <div class="line net">
+          <span class="k">résultat net</span>
+          <span class="v" id="net">37 748 283 €</span>
+        </div>
+
+        <div class="src">
+          <span>réponse servie telle quelle</span>
+          <span>source · annuaire-entreprises.data.gouv.fr</span>
+        </div>
+      </div>
+
+      <div class="card proof" id="proof">
+        <span class="lbl">ce qu’une donnée honnête dirait · <b>chiffre d’affaires</b></span>
+        <span class="out">non communiqué</span>
+      </div>
+    </div>
+
+    <div class="chute">
+      <p class="display" id="ph">Zéro et « on ne sait pas »<br>ne sont pas<br>la même chose.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mono">Open source · Otomata</div>
+    <div class="url2 mono">data.oto.zone</div>
+  </footer>
+
+  <div class="fade" id="fade"></div>
+  <div class="grain"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const io = (t0, d, t) => clamp((t - t0) / d);
+  const eoc = p => 1 - Math.pow(1 - p, 3);
+  const eob = p => { const c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+
+  const T = {
+    fiche: 200, ficheDur: 550,
+    zero: 1100, zeroDur: 500,
+    stamp: 2000, stampDur: 380,
+    net: 3000, netDur: 500,
+    proof: 4400, proofDur: 500,
+    zoomOut: 5500, zoomDur: 900,
+    phrase: 5750, phraseDur: 600,
+    fadeOut: 8300
+  };
+  const ZOOM = 0.72;
+  const LOOP = 9000;
+  window.__DURATION = LOOP;
+
+  function render(t) {
+    t = t % LOOP;
+    $('sun').style.transform = `scale(${1 + 0.025 * Math.sin(t / 1300)})`;
+
+    const pf0 = eoc(io(T.fiche, T.ficheDur, t));
+    $('fiche').style.opacity = pf0;
+    $('fiche').style.transform = `translateY(${28 * (1 - pf0)}px)`;
+
+    // le zéro tombe, énorme et faux
+    const pz0 = io(T.zero, T.zeroDur, t), ez = eob(pz0);
+    $('zero').style.opacity = clamp(pz0 * 2.5);
+    $('zero').style.transform = `scale(${0.55 + 0.45 * ez})`;
+
+    // le tampon vient dire ce que le zéro cache
+    const pst = io(T.stamp, T.stampDur, t), es = eob(pst);
+    $('stamp').style.opacity = clamp(pst * 3);
+    $('stamp').style.transform = `rotate(${-4 - 6 * (1 - es)}deg) scale(${1.5 - 0.5 * es})`;
+
+    // le résultat net, qui rend le zéro absurde
+    const pn = eoc(io(T.net, T.netDur, t));
+    $('net').style.opacity = pn;
+    $('net').style.transform = `translateX(${26 * (1 - pn)}px)`;
+
+    const pp = eoc(io(T.proof, T.proofDur, t));
+    $('proof').style.opacity = pp;
+    $('proof').style.transform = `translateY(${22 * (1 - pp)}px)`;
+
+    const pz = eoc(io(T.zoomOut, T.zoomDur, t));
+    $('scene').style.transform = `scale(${1 - (1 - ZOOM) * pz})`;
+
+    const pfr = eoc(io(T.phrase, T.phraseDur, t));
+    const ps = eoc(io(T.phrase + 350, 400, t));
+    const ph = $('ph');
+    ph.style.opacity = pfr;
+    ph.style.transform = `translateY(${40 * (1 - pfr)}px)`;
+    ph.style.textShadow = `${5 * ps}px ${5 * ps}px 0 #f0b41e`;
+
+    $('fade').style.opacity = io(T.fadeOut, 450, t);
+  }
+
+  window.__seek = render;
+  render(0);
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('capture') !== '1') {
+    let s = null;
+    function fr(now) { if (s === null) s = now; render(now - s); requestAnimationFrame(fr); }
+    requestAnimationFrame(fr);
+  }
+</script>
+</body>
+</html>

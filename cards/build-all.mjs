@@ -71,13 +71,15 @@ for(const uc of slice){
   }
   // encode
   const odir = `${ROOT}/out/cards`; mkdirSync(odir,{recursive:true});
+  const mp4 = `${odir}/${uc.num}-${uc.slug}.mp4`;
   const gif = `${odir}/${uc.num}-${uc.slug}.gif`, pal = `${fdir}/pal.png`;
   const gifArgs = 'fps=18,scale=720:-1:flags=lanczos';
-  spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});
-  spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-i',pal,'-lavfi',`${gifArgs} [x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3`,gif],{stdio:'ignore'});
-  const ok = existsSync(gif);
-  summary.push({ num:uc.num, slug:uc.slug, frames, ok });
-  console.error(`[${uc.num}] ${uc.slug}: ${frames} frames, mp4 ${ok?'ok':'FAIL'}`);
+  spawnSync('ffmpeg',['-y','-framerate',String(FPS),'-i',`${fdir}/frame_%04d.png`,'-c:v','libx264','-pix_fmt','yuv420p','-crf','18','-movflags','+faststart',mp4],{stdio:'ignore'});
+  spawnSync('ffmpeg',['-y','-i',mp4,'-vf',`${gifArgs},palettegen=stats_mode=diff`,pal],{stdio:'ignore'});
+  spawnSync('ffmpeg',['-y','-i',mp4,'-i',pal,'-lavfi',`${gifArgs} [x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3`,gif],{stdio:'ignore'});
+  const okMp4 = existsSync(mp4), ok = existsSync(gif);
+  summary.push({ num:uc.num, slug:uc.slug, frames, mp4:okMp4, ok });
+  console.error(`[${uc.num}] ${uc.slug}: ${frames} frames, mp4 ${okMp4?'ok':'FAIL'} · gif ${ok?'ok':'FAIL'}`);
 }
 chrome.kill('SIGKILL');
 writeFileSync(`${ROOT}/.gen/build-summary.json`, JSON.stringify(summary,null,2));
