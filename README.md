@@ -150,6 +150,8 @@ node service/server.mjs          # → http://127.0.0.1:8100 (STUDIO_PORT, STUDI
 | `service/render.mjs` | moteur : un Chrome persistant, une **file sérialisée**, ffmpeg. Pointe mesurée **~900 Mo de RSS** par rendu — deux en parallèle sur une petite box, c'est le gel. |
 | `service/templates.mjs` | registre des gabarits : manifeste de champs + construction de l'HTML + validation. **Ajouter un gabarit = ajouter une entrée ici**, rien n'est découvert dynamiquement. |
 | `service/server.mjs` | API REST + service des fichiers + IHM statique. |
+| `service/uploads.mjs` | les images déposées, stockées **hors des travaux** (`out/uploads/`) : un `job.json` ne garde qu'un identifiant, sinon la galerie relirait une image en base64 toutes les 15 s. L'identifiant est l'empreinte du contenu. |
+| `service/photos.mjs` | l'**atelier photo** : recadrer, égaliser (ImageMagick), et retoucher **une zone** au modèle d'image. Le résultat est un dépôt dérivé, réutilisable par tous les gabarits ; l'originale reste intacte. |
 | `service/web/index.html` | l'IHM : formulaire **dérivé du manifeste**, aperçu, galerie des rendus avec leur statut. |
 | `service/brand.mjs` + `web/brand.html` | la page **`/brand`** : la charte en accès **public** (mark, palette lue dans `brand/theme/theme.css`, typo, fichiers d'impression du merch). Préfixe unique pour qu'un seul bypass Cloudflare Access l'ouvre sans ouvrir le générateur. |
 | `service/kit.mjs` + `web/kit.html` | la page **`/kit`** : les visuels FIXES de la marque (un par emplacement LinkedIn), rendus au premier accès puis gardés en cache sous une empreinte des sources. L'IHM est un générateur ; le kit, un endroit où retrouver. |
@@ -157,7 +159,10 @@ node service/server.mjs          # → http://127.0.0.1:8100 (STUDIO_PORT, STUDI
 **API** — `GET /api/templates` · `GET /api/templates/:id` (manifeste + `example`) · `GET /api/kit` ·
 `POST /api/previews` → une URL d'aperçu HTML éphémère (10 min) ·
 `POST /api/renders` {template, data, formats} → le travail, rendu **en tâche de fond** ·
-`GET /api/renders` (galerie) · `GET /api/renders/:id` · `GET /files/:id/:nom` · `GET /healthz`.
+`GET /api/renders` (galerie) · `GET /api/renders/:id` · `GET /files/:id/:nom` · `GET /healthz` ·
+`POST /api/uploads` (corps **binaire**) → l'identifiant d'une image ·
+`POST /api/uploads/:id/derivees` {recadre, egalise, ia, zone, prompt} → une photo dérivée ·
+`GET /api/capacites` (ce que le service sait faire ici).
 Le code HTTP ne se dérive **jamais** du corps : un travail porte son propre `status` métier
 (`en_cours` / `fini` / `échoué`), les échecs passent par une exception portant son code.
 
@@ -177,12 +182,36 @@ récents (`STUDIO_KEEP`).
 `service/deploy/README.md`. ⚠️ Les trois lignes `Memory*` de l'unité ne sont pas
 décoratives — sur otomata-0, `system.slice` n'a aucune limite.
 
+### L'atelier photo — recadrer, égaliser, et une zone confiée au modèle
+
+Une photo d'événement arrive rarement prête : mal cadrée, sous-exposée, terne. L'atelier
+(bouton **« Retoucher »** à côté d'une photo déposée, ou `POST /api/uploads/:id/derivees`)
+fait trois choses, dans cet ordre, et rend **un nouveau dépôt** — l'originale ne bouge pas.
+
+1. **Recadrer** — une zone tracée à la souris, transmise en **fractions** de l'image (0 → 1),
+   jamais en pixels : ce qu'on désigne à l'écran vaut sur le fichier pleine résolution.
+2. **Égaliser** — passe déterministe, toujours disponible, celle qui fait 90 % du travail :
+   `-auto-level -sigmoidal-contrast 3x50% -modulate 102,105,100 -unsharp 0x1.2+0.6+0.02`.
+3. **Retoucher une zone** au modèle d'image, avec une consigne libre.
+
+⚠️ **Pourquoi la zone est obligatoire pour la passe IA.** Mesuré le 15/09/2026 sur la photo
+du Grand Bain : le modèle **régénère toute l'image et réécrit les textes**, malgré la
+consigne de tout conserver — badge « STARTUP » → « STUNTLID », t-shirt « otomata.tech » →
+« ctamalatach », logos du fond déformés. Sa sortie entière est inutilisable. On n'en garde
+donc que la zone demandée, fondue par un masque adouci (`-blur 0x18`) sur la photo égalisée,
+après remise à la taille EXACTE (`-resize WxH!`, sinon le composite décale). Mesure du
+résultat : **14 % d'écart dans la zone, 0,11 % hors zone** — le bruit de recompression JPEG.
+Corollaire pour qui s'en sert : **pas de texte dans la zone**.
+
 ### S'en servir depuis oto (agents)
 
 Le studio est un connecteur `http` de l'org Otomata (instance `org:2:http:studio`) : n'importe quel Claude branché sur oto peut produire un visuel, pas seulement le studio dans un navigateur. Appels, épinglage d'instance et raison du réseau privé : **[`service/README.md`](service/README.md)**.
 
 ## Pré-requis
-`google-chrome` + `ffmpeg` (déjà présents sur ce poste).
+`google-chrome` + `ffmpeg` (déjà présents sur ce poste). `imagemagick` **en plus** pour
+l'atelier photo, et `GEMINI_API_KEY` dans l'environnement pour sa seule passe IA — sans
+eux l'atelier répond 503 avec le motif au lieu d'échouer obscurément (état sur la box :
+`service/deploy/README.md`).
 
 ## Exports
 Les exports sortent dans `out/<famille>/` — `out/cards/`, `out/posts/`, `out/plaquettes/`, `out/articles/<slug>/` (illustrations statiques d'articles, sources dans `article-<slug>/`). Les scripts créent leur sous-dossier eux-mêmes. LinkedIn : préférer le **MP4** (le GIF natif y est souvent rendu statique).

@@ -7,6 +7,7 @@
   --terra:#d63d0a;--terra-ink:#5a1804;--saffron:#f0b41e;--olive:#8aa620;--cobalt:#1f6dba;
   --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 body{font-family:var(--sans);background:#efe7d3;color:var(--ink);min-height:100vh;display:flex}
 .panel{width:44%;max-width:620px;min-height:100vh;overflow:auto;background:var(--bg);border-right:1px solid var(--hair);padding:24px 26px 60px}
 .stage{flex:1;min-height:100vh;padding:24px;overflow:auto}
@@ -75,6 +76,44 @@ textarea{resize:vertical;min-height:56px}
 .notice li b{color:var(--ink)}
 .notice p{margin:8px 0 0;color:var(--mute);font-size:13px}
 .notice p b{color:var(--soft)}
+.img-zone .retouche{border:1px solid var(--hair);background:var(--surface);border-radius:8px;padding:8px 12px;
+  font-size:13px;font-weight:700;color:var(--soft);cursor:pointer;white-space:nowrap}
+.img-zone .retouche:hover:not(:disabled){border-color:var(--terra);color:var(--terra)}
+.img-zone .retouche:disabled{opacity:.4;cursor:not-allowed}
+.ovl{position:fixed;inset:0;z-index:50;background:rgba(44,33,18,.55);display:flex;align-items:center;justify-content:center;padding:24px}
+.ate{background:var(--bg);border-radius:16px;width:min(1080px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 30px 80px rgba(44,33,18,.4)}
+.ate>header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--hair)}
+.ate>header b{font-size:15px}
+.ate>header .ferme{border:none;background:transparent;font-size:22px;line-height:1;color:var(--mute);cursor:pointer}
+.ate-corps{display:flex;gap:18px;padding:18px;overflow:auto}
+.ate-vue{flex:1;min-width:0;display:flex;gap:14px}
+.ate-cmd{width:290px;flex:none}
+.ate-cmd label{margin-top:0}
+.vue{flex:1;min-width:0}
+.vue>.t{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.toile{position:relative;display:inline-block;max-width:100%;line-height:0;user-select:none;cursor:crosshair;background:#efe7d3}
+.toile img{max-width:100%;max-height:58vh;display:block}
+.toile .r{position:absolute;pointer-events:none}
+.toile .r.crop{border:2px dashed var(--cobalt);box-shadow:0 0 0 9999px rgba(44,33,18,.42)}
+.toile .r.zone{border:2px solid var(--terra);background:rgba(214,61,10,.14)}
+.toile .r .n{position:absolute;top:-1px;left:-1px;transform:translateY(-100%);font-size:10px;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;color:#fff}
+.toile .r.crop .n{background:var(--cobalt)}
+.toile .r.zone .n{background:var(--terra)}
+.outils{display:flex;gap:6px;margin-bottom:10px}
+.outils button{flex:1;border:1px solid var(--hair);background:var(--surface);border-radius:9px;padding:9px 6px;
+  font-size:12.5px;font-weight:700;color:var(--soft);cursor:pointer}
+.outils button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.outils button:disabled{opacity:.4;cursor:not-allowed}
+.ate .mise{font-size:12px;color:var(--mute);margin-top:6px;min-height:16px}
+.ate .efface{border:none;background:transparent;color:var(--faint);font-size:12px;font-weight:700;cursor:pointer;padding:0}
+.ate .efface:hover{color:var(--terra)}
+.garde{border:1px solid #e8c98f;background:#fdf4e0;border-radius:10px;padding:10px 12px;font-size:12.5px;
+  line-height:1.5;color:#6b5312;margin-top:10px}
+.garde b{color:#4a3a23}
+.ate-pied{display:flex;gap:10px;align-items:center;padding:14px 18px;border-top:1px solid var(--hair);background:var(--bg)}
+.ate-pied .status{margin:0;flex:1}
 </style></head>
 <body>
 <div class="panel">
@@ -92,6 +131,9 @@ textarea{resize:vertical;min-height:56px}
           le ton et la longueur attendus — remplacez-le.</li>
         <li><b>L'aperçu suit votre saisie</b>, sans rien cliquer. Le bouton « Aperçu » sert
           à le forcer ; une photo se dépose avec le bouton « Parcourir » du champ.</li>
+        <li><b>« Retoucher »</b>, à côté d'une photo déposée, ouvre l'atelier : on y trace son
+          cadre, on égalise, et on peut confier <b>une zone</b> à l'IA. Hors de cette zone,
+          rien n'est modifié — c'est pour cela que la zone est obligatoire.</li>
         <li><b>« Reprendre »</b>, sous un visuel déjà produit, recharge son gabarit et son
           contenu : c'est ainsi qu'on fait une variante sans tout ressaisir.</li>
         <li><b>Générez.</b> Comptez une minute pour une image fixe, deux à trois pour une
@@ -126,6 +168,54 @@ textarea{resize:vertical;min-height:56px}
   <div class="gallery" id="gallery"></div>
 </div>
 
+
+<!-- L'atelier photo : recadrer, égaliser, et retoucher UNE zone au modèle d'image.
+     Il vit à côté des gabarits — ce qu'il produit est une image déposée comme une autre. -->
+<div class="ovl" id="atelier" hidden>
+  <div class="ate">
+    <header><b>Atelier photo</b><button class="ferme" id="ate-ferme" title="Fermer">&times;</button></header>
+    <div class="ate-corps">
+      <div class="ate-vue">
+        <div class="vue">
+          <div class="t">Avant</div>
+          <div class="toile" id="ate-toile"><img id="ate-avant" alt=""></div>
+        </div>
+        <div class="vue" id="ate-vue-apres" hidden>
+          <div class="t">Après</div>
+          <div class="toile" style="cursor:default"><img id="ate-apres" alt=""></div>
+        </div>
+      </div>
+      <div class="ate-cmd">
+        <label>Tracer sur la photo</label>
+        <div class="outils">
+          <button id="ate-outil-crop" aria-pressed="true">Recadrer</button>
+          <button id="ate-outil-zone" aria-pressed="false">Zone à retoucher</button>
+        </div>
+        <div class="mise" id="ate-mise"></div>
+        <button class="efface" id="ate-efface">tout effacer</button>
+
+        <div class="checks" style="margin-top:14px">
+          <label><input type="checkbox" id="ate-egalise" checked> Égaliser (contraste, couleurs, netteté)</label>
+        </div>
+
+        <label style="margin-top:16px">Retouche IA — ce que vous voulez changer</label>
+        <textarea id="ate-prompt" placeholder="adoucir les ombres sur le visage, garder le grain naturel"></textarea>
+        <div class="hint" id="ate-ia-hint"></div>
+        <div class="garde" id="ate-garde" hidden>
+          <b>La retouche IA ne s'applique qu'à la zone tracée.</b> Le modèle régénère l'image
+          entière et <b>réécrit les textes et les logos</b> : hors de la zone, rien n'est
+          conservé de sa sortie. Ne mettez pas de texte dans la zone.
+        </div>
+      </div>
+    </div>
+    <div class="ate-pied">
+      <div class="status" id="ate-status"></div>
+      <button class="btn ghost" id="ate-appliquer">Appliquer</button>
+      <button class="btn" id="ate-garder" disabled>Garder</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 const $ = s => document.querySelector(s);
 const api = async (path, opts) => {
@@ -135,6 +225,133 @@ const api = async (path, opts) => {
   return j;
 };
 const say = (msg, isErr) => { const s = $('#status'); s.textContent = msg; s.classList.toggle('err', !!isErr); };
+
+/* ---------- atelier photo ----------
+   Recadrer et égaliser sont déterministes. La retouche IA, elle, ne s'applique JAMAIS à
+   toute l'image : le modèle la régénère et réécrit les textes — on n'en garde que la zone
+   tracée, fondue par le serveur. L'IHM impose donc la zone, et le dit. */
+let capacites = { magick: false, ia: false };
+
+const atelier = (() => {
+  const el = id => document.getElementById(id);
+  const ovl = el('atelier'), toile = el('ate-toile'), avant = el('ate-avant'), apres = el('ate-apres');
+  const dit = (m, err) => { const s = el('ate-status'); s.textContent = m || ''; s.classList.toggle('err', !!err); };
+
+  let outil = 'crop', rects = {}, resultat = null, sourceId = null, rendu = null, trace = null;
+
+  const pourcent = r => ({ left: r.x * 100 + '%', top: r.y * 100 + '%', width: r.w * 100 + '%', height: r.h * 100 + '%' });
+
+  function dessine() {
+    for (const n of toile.querySelectorAll('.r')) n.remove();
+    for (const [nom, r] of Object.entries(rects)) {
+      const d = document.createElement('div');
+      d.className = 'r ' + nom;
+      Object.assign(d.style, pourcent(r));
+      d.innerHTML = `<span class="n">${nom === 'crop' ? 'cadre' : 'zone IA'}</span>`;
+      toile.append(d);
+    }
+    const c = rects.crop, z = rects.zone;
+    el('ate-mise').textContent = [
+      c ? `cadre ${Math.round(c.w * 100)} × ${Math.round(c.h * 100)} %` : null,
+      z ? `zone IA tracée` : null,
+    ].filter(Boolean).join(' · ') || 'glissez sur la photo pour tracer.';
+    el('ate-garde').hidden = !z;
+  }
+
+  // Les fractions, pas les pixels : ce qu'on désigne à l'écran vaut sur le fichier
+  // pleine résolution, quelle que soit la taille d'affichage.
+  toile.addEventListener('pointerdown', ev => {
+    if (!avant.src) return;
+    const box = avant.getBoundingClientRect();
+    const depart = { x: (ev.clientX - box.left) / box.width, y: (ev.clientY - box.top) / box.height };
+    trace = { nom: outil, depart, box };
+    toile.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  });
+  toile.addEventListener('pointermove', ev => {
+    if (!trace) return;
+    const { box, depart, nom } = trace;
+    const p = { x: (ev.clientX - box.left) / box.width, y: (ev.clientY - box.top) / box.height };
+    const borne = v => Math.min(1, Math.max(0, v));
+    rects[nom] = { x: borne(Math.min(depart.x, p.x)), y: borne(Math.min(depart.y, p.y)),
+      w: Math.abs(borne(p.x) - borne(depart.x)), h: Math.abs(borne(p.y) - borne(depart.y)) };
+    dessine();
+  });
+  const fini = () => {
+    if (trace && (rects[trace.nom]?.w < .02 || rects[trace.nom]?.h < .02)) delete rects[trace.nom];
+    trace = null; dessine();
+  };
+  toile.addEventListener('pointerup', fini);
+  toile.addEventListener('pointercancel', fini);
+
+  for (const [nom, bouton] of [['crop', el('ate-outil-crop')], ['zone', el('ate-outil-zone')]]) {
+    bouton.onclick = () => {
+      outil = nom;
+      el('ate-outil-crop').ariaPressed = String(nom === 'crop');
+      el('ate-outil-zone').ariaPressed = String(nom === 'zone');
+    };
+  }
+  el('ate-efface').onclick = () => { rects = {}; dessine(); };
+  el('ate-ferme').onclick = () => { ovl.hidden = true; };
+  ovl.onclick = ev => { if (ev.target === ovl) ovl.hidden = true; };
+
+  el('ate-appliquer').onclick = async () => {
+    // Recadrer sans zone est parfaitement légitime : la passe IA n'est demandée que si
+    // une zone existe. Le serveur refuse de toute façon l'IA sans zone.
+    const corps = { egalise: el('ate-egalise').checked };
+    if (rects.crop) corps.recadre = rects.crop;
+    if (rects.zone) {
+      if (!capacites.ia) return dit('la retouche IA n\'est pas configurée sur ce service.', true);
+      corps.ia = true; corps.zone = rects.zone;
+      corps.prompt = el('ate-prompt').value.trim();
+      // La zone est tracée sur l'AVANT : si on recadre en même temps, elle ne désigne plus
+      // le même endroit une fois la découpe faite. On la rapporte au cadre.
+      if (rects.crop) {
+        const c = rects.crop, z = rects.zone;
+        corps.zone = { x: (z.x - c.x) / c.w, y: (z.y - c.y) / c.h, w: z.w / c.w, h: z.h / c.h };
+        if (corps.zone.x < 0 || corps.zone.y < 0 || corps.zone.x + corps.zone.w > 1 || corps.zone.y + corps.zone.h > 1)
+          return dit('la zone IA doit être entièrement dans le cadre.', true);
+      }
+    }
+    if (!corps.recadre && !corps.egalise && !corps.ia)
+      return dit('rien à appliquer : cochez « Égaliser », ou tracez un cadre ou une zone.', true);
+
+    el('ate-appliquer').disabled = true;
+    dit(corps.ia ? 'retouche en cours — comptez une trentaine de secondes…' : 'traitement…');
+    try {
+      resultat = await api(`/api/uploads/${sourceId}/derivees`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corps) });
+      apres.src = resultat.url + '?t=' + Date.now();
+      el('ate-vue-apres').hidden = false;
+      el('ate-garder').disabled = false;
+      dit(`${resultat.largeur} × ${resultat.hauteur}${resultat.modele ? ' · ' + resultat.modele : ''}. Comparez, puis gardez.`);
+    } catch (e) { dit(e.message, true); }
+    finally { el('ate-appliquer').disabled = false; }
+  };
+
+  el('ate-garder').onclick = () => {
+    if (!resultat) return;
+    ovl.hidden = true;
+    rendu(resultat);
+  };
+
+  /** @param onGarde reçoit le dépôt dérivé quand l'utilisateur le garde. */
+  return function ouvre(id, onGarde) {
+    sourceId = id; rendu = onGarde; resultat = null; rects = {}; trace = null;
+    avant.src = `/uploads/${id}`;
+    apres.removeAttribute('src');
+    el('ate-vue-apres').hidden = true;
+    el('ate-garder').disabled = true;
+    el('ate-prompt').disabled = !capacites.ia;
+    el('ate-outil-zone').disabled = !capacites.ia;
+    el('ate-ia-hint').textContent = capacites.ia
+      ? 'S\'ajoute à une consigne de retouche discrète. Sans zone tracée, aucune IA n\'intervient.'
+      : 'Indisponible sur ce service : aucune clé de modèle d\'image n\'y est configurée.';
+    dit('');
+    dessine();
+    ovl.hidden = false;
+  };
+})();
 
 let manifest = null;
 let minuteur = null;
@@ -171,11 +388,24 @@ function field(f, value, onChange) {
         say('dépôt de l\'image…');
         const r = await api('/api/uploads', { method: 'POST', headers: { 'Content-Type': fichier.type }, body: fichier });
         vign.src = r.url; vign.hidden = false;
+        retouche.disabled = !capacites.magick;
         onChange(r.id);
         say(`image déposée (${Math.round(r.bytes / 1024)} Ko).`);
       } catch (e) { say(e.message, true); }
     };
-    zone.append(inp, vign);
+    // Retoucher sur place : ce qui en sort est un dépôt comme un autre, et le champ
+    // pointe alors dessus — l'originale reste déposée, rien n'est écrasé.
+    const retouche = document.createElement('button');
+    retouche.type = 'button'; retouche.className = 'retouche'; retouche.textContent = 'Retoucher';
+    retouche.disabled = !value || !capacites.magick;
+    retouche.title = capacites.magick ? 'Recadrer, égaliser, retoucher une zone'
+      : 'Indisponible : ImageMagick n\'est pas installé sur ce service.';
+    retouche.onclick = () => atelier(state[f.key], r => {
+      vign.src = r.url + '?t=' + Date.now(); vign.hidden = false;
+      onChange(r.id);
+      say(`photo retouchée (${r.largeur} × ${r.hauteur}).`);
+    });
+    zone.append(inp, retouche, vign);
     wrap.append(zone);
     if (f.hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = f.hint; wrap.append(h); }
     return wrap;
@@ -477,6 +707,9 @@ sel.onchange = async () => {
     await preview();
   } catch (e) { if (request === selectionRequest) say(e.message, true); }
 };
+// Ce que le service sait faire ICI : sans ImageMagick, l'atelier ne s'ouvre pas ; sans clé
+// de modèle d'image, il recadre et égalise sans proposer la retouche.
+capacites = (await api('/api/capacites').catch(() => ({ photo: {} }))).photo || {};
 await sel.onchange();
 await gallery();
 setInterval(gallery, 15000);

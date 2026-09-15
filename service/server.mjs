@@ -12,6 +12,7 @@ import { render } from './render.mjs';
 import * as kit from './kit.mjs';
 import * as brand from './brand.mjs';
 import * as uploads from './uploads.mjs';
+import * as photos from './photos.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '..');
@@ -107,6 +108,16 @@ const routes = [
     uploads.purge();
     return recu;
   }, { brut: true, limite: 12e6 }],
+
+  /* ---------- travailler une image ----------
+     Le résultat est un NOUVEAU dépôt, dérivé de la source, que tous les gabarits acceptent :
+     l'originale reste disponible, et rien n'oblige à repasser par le gabarit photo. */
+  ['POST', /^\/api\/uploads\/([0-9a-f]{16}\.(?:jpg|png|webp))\/derivees$/,
+    ([id], body) => photos.travaille(id, body || {})],
+
+  // Ce que ce service sait faire ICI : `magick` et la clé du modèle sont des conditions
+  // d'environnement, pas du code. L'IHM n'offre pas ce qui échouerait sur cette machine.
+  ['GET', /^\/api\/capacites$/, () => ({ photo: photos.capacites() })],
 
   ['GET', /^\/uploads\/([0-9a-f]{16}\.(?:jpg|png|webp))$/, ([id], _b, res) => {
     if (!uploads.existe(id)) throw Object.assign(new Error('image inconnue'), { status: 404 });

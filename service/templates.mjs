@@ -380,7 +380,7 @@ const photoCadre = {
   id: 'photo-cadre',
   label: 'Photo encadrée',
   description: 'Format LinkedIn 4:5. Une vraie photo posée dans la charte : mention en mono, filet, ombre dure, '
-    + 'couche saffran décalée, pied de marque. La photo n\'est NI recadrée NI retouchée — ce sont ses proportions '
+    + 'couche saffran décalée, pied de marque. Le gabarit ne touche PAS à la photo — ce sont ses proportions '
     + 'qui décident de la taille du cadre. Elle se dépose d\'abord sur POST /api/uploads (corps binaire, '
     + 'Content-Type image/jpeg|png|webp), qui rend l\'identifiant à mettre dans `photo`.',
   size: { width: 1200, height: 1500, scale: 2 },
@@ -388,7 +388,8 @@ const photoCadre = {
   formats: ['png'],
   fields: [
     { key: 'photo', label: 'Photo', type: 'image', required: true,
-      hint: 'jpeg, png ou webp, 12 Mo maximum — posée telle quelle, sans recadrage ni retouche' },
+      hint: 'jpeg, png ou webp, 12 Mo maximum. Le gabarit la pose telle quelle : pour la recadrer '
+        + 'ou la retoucher, passer par POST /api/uploads/{id}/derivees (bouton « Retoucher » dans l\'IHM).' },
     { key: 'mention', label: 'Mention', type: 'text', required: false,
       hint: 'la ligne mono au-dessus de la photo — ex. « Le Grand Bain · 14 septembre 2026 · Palais du Pharo »' },
     { key: 'decor', label: 'Décor', type: 'enum', options: ['registration', 'plat'], required: false,

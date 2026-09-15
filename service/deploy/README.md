@@ -1,9 +1,21 @@
 # Déployer le studio
 
 Cible retenue : **otomata-0** (`51.15.225.121`). Chrome 149 (`/usr/bin/google-chrome`) et
-ffmpeg **y sont déjà installés** — rien à poser côté dépendances système. Le service n'a
-**aucune dépendance npm** (Node natif seul) : pas de `npm install`, pas de build, pas de
-`node_modules`. Déployer = mettre le dépôt à jour et redémarrer.
+ffmpeg **y sont déjà installés**. Le service n'a **aucune dépendance npm** (Node natif seul) :
+pas de `npm install`, pas de build, pas de `node_modules`. Déployer = mettre le dépôt à jour
+et redémarrer.
+
+## Ce que l'atelier photo exige EN PLUS (constaté absent le 15/09/2026)
+
+`POST /api/uploads/{id}/derivees` — recadrer, égaliser, retoucher une zone — a deux
+conditions d'environnement que le code ne peut pas créer lui-même. Sans elles il répond
+**503** avec le motif, et l'IHM grise le bouton « Retoucher » : rien ne casse, mais rien ne
+marche non plus. `GET /api/capacites` dit lequel des deux manque.
+
+| condition | état sur otomata-0 | pourquoi |
+|---|---|---|
+| `imagemagick` (`magick`) | **absent** — `apt install imagemagick` | recadrage, égalisation et composite masqué. Tout l'atelier en dépend. |
+| `GEMINI_API_KEY` dans l'environnement du service | **absent** — cf. `systemctl show oto-studio -p Environment` | la seule passe IA. La clé vit dans SOPS (`~/.otomata/secrets/secrets.yaml`) ; elle se pose en `EnvironmentFile=` root-only sur la box, **jamais dans l'unité versionnée ni dans le code**. |
 
 ## Port
 

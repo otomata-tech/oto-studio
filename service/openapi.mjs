@@ -70,6 +70,18 @@ export function openapi() {
         'qui est commune.\n\n' +
         '## Gabarits disponibles\n\n' + detail
     },
+    components: {
+      schemas: {
+        Zone: {
+          type: 'object', required: ['x', 'y', 'w', 'h'],
+          description: 'une zone en fractions de l\'image (0 → 1), coin haut-gauche',
+          properties: {
+            x: { type: 'number' }, y: { type: 'number' },
+            w: { type: 'number' }, h: { type: 'number' }
+          }
+        }
+      }
+    },
     paths: {
       '/api/templates': {
         get: { summary: 'Les gabarits et leurs formats', responses: { 200: { description: 'liste' } } }
@@ -118,6 +130,54 @@ export function openapi() {
           summary: 'L\'état d\'un rendu : en_cours | fini | échoué',
           parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
           responses: { 200: { description: 'le travail' }, 404: { description: 'inconnu' } }
+        }
+      },
+      '/api/uploads/{id}/derivees': {
+        post: {
+          summary: 'Travailler une photo déposée : recadrer, égaliser, retoucher une zone',
+          description:
+            'Rend un NOUVEAU dépôt, dérivé : l\'originale reste intacte, et l\'identifiant rendu ' +
+            's\'utilise dans n\'importe quel gabarit qui attend une image.\n\n' +
+            'Les zones (`recadre`, `zone`) sont en **fractions** de l\'image, 0 → 1, coin haut-gauche ' +
+            '— jamais en pixels. `zone` se lit sur l\'image APRÈS recadrage.\n\n' +
+            '⚠️ **La passe IA ne s\'applique jamais à toute l\'image.** Le modèle la régénère et ' +
+            'réécrit les textes et les logos (mesuré : « STARTUP » → « STUNTLID »). Seule la `zone` ' +
+            'demandée est reprise, fondue sur la photo égalisée ; le reste n\'est pas touché. D\'où ' +
+            '`zone` OBLIGATOIRE dès que `ia: true`, et **pas de texte dans la zone**. Compter ~30 s.\n\n' +
+            'Ce que ce service sait faire ici se lit sur `GET /api/capacites` : sans ImageMagick, ' +
+            'rien ; sans clé de modèle d\'image, le recadrage et l\'égalisation seulement.',
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' },
+            description: 'l\'identifiant rendu par POST /api/uploads' }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    recadre: { $ref: '#/components/schemas/Zone' },
+                    egalise: { type: 'boolean', default: true,
+                      description: 'passe déterministe : niveaux, contraste, couleurs, netteté' },
+                    ia: { type: 'boolean', default: false, description: 'exige `zone`' },
+                    zone: { $ref: '#/components/schemas/Zone' },
+                    prompt: { type: 'string',
+                      description: 'ce qu\'on veut changer dans la zone ; s\'ajoute à une consigne de retouche discrète' }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            200: { description: 'le dépôt dérivé : `id`, `url`, `largeur`, `hauteur`, `passes`, `modele`' },
+            400: { description: 'zone absente ou hors cadre, image inconnue' },
+            503: { description: 'ImageMagick ou clé du modèle absents de ce service' }
+          }
+        }
+      },
+      '/api/capacites': {
+        get: {
+          summary: 'Ce que ce service sait faire ici : `photo.magick`, `photo.ia`',
+          responses: { 200: { description: 'les capacités' } }
         }
       },
       '/files/{id}/{nom}': {
