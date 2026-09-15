@@ -6,6 +6,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FORMATS, CLES, livre } from '../posts/identite-formats.mjs';
+import * as uploads from './uploads.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -373,7 +374,48 @@ const annonce = {
   }
 };
 
-const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere], [output.id, output], [annonce.id, annonce]]);
+/* ---------- photo encadrée ---------- */
+
+const photoCadre = {
+  id: 'photo-cadre',
+  label: 'Photo encadrée',
+  description: 'Format LinkedIn 4:5. Une vraie photo posée dans la charte : mention en mono, filet, ombre dure, '
+    + 'couche saffran décalée, pied de marque. La photo n\'est NI recadrée NI retouchée — ce sont ses proportions '
+    + 'qui décident de la taille du cadre. Elle se dépose d\'abord sur POST /api/uploads (corps binaire, '
+    + 'Content-Type image/jpeg|png|webp), qui rend l\'identifiant à mettre dans `photo`.',
+  size: { width: 1200, height: 1500, scale: 2 },
+  fps: 25,
+  formats: ['png'],
+  fields: [
+    { key: 'photo', label: 'Photo', type: 'image', required: true,
+      hint: 'jpeg, png ou webp, 12 Mo maximum — posée telle quelle, sans recadrage ni retouche' },
+    { key: 'mention', label: 'Mention', type: 'text', required: false,
+      hint: 'la ligne mono au-dessus de la photo — ex. « Le Grand Bain · 14 septembre 2026 · Palais du Pharo »' },
+    { key: 'decor', label: 'Décor', type: 'enum', options: ['registration', 'plat'], required: false,
+      hint: 'registration = couche saffran décalée et léger dévers, la grammaire du mark ; plat = filet et ombre seuls' },
+    { key: 'mot', label: 'Nom en pied', type: 'text', required: false, hint: 'par défaut OTOMATA' },
+    { key: 'sig', label: 'Signature', type: 'text', required: false, hint: 'sous le nom, en mono' },
+    { key: 'url', label: 'Adresse', type: 'text', required: false, hint: 'en bas à droite' }
+  ],
+  // Pas de photo dans l'exemple : une image d'exemple pèserait dans le dépôt et ne dirait rien
+  // de plus. Le reste montre le ton attendu.
+  example: {
+    mention: 'Le Grand Bain · 14 septembre 2026 · Palais du Pharo', decor: 'registration',
+    mot: 'OTOMATA', sig: 'Studio IA · Marseille', url: 'otomata.tech'
+  },
+  build(data) {
+    const d = { ...data, src: uploads.dataUri(data.photo),
+      style: data.decor === 'plat' ? '' : 'registration' };
+    delete d.photo; delete d.decor;
+    const body = read('posts/photo-cadre.html')
+      .replace('<!--__MARK__-->', read('brand/logos/otomata/otomata-mark.svg'))
+      .replace('<!--__DATA__-->', `<script>window.__PC=${inScript(d)};</script>`)
+      .replace('/* __FONTS__ */', read('assets/fonts.css'));
+    return page(`oto — ${data.mention || 'photo'}`, body);
+  }
+};
+
+const TEMPLATES = new Map([[carte.id, carte], [affiche.id, affiche], [identite.id, identite], [banniere.id, banniere], [output.id, output], [annonce.id, annonce], [photoCadre.id, photoCadre]]);
 
 // L'index reste léger : ni le constructeur ni l'exemple (le manifeste unitaire les porte).
 export const list = () => [...TEMPLATES.values()].map(
@@ -417,6 +459,10 @@ export function validate(template, data) {
       }
       if (f.type === 'enum' && !f.options.includes(v))
         refus.push(`valeur refusée pour ${où(f.key)} : ${v} (attendues : ${f.options.join(', ')})`);
+      // Une image est un identifiant de dépôt, jamais son contenu : on vérifie qu'il désigne
+      // un fichier réel plutôt que de laisser le rendu sortir un cadre vide.
+      if (f.type === 'image' && !uploads.existe(v))
+        refus.push(`image inconnue pour ${où(f.key)} : ${v} — la déposer d'abord sur POST /api/uploads`);
       if (f.type === 'list') {
         if (!Array.isArray(v)) { refus.push(`${où(f.key)} doit être une liste`); continue; }
         if (f.min && v.length < f.min) refus.push(`${où(f.key)} : au moins ${f.min} entrée(s)`);

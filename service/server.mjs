@@ -11,6 +11,7 @@ import { openapi } from './openapi.mjs';
 import { render } from './render.mjs';
 import * as kit from './kit.mjs';
 import * as brand from './brand.mjs';
+import * as uploads from './uploads.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(DIR, '..');
@@ -27,7 +28,8 @@ mkdirSync(WORK, { recursive: true });
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.mp4': 'video/mp4', '.gif': 'image/gif',
-  '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json; charset=utf-8' };
+  '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json; charset=utf-8',
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
 
 /* ---------- état des travaux : sur disque, pour survivre au redémarrage ---------- */
 
@@ -95,6 +97,23 @@ const routes = [
     if (!p) throw Object.assign(new Error('aperçu expiré'), { status: 404 });
     res.writeHead(200, { 'Content-Type': MIME['.html'] });
     res.end(p.html);
+  }],
+
+  /* ---------- déposer une image ----------
+     Corps BINAIRE, pas de JSON : une image passée en base64 dans les données d'un travail
+     gonflerait `job.json` et chaque réponse de la galerie. Le travail ne garde que l'id. */
+  ['POST', /^\/api\/uploads$/, (_a, buf, _res, req) => {
+    const recu = uploads.depose(buf, req.headers['content-type']);
+    uploads.purge();
+    return recu;
+  }, { brut: true, limite: 12e6 }],
+
+  ['GET', /^\/uploads\/([0-9a-f]{16}\.(?:jpg|png|webp))$/, ([id], _b, res) => {
+    if (!uploads.existe(id)) throw Object.assign(new Error('image inconnue'), { status: 404 });
+    const buf = readFileSync(uploads.chemin(id));
+    res.writeHead(200, { 'Content-Type': MIME[extname(id)], 'Content-Length': buf.length,
+      'Cache-Control': 'public, max-age=86400' });
+    res.end(buf);
   }],
 
   ['GET', /^\/api\/renders$/, () => ({ renders: listJobs().map(withLinks) })],
@@ -249,18 +268,21 @@ function serveWeb(name, res) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   try {
-    for (const [method, re, handler] of routes) {
+    for (const [method, re, handler, opts] of routes) {
       if (req.method !== method) continue;
       const m = url.pathname.match(re);
       if (!m) continue;
 
       let body = null;
       if (method === 'POST') {
-        const raw = await readBody(req);
-        try { body = raw ? JSON.parse(raw) : {}; }
-        catch { throw Object.assign(new Error('corps JSON illisible'), { status: 400 }); }
+        if (opts?.brut) body = await readBrut(req, opts.limite);
+        else {
+          const raw = await readBody(req);
+          try { body = raw ? JSON.parse(raw) : {}; }
+          catch { throw Object.assign(new Error('corps JSON illisible'), { status: 400 }); }
+        }
       }
-      const out = await handler(m.slice(1), body, res);
+      const out = await handler(m.slice(1), body, res, req);
       if (res.headersSent) return;   // le handler a servi lui-même (fichier, HTML)
       // Toujours 200 : le code HTTP ne se dérive JAMAIS du corps (un job porte son
       // propre `status` métier, qui n'est pas un code de réponse). Les échecs passent
@@ -279,6 +301,23 @@ const server = http.createServer(async (req, res) => {
     if (status >= 500) console.error(`[studio] ${req.method} ${url.pathname} →`, err);
   }
 });
+
+/** Corps binaire, en Buffers : `b += c` concatène en TEXTE et corrompt une image. */
+function readBrut(req, max = 12e6) {
+  return new Promise((resolve, reject) => {
+    const morceaux = []; let size = 0;
+    req.on('data', c => {
+      size += c.length;
+      if (size > max) {
+        reject(Object.assign(new Error(`image trop lourde (maximum ${Math.round(max / 1e6)} Mo)`), { status: 413 }));
+        req.destroy(); return;
+      }
+      morceaux.push(c);
+    });
+    req.on('end', () => resolve(Buffer.concat(morceaux)));
+    req.on('error', reject);
+  });
+}
 
 function readBody(req) {
   return new Promise((resolve, reject) => {

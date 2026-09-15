@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>/* __FONTS__ */</style>
+<style>
+  /* Dessin « photo encadrée » — une vraie photo posée dans la charte : papier, filet, ombre dure,
+     une ligne de mention en haut, le pied de marque en bas. La photo n'est ni recadrée ni retouchée
+     ici : elle arrive telle quelle, en data-URI, et garde ses proportions.
+
+     Servi par le gabarit `photo-cadre` du studio. La photo n'arrive PAS dans les données du
+     travail : elle est déposée sur /api/uploads et le gabarit la pose ici en data-URI. */
+  :root { --bg:#fefcf5; --ink:#2c2112; --mute:#6c5e44; --primary:#f0b41e; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:1500px; overflow:hidden; }
+  body { position:relative; background:var(--bg);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,.03) 1px, transparent 1px);
+    background-size:64px 64px;
+    color:var(--ink); font-family:"Hanken Grotesk",system-ui,sans-serif;
+    display:flex; flex-direction:column; padding:70px 80px 60px; }
+  .grain { position:absolute; inset:0; z-index:40; pointer-events:none; opacity:.07; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>"); }
+  .mono { font-family:"JetBrains Mono",monospace; text-transform:uppercase; letter-spacing:.16em; }
+
+
+  /* Le dynamisme est AUTOUR de la photo, jamais dessus : la photo ne subit ni rotation forte,
+     ni filtre, ni recadrage. Deux registres, tous deux pris dans la grammaire du mark. */
+
+  /* « registration » — la couche saffran mal calée en haut-gauche, l'ombre dure en bas-droite :
+     c'est le mark lui-même (anneau décalé, disque, ombre). L'inclinaison reste sous 2°. */
+  body.registration .photo { transform: rotate(-1.6deg); transform-origin: 50% 40%; }
+  body.registration .photo .cadre { box-shadow: 18px 18px 0 rgba(44,33,18,.88), -15px -15px 0 var(--primary); }
+
+  .mention { z-index:1; font-size:15px; color:var(--mute); }
+
+  /* La photo : filet d'encre et ombre DURE, sans flou ni radius — la signature de la charte.
+     Le conteneur réserve la place de l'ombre pour que l'ensemble reste optiquement centré. */
+  /* La photo se dimensionne SEULE : contrainte en largeur et en hauteur, elle garde ses
+     proportions, et le cadre en inline-block l'épouse. Aucun calcul en JavaScript — un
+     dimensionnement fait après le décodage de l'image arrivait parfois après la capture,
+     et le rendu variait de quelques pixels d'une fois sur l'autre. */
+  .photo { z-index:1; margin:26px 0 0; text-align:center; }
+  .photo .cadre { display:inline-block; border:3px solid var(--ink); box-shadow:16px 16px 0 rgba(44,33,18,.88); }
+  .photo img { display:block; max-width:1024px; max-height:1190px; width:auto; height:auto; }
+
+  footer { z-index:1; margin-top:auto; padding-top:26px; border-top:3px solid var(--ink);
+    display:flex; align-items:center; gap:28px; }
+  footer .sign { display:flex; align-items:center; gap:18px; }
+  footer .pmk { width:66px; height:66px; flex:none; }
+  footer .pmk svg { width:100%; height:100%; display:block; }
+  footer .mot { font-family:"Bricolage Grotesque",sans-serif; font-variation-settings:"wdth" 90;
+    font-weight:600; font-size:52px; letter-spacing:-.035em; line-height:.9;
+    text-shadow:4px 4px 0 var(--primary); }
+  footer .sig { font-size:13px; color:var(--mute); margin-top:9px; }
+  footer .url { margin-left:auto; font-size:16px; color:var(--mute); align-self:flex-end; padding-bottom:6px; }
+</style>
+</head>
+<body>
+<div class="mention mono" id="mention"></div>
+<div class="photo" id="photo"><div class="cadre"><img id="img" alt=""></div></div>
+<footer>
+  <div class="sign">
+    <div class="pmk"><!--__MARK__--></div>
+    <div>
+      <div class="mot" id="mot"></div>
+      <div class="sig mono" id="sig"></div>
+    </div>
+  </div>
+  <div class="url mono" id="url"></div>
+</footer>
+<div class="grain"></div>
+<!--__DATA__-->
+<script>
+  const D = window.__PC, $ = id => document.getElementById(id);
+  document.body.className = D.style || '';
+  $('mention').textContent = D.mention || '';
+  $('mot').textContent = D.mot || 'OTOMATA';
+  $('sig').textContent = D.sig || '';
+  $('url').textContent = D.url || '';
+  $('img').src = D.src;
+
+  document.title = 'prêt';
+</script>
+</body>
+</html>
