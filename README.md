@@ -209,8 +209,10 @@ un étirement **lié** (min/max pris sur les trois canaux ensemble, sinon les co
 facteur 2 du seuil d'`-unsharp` est bien celui d'IM. Écart du livrable final : **0,35 %**,
 dont 0,14 % de simple ré-encodage JPEG — quand la passe elle-même en produit 4,26 %. Le
 redressement EXIF est fait par Chrome au décodage, vérifié identique à `-auto-orient`.
-Le masque flou tourne en **fenêtre glissante** (253 Ko au lieu de 172 Mo de tampons) : une
-passe sur 7 Mpx coûte ~0,6 s et ~316 Mo de pointe, dans la même file que les rendus.
+Le masque flou tourne en **fenêtre glissante** (253 Ko au lieu de 172 Mo de tampons). Mesuré
+sur la box : égalisation d'une photo de 7 Mpx **2,5 s**, retouche IA **27 s** (le modèle),
+pointe de **891 Mo** sur les 1400 autorisés. Une passe emprunte la même file que les rendus,
+jamais en parallèle.
 
 ⚠️ **Pourquoi la zone est obligatoire pour la passe IA.** Mesuré le 15/09/2026 sur la photo
 du Grand Bain : le modèle **régénère toute l'image et réécrit les textes**, malgré la

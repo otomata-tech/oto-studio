@@ -17,10 +17,19 @@ La seule condition est la clé du modèle d'image, et seulement pour la retouche
 |---|---|
 | `GEMINI_API_KEY` dans l'environnement du service | la seule passe IA. Sans elle, `GET /api/capacites` rend `{"photo":{"ia":false}}`, l'IHM masque la retouche, et l'API répond **503** avec le motif — le recadrage et l'égalisation continuent de marcher. La clé se pose en `EnvironmentFile=` root-only sur la box, **jamais dans l'unité versionnée ni dans le code**. |
 
-**Mémoire** : une passe sur une photo de 2400×3000 coûte **~316 Mo de pointe** au-dessus du
-Chrome au repos (mesuré le 15/09/2026). Elle passe par la **même file** que les rendus —
-jamais en parallèle — donc la pointe du service reste `max(rendu, photo)`, pas leur somme,
-et tient sous le `MemoryMax=1400M` de l'unité.
+**Mesuré SUR LA BOX le 15/09/2026**, photo de 2400×3000 :
+
+| | durée | pointe du cgroup (plafond 1400 Mo) |
+|---|---|---|
+| recadrage + égalisation, Chrome froid | 6,1 s | 709 Mo |
+| égalisation, Chrome déjà chaud | 2,5 s | — |
+| retouche IA sur une zone | 27,2 s | **891 Mo** |
+
+La retouche est le cas lourd : la page tient à la fois la photo égalisée et l'image rendue
+par le modèle. 891 Mo laisse 36 % de marge, mais c'est le chiffre à surveiller si un jour on
+traite plus grand — et la raison pour laquelle le masque flou tourne en fenêtre glissante
+plutôt qu'en tampons pleins. Une passe emprunte la **même file** que les rendus, jamais en
+parallèle : la pointe du service reste `max(rendu, photo)`, pas leur somme.
 
 ## Port
 
