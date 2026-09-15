@@ -51,6 +51,17 @@ textarea{resize:vertical;min-height:56px}
 .checks{display:flex;gap:14px;margin-top:6px}
 .checks label{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--soft)}
 .checks input{width:auto}
+.img-zone{display:flex;gap:10px;align-items:flex-start;margin-top:2px}
+.img-zone input[type=file]{font-size:13px;padding:8px}
+.vign{width:84px;height:84px;object-fit:cover;border:1px solid var(--hair);border-radius:9px;background:var(--surface);flex:none}
+.item .mv{position:absolute;top:9px;right:41px;display:flex;gap:4px}
+.item .mv button{border:1px solid var(--hair);background:var(--surface);border-radius:7px;width:26px;height:26px;
+  font-size:13px;line-height:1;color:var(--mute);cursor:pointer}
+.item .mv button:hover:not(:disabled){color:var(--terra);border-color:var(--terra)}
+.item .mv button:disabled{opacity:.3;cursor:default}
+.card .re{background:transparent;border:1px solid var(--hair);border-radius:7px;padding:3px 9px;font-size:11px;
+  font-weight:700;color:var(--soft);cursor:pointer;margin-top:6px}
+.card .re:hover{border-color:var(--terra);color:var(--terra)}
 .notice{border:1px solid var(--hair);background:#fffdf7;border-radius:12px;margin:16px 0 4px;overflow:hidden}
 .notice summary{cursor:pointer;padding:12px 14px;font-size:13px;font-weight:700;color:var(--soft);
   list-style:none;display:flex;align-items:center;justify-content:space-between}
@@ -79,8 +90,10 @@ textarea{resize:vertical;min-height:56px}
           moyen de sortir de la charte, c'est voulu.</li>
         <li><b>Remplissez.</b> Le formulaire s'ouvre sur un exemple : il est là pour montrer
           le ton et la longueur attendus — remplacez-le.</li>
-        <li><b>L'aperçu s'affiche dès le choix du gabarit.</b> Après vos modifications,
-          cliquez sur « Aperçu » pour vérifier la composition.</li>
+        <li><b>L'aperçu suit votre saisie</b>, sans rien cliquer. Le bouton « Aperçu » sert
+          à le forcer ; une photo se dépose avec le bouton « Parcourir » du champ.</li>
+        <li><b>« Reprendre »</b>, sous un visuel déjà produit, recharge son gabarit et son
+          contenu : c'est ainsi qu'on fait une variante sans tout ressaisir.</li>
         <li><b>Générez.</b> Comptez une minute pour une image fixe, deux à trois pour une
           animation. Vous pouvez fermer l'onglet : le visuel apparaît dans « Produits
           récemment » quand il est prêt.</li>
@@ -124,6 +137,10 @@ const api = async (path, opts) => {
 const say = (msg, isErr) => { const s = $('#status'); s.textContent = msg; s.classList.toggle('err', !!isErr); };
 
 let manifest = null;
+let minuteur = null;
+/** L'aperçu suit la saisie : on ne clique plus après chaque mot. Le délai laisse finir de
+ *  taper, et `preview()` ignore de toute façon les réponses d'une demande dépassée. */
+function planifie() { clearTimeout(minuteur); minuteur = setTimeout(preview, 700); }
 let selectionRequest = 0;
 let previewRequest = 0;
 const state = {};   // valeurs du formulaire, par clé de champ
@@ -136,6 +153,34 @@ function field(f, value, onChange) {
   lab.textContent = f.label + (f.required ? '' : ' (optionnel)');
   wrap.append(lab);
 
+  // Une image ne passe pas par les données du travail : on la dépose, et le champ garde
+  // l'identifiant rendu par le serveur.
+  if (f.type === 'image') {
+    const zone = document.createElement('div');
+    zone.className = 'img-zone';
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = Object.keys({ 'image/jpeg': 1, 'image/png': 1, 'image/webp': 1 }).join(',');
+    const vign = document.createElement('img');
+    vign.className = 'vign'; vign.alt = '';
+    if (value) vign.src = `/uploads/${value}`; else vign.hidden = true;
+    inp.onchange = async () => {
+      const fichier = inp.files?.[0];
+      if (!fichier) return;
+      try {
+        say('dépôt de l\'image…');
+        const r = await api('/api/uploads', { method: 'POST', headers: { 'Content-Type': fichier.type }, body: fichier });
+        vign.src = r.url; vign.hidden = false;
+        onChange(r.id);
+        say(`image déposée (${Math.round(r.bytes / 1024)} Ko).`);
+      } catch (e) { say(e.message, true); }
+    };
+    zone.append(inp, vign);
+    wrap.append(zone);
+    if (f.hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = f.hint; wrap.append(h); }
+    return wrap;
+  }
+
   let el;
   if (f.type === 'textarea') { el = document.createElement('textarea'); }
   else if (f.type === 'enum') {
@@ -144,6 +189,10 @@ function field(f, value, onChange) {
   } else { el = document.createElement('input'); el.type = 'text'; }
 
   el.value = value ?? '';
+  // Un pavé dans une boîte de trois lignes se relit mal : la zone suit son contenu.
+  const pousse = () => { if (f.type === 'textarea') { el.style.height = 'auto'; el.style.height = el.scrollHeight + 4 + 'px'; } };
+  el.addEventListener('input', pousse);
+  setTimeout(pousse);
   el.addEventListener('input', () => onChange(el.value));
   el.addEventListener('change', () => onChange(el.value));
   wrap.append(el);
@@ -169,12 +218,24 @@ function listField(f) {
       card.className = 'item';
       const del = document.createElement('button');
       del.className = 'x'; del.textContent = '×'; del.title = 'retirer';
-      del.onclick = () => { state[f.key].splice(i, 1); draw(); };
+      del.onclick = () => { state[f.key].splice(i, 1); draw(); planifie(); };
       card.append(del);
+      // Sans ça, déplacer une ligne oblige à la supprimer et à la ressaisir.
+      const mv = document.createElement('div');
+      mv.className = 'mv';
+      const bouger = (sens, signe, titre) => {
+        const b = document.createElement('button');
+        b.textContent = signe; b.title = titre;
+        b.disabled = sens < 0 ? i === 0 : i === state[f.key].length - 1;
+        b.onclick = () => { const l = state[f.key]; [l[i + sens], l[i]] = [l[i], l[i + sens]]; draw(); planifie(); };
+        return b;
+      };
+      mv.append(bouger(-1, '↑', 'monter'), bouger(1, '↓', 'descendre'));
+      card.append(mv);
       const grid = document.createElement('div');
       grid.className = 'grid';
       for (const sub of f.item) {
-        const cell = field(sub, item[sub.key], v => { item[sub.key] = v; });
+        const cell = field(sub, item[sub.key], v => { item[sub.key] = v; planifie(); });
         (sub.type === 'textarea' ? card : grid).append(cell);
       }
       card.append(grid);
@@ -189,7 +250,7 @@ function listField(f) {
   add.onclick = () => {
     const blank = {};
     for (const sub of f.item) blank[sub.key] = sub.type === 'enum' ? sub.options[0] : '';
-    state[f.key].push(blank); draw();
+    state[f.key].push(blank); draw(); planifie();
   };
   box.append(add);
   draw();
@@ -205,6 +266,7 @@ function buildForm() {
       state[f.key] = v;
       // un gabarit multi-formats change de taille en cours de saisie : le cadre suit
       if (f.key === manifest.size_field) fitView();
+      planifie();
     }));
   }
   const fmt = $('#formats');
@@ -238,8 +300,21 @@ const formats = () => [...document.querySelectorAll('.fmt')].filter(c => c.check
 
 /* ---------- aperçu et génération ---------- */
 
+/** Les champs requis encore vides. Sans ce contrôle, l'aperçu automatique d'un gabarit
+ *  qui attend une image s'ouvre sur un refus rouge avant qu'on ait rien pu remplir. */
+function manquants() {
+  if (!manifest) return [];
+  return manifest.fields.filter(f => {
+    const v = state[f.key];
+    if (!f.required) return false;
+    return f.type === 'list' ? !v?.length : (v === undefined || v === null || v === '');
+  }).map(f => f.label);
+}
+
 async function preview() {
   if (!manifest) return;
+  const reste = manquants();
+  if (reste.length) return say('à compléter : ' + reste.join(', '));
   const request = ++previewRequest;
   try {
     say('aperçu…');
@@ -332,10 +407,28 @@ async function gallery() {
       a.href = `/files/${r.id}/${name}`; a.download = `${r.id}.${kind}`; a.textContent = kind;
       links.append(a);
     }
+    // Reprendre : recharger le gabarit ET les données d'un visuel pour en refaire une
+    // variante. Sans ça, itérer voulait dire tout ressaisir.
+    if (r.data && templates.some(t => t.id === r.template)) {
+      const re = document.createElement('button');
+      re.className = 're'; re.textContent = 'reprendre';
+      re.onclick = () => reprendre(r);
+      meta.append(re);
+    }
     meta.append(links);
     card.append(meta);
     host.append(card);
   }
+}
+
+async function reprendre(r) {
+  sel.value = r.template;
+  await sel.onchange();                       // charge le manifeste, pose l'exemple
+  for (const k of Object.keys(state)) delete state[k];
+  Object.assign(state, structuredClone(r.data));
+  buildForm();
+  say(`repris : ${r.template_label}`);
+  planifie();
 }
 
 /* ---------- démarrage ---------- */
@@ -352,8 +445,13 @@ notice.addEventListener('toggle', () => {
 const { templates } = await api('/api/templates');
 const sel = $('#tpl');
 for (const t of templates) sel.append(new Option(t.label, t.id));
+// L'adresse retient le gabarit : un lien peut pointer un gabarit précis, et un
+// rechargement ne renvoie pas sur le premier de la liste.
+const voulu = decodeURIComponent(location.hash.slice(1));
+if (templates.some(t => t.id === voulu)) sel.value = voulu;
 sel.onchange = async () => {
   const request = ++selectionRequest;
+  history.replaceState(null, '', '#' + sel.value);
   ++previewRequest;
   manifest = null;
   $('#preview').disabled = true;
