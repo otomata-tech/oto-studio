@@ -115,7 +115,7 @@ const routes = [
   ['POST', /^\/api\/uploads\/([0-9a-f]{16}\.(?:jpg|png|webp))\/derivees$/,
     ([id], body) => photos.travaille(id, body || {})],
 
-  // Ce que ce service sait faire ICI : `magick` et la clé du modèle sont des conditions
+  // Ce que ce service sait faire ICI : la clé du modèle d'image est une condition
   // d'environnement, pas du code. L'IHM n'offre pas ce qui échouerait sur cette machine.
   ['GET', /^\/api\/capacites$/, () => ({ photo: photos.capacites() })],
 

@@ -92,6 +92,37 @@ const evalJs = (expr, awaitPromise = false) =>
 let chain = Promise.resolve();
 
 /**
+ * Exécuter une page dans le Chrome du service et rendre ce qu'elle produit.
+ *
+ * Passe par la MÊME file que les rendus, et c'est le point : le Chrome est unique et
+ * sérialisé parce que deux travaux lourds en parallèle gèlent une petite box. Un atelier
+ * photo qui ouvrirait son propre Chrome ferait exactement ce que cette file interdit.
+ *
+ * La page doit exposer `window.__fait`, une promesse rendant une valeur sérialisable.
+ */
+export function dansChrome(fichier) {
+  const run = () => executePage(fichier).finally(armIdle);
+  chain = chain.then(run, run);
+  return chain;
+}
+
+async function executePage(fichier) {
+  await chrome();
+  await ss('Page.navigate', { url: `file://${fichier}` });
+  // Sonder plutôt que dormir : une photo de 7 Mpx se décode en bien moins que le délai
+  // qu'il faudrait poser pour être tranquille dans tous les cas.
+  let prete = false;
+  for (let i = 0; i < 200 && !prete; i++) {
+    prete = await evalJs('document.readyState === "complete" && !!window.__fait');
+    if (!prete) await sleep(50);
+  }
+  if (!prete) throw new Error('la page de traitement n\'a pas démarré (10 s)');
+  const r = await evalJs('window.__fait.then(v => ({ v })).catch(e => ({ e: String(e && e.message || e) }))', true);
+  if (r?.e) throw new Error(r.e);
+  return r?.v;
+}
+
+/**
  * Rend un HTML dans le dossier `dir`. `formats` ⊂ {png, mp4, gif}.
  * Sérialisé : chaque appel attend la fin du précédent, y compris après un échec.
  */

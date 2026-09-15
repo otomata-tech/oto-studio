@@ -144,8 +144,8 @@ export function openapi() {
             'réécrit les textes et les logos (mesuré : « STARTUP » → « STUNTLID »). Seule la `zone` ' +
             'demandée est reprise, fondue sur la photo égalisée ; le reste n\'est pas touché. D\'où ' +
             '`zone` OBLIGATOIRE dès que `ia: true`, et **pas de texte dans la zone**. Compter ~30 s.\n\n' +
-            'Ce que ce service sait faire ici se lit sur `GET /api/capacites` : sans ImageMagick, ' +
-            'rien ; sans clé de modèle d\'image, le recadrage et l\'égalisation seulement.',
+            'Le recadrage et l\'égalisation sont toujours disponibles. Pour la retouche, ' +
+            '`GET /api/capacites` dit si ce service a la clé du modèle d\'image.',
           parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' },
             description: 'l\'identifiant rendu par POST /api/uploads' }],
           requestBody: {
@@ -170,13 +170,13 @@ export function openapi() {
           responses: {
             200: { description: 'le dépôt dérivé : `id`, `url`, `largeur`, `hauteur`, `passes`, `modele`' },
             400: { description: 'zone absente ou hors cadre, image inconnue' },
-            503: { description: 'ImageMagick ou clé du modèle absents de ce service' }
+            503: { description: 'clé du modèle d\'image absente de ce service' }
           }
         }
       },
       '/api/capacites': {
         get: {
-          summary: 'Ce que ce service sait faire ici : `photo.magick`, `photo.ia`',
+          summary: 'Ce que ce service sait faire ici — aujourd\'hui `photo.ia` (clé du modèle d\'image)',
           responses: { 200: { description: 'les capacités' } }
         }
       },

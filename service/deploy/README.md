@@ -5,17 +5,22 @@ ffmpeg **y sont déjà installés**. Le service n'a **aucune dépendance npm** (
 pas de `npm install`, pas de build, pas de `node_modules`. Déployer = mettre le dépôt à jour
 et redémarrer.
 
-## Ce que l'atelier photo exige EN PLUS (constaté absent le 15/09/2026)
+## Ce que l'atelier photo exige EN PLUS
 
-`POST /api/uploads/{id}/derivees` — recadrer, égaliser, retoucher une zone — a deux
-conditions d'environnement que le code ne peut pas créer lui-même. Sans elles il répond
-**503** avec le motif, et l'IHM grise le bouton « Retoucher » : rien ne casse, mais rien ne
-marche non plus. `GET /api/capacites` dit lequel des deux manque.
+`POST /api/uploads/{id}/derivees` — recadrer, égaliser, retoucher une zone — **ne pose
+aucune dépendance système** : tout le travail d'image se fait dans le Chrome déjà installé
+pour les rendus, et les formules sont dans `service/photo-ops.js`. Rien à installer.
 
-| condition | état sur otomata-0 | pourquoi |
-|---|---|---|
-| `imagemagick` (`magick`) | **absent** — `apt install imagemagick` | recadrage, égalisation et composite masqué. Tout l'atelier en dépend. |
-| `GEMINI_API_KEY` dans l'environnement du service | **absent** — cf. `systemctl show oto-studio -p Environment` | la seule passe IA. La clé vit dans SOPS (`~/.otomata/secrets/secrets.yaml`) ; elle se pose en `EnvironmentFile=` root-only sur la box, **jamais dans l'unité versionnée ni dans le code**. |
+La seule condition est la clé du modèle d'image, et seulement pour la retouche :
+
+| condition | pourquoi |
+|---|---|
+| `GEMINI_API_KEY` dans l'environnement du service | la seule passe IA. Sans elle, `GET /api/capacites` rend `{"photo":{"ia":false}}`, l'IHM masque la retouche, et l'API répond **503** avec le motif — le recadrage et l'égalisation continuent de marcher. La clé se pose en `EnvironmentFile=` root-only sur la box, **jamais dans l'unité versionnée ni dans le code**. |
+
+**Mémoire** : une passe sur une photo de 2400×3000 coûte **~316 Mo de pointe** au-dessus du
+Chrome au repos (mesuré le 15/09/2026). Elle passe par la **même file** que les rendus —
+jamais en parallèle — donc la pointe du service reste `max(rendu, photo)`, pas leur somme,
+et tient sous le `MemoryMax=1400M` de l'unité.
 
 ## Port
 

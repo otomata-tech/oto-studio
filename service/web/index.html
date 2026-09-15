@@ -230,7 +230,7 @@ const say = (msg, isErr) => { const s = $('#status'); s.textContent = msg; s.cla
    Recadrer et égaliser sont déterministes. La retouche IA, elle, ne s'applique JAMAIS à
    toute l'image : le modèle la régénère et réécrit les textes — on n'en garde que la zone
    tracée, fondue par le serveur. L'IHM impose donc la zone, et le dit. */
-let capacites = { magick: false, ia: false };
+let capacites = { ia: false };
 
 const atelier = (() => {
   const el = id => document.getElementById(id);
@@ -388,7 +388,7 @@ function field(f, value, onChange) {
         say('dépôt de l\'image…');
         const r = await api('/api/uploads', { method: 'POST', headers: { 'Content-Type': fichier.type }, body: fichier });
         vign.src = r.url; vign.hidden = false;
-        retouche.disabled = !capacites.magick;
+        retouche.disabled = false;
         onChange(r.id);
         say(`image déposée (${Math.round(r.bytes / 1024)} Ko).`);
       } catch (e) { say(e.message, true); }
@@ -397,9 +397,8 @@ function field(f, value, onChange) {
     // pointe alors dessus — l'originale reste déposée, rien n'est écrasé.
     const retouche = document.createElement('button');
     retouche.type = 'button'; retouche.className = 'retouche'; retouche.textContent = 'Retoucher';
-    retouche.disabled = !value || !capacites.magick;
-    retouche.title = capacites.magick ? 'Recadrer, égaliser, retoucher une zone'
-      : 'Indisponible : ImageMagick n\'est pas installé sur ce service.';
+    retouche.disabled = !value;
+    retouche.title = 'Recadrer, égaliser, retoucher une zone';
     retouche.onclick = () => atelier(state[f.key], r => {
       vign.src = r.url + '?t=' + Date.now(); vign.hidden = false;
       onChange(r.id);
@@ -707,8 +706,8 @@ sel.onchange = async () => {
     await preview();
   } catch (e) { if (request === selectionRequest) say(e.message, true); }
 };
-// Ce que le service sait faire ICI : sans ImageMagick, l'atelier ne s'ouvre pas ; sans clé
-// de modèle d'image, il recadre et égalise sans proposer la retouche.
+// Ce que le service sait faire ICI : sans clé de modèle d'image, l'atelier recadre et
+// égalise mais ne propose pas la retouche.
 capacites = (await api('/api/capacites').catch(() => ({ photo: {} }))).photo || {};
 await sel.onchange();
 await gallery();

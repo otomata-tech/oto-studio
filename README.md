@@ -151,7 +151,8 @@ node service/server.mjs          # → http://127.0.0.1:8100 (STUDIO_PORT, STUDI
 | `service/templates.mjs` | registre des gabarits : manifeste de champs + construction de l'HTML + validation. **Ajouter un gabarit = ajouter une entrée ici**, rien n'est découvert dynamiquement. |
 | `service/server.mjs` | API REST + service des fichiers + IHM statique. |
 | `service/uploads.mjs` | les images déposées, stockées **hors des travaux** (`out/uploads/`) : un `job.json` ne garde qu'un identifiant, sinon la galerie relirait une image en base64 toutes les 15 s. L'identifiant est l'empreinte du contenu. |
-| `service/photos.mjs` | l'**atelier photo** : recadrer, égaliser (ImageMagick), et retoucher **une zone** au modèle d'image. Le résultat est un dépôt dérivé, réutilisable par tous les gabarits ; l'originale reste intacte. |
+| `service/photos.mjs` | l'**atelier photo** : recadrer, égaliser, et retoucher **une zone** au modèle d'image. Le résultat est un dépôt dérivé, réutilisable par tous les gabarits ; l'originale reste intacte. |
+| `service/photo-ops.js` | les **formules d'image**, en arithmétique pure sur des pixels RGBA (niveaux liés, sigmoïde, HSL, masque flou en fenêtre glissante). Tourne dans le Chrome du service, et tel quel dans Node pour être comparé à sa référence. |
 | `service/web/index.html` | l'IHM : formulaire **dérivé du manifeste**, aperçu, galerie des rendus avec leur statut. |
 | `service/brand.mjs` + `web/brand.html` | la page **`/brand`** : la charte en accès **public** (mark, palette lue dans `brand/theme/theme.css`, typo, fichiers d'impression du merch). Préfixe unique pour qu'un seul bypass Cloudflare Access l'ouvre sans ouvrir le générateur. |
 | `service/kit.mjs` + `web/kit.html` | la page **`/kit`** : les visuels FIXES de la marque (un par emplacement LinkedIn), rendus au premier accès puis gardés en cache sous une empreinte des sources. L'IHM est un générateur ; le kit, un endroit où retrouver. |
@@ -190,17 +191,34 @@ fait trois choses, dans cet ordre, et rend **un nouveau dépôt** — l'original
 
 1. **Recadrer** — une zone tracée à la souris, transmise en **fractions** de l'image (0 → 1),
    jamais en pixels : ce qu'on désigne à l'écran vaut sur le fichier pleine résolution.
-2. **Égaliser** — passe déterministe, toujours disponible, celle qui fait 90 % du travail :
-   `-auto-level -sigmoidal-contrast 3x50% -modulate 102,105,100 -unsharp 0x1.2+0.6+0.02`.
+2. **Égaliser** — passe déterministe, celle qui fait l'essentiel du travail : étirement des
+   niveaux, sigmoïde de contraste, brillance et saturation en HSL, masque flou.
 3. **Retoucher une zone** au modèle d'image, avec une consigne libre.
+
+**Tout passe par le Chrome du service, pas par un outil à installer.** Le studio n'a aucune
+dépendance : mettre ImageMagick sur la box pour cela aurait ajouté un binaire système à un
+service qui n'en demande aucun, et `sharp` un binding natif à recompiler par architecture.
+Le canvas fait le recadrage (`drawImage`) et le composite masqué (`blur` + `destination-in`) ;
+les quatre opérations de la passe déterministe sont écrites en arithmétique sur les pixels
+dans `service/photo-ops.js`, parce que les filtres CSS (`contrast()`, `saturate()`) ne sont
+**pas** la sigmoïde ni le `modulate` d'ImageMagick et auraient donné un autre rendu.
+
+Ces formules ont été **mesurées** contre ImageMagick 7.1.2, pas devinées : `-auto-level` est
+un étirement **lié** (min/max pris sur les trois canaux ensemble, sinon les couleurs virent),
+`-modulate` travaille en **HSL**, la sigmoïde s'applique en **sRGB sans linéarisation**, et le
+facteur 2 du seuil d'`-unsharp` est bien celui d'IM. Écart du livrable final : **0,35 %**,
+dont 0,14 % de simple ré-encodage JPEG — quand la passe elle-même en produit 4,26 %. Le
+redressement EXIF est fait par Chrome au décodage, vérifié identique à `-auto-orient`.
+Le masque flou tourne en **fenêtre glissante** (253 Ko au lieu de 172 Mo de tampons) : une
+passe sur 7 Mpx coûte ~0,6 s et ~316 Mo de pointe, dans la même file que les rendus.
 
 ⚠️ **Pourquoi la zone est obligatoire pour la passe IA.** Mesuré le 15/09/2026 sur la photo
 du Grand Bain : le modèle **régénère toute l'image et réécrit les textes**, malgré la
 consigne de tout conserver — badge « STARTUP » → « STUNTLID », t-shirt « otomata.tech » →
 « ctamalatach », logos du fond déformés. Sa sortie entière est inutilisable. On n'en garde
-donc que la zone demandée, fondue par un masque adouci (`-blur 0x18`) sur la photo égalisée,
-après remise à la taille EXACTE (`-resize WxH!`, sinon le composite décale). Mesure du
-résultat : **14 % d'écart dans la zone, 0,11 % hors zone** — le bruit de recompression JPEG.
+donc que la zone demandée, fondue par un masque adouci (flou de 18 px) sur la photo égalisée,
+après remise à la taille EXACTE de la base — sinon le composite décale la zone. Mesure du
+résultat : **13,9 % d'écart dans la zone, 0,11 % hors zone** — le bruit de recompression JPEG.
 Corollaire pour qui s'en sert : **pas de texte dans la zone**.
 
 ### S'en servir depuis oto (agents)
@@ -208,10 +226,10 @@ Corollaire pour qui s'en sert : **pas de texte dans la zone**.
 Le studio est un connecteur `http` de l'org Otomata (instance `org:2:http:studio`) : n'importe quel Claude branché sur oto peut produire un visuel, pas seulement le studio dans un navigateur. Appels, épinglage d'instance et raison du réseau privé : **[`service/README.md`](service/README.md)**.
 
 ## Pré-requis
-`google-chrome` + `ffmpeg` (déjà présents sur ce poste). `imagemagick` **en plus** pour
-l'atelier photo, et `GEMINI_API_KEY` dans l'environnement pour sa seule passe IA — sans
-eux l'atelier répond 503 avec le motif au lieu d'échouer obscurément (état sur la box :
-`service/deploy/README.md`).
+`google-chrome` + `ffmpeg` (déjà présents sur ce poste), et rien d'autre : **aucune
+dépendance npm, aucun `node_modules`**. `GEMINI_API_KEY` dans l'environnement débloque la
+seule retouche IA de l'atelier photo ; sans elle, l'atelier recadre et égalise, et l'API
+répond 503 avec le motif au lieu d'échouer obscurément.
 
 ## Exports
 Les exports sortent dans `out/<famille>/` — `out/cards/`, `out/posts/`, `out/plaquettes/`, `out/articles/<slug>/` (illustrations statiques d'articles, sources dans `article-<slug>/`). Les scripts créent leur sous-dossier eux-mêmes. LinkedIn : préférer le **MP4** (le GIF natif y est souvent rendu statique).
