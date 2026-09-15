@@ -1,3 +1,7 @@
+# secrets d'environnement du service : la valeur de référence est un item 1Password,
+# jamais ce dépôt (cf. /data/infra/docs/secrets.md)
+.env
+
 # artefacts regénérables
 out/
 .gen/

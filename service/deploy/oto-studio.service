@@ -29,6 +29,13 @@ Environment=STUDIO_CHROME=/usr/bin/google-chrome
 Environment=STUDIO_CHROME_IDLE_MS=600000
 Environment=STUDIO_KEEP=60
 
+# Les secrets ne sont PAS dans cette unité, qui est versionnée : ils vivent dans un
+# fichier 600 sur la box, dont la valeur de référence est un item 1Password. Le `-` rend
+# le fichier facultatif — sans lui, le studio démarre et rend des visuels, seule la
+# retouche IA de l'atelier photo répond 503 avec son motif.
+#   GEMINI_API_KEY — « Google Gemini — API modèle d'image (plateforme oto) », coffre oto
+EnvironmentFile=-/opt/oto-studio/.env
+
 # ⚠️ SANS CES TROIS LIGNES, RIEN NE PLAFONNE CE SERVICE. Les garde-fous mémoire posés
 # sur cette box après les gels du 30/06 et du 06/08 ne couvrent que `user-*.slice` et
 # les unités `actions.runner.*` : `system.slice` a `memory.max = max`. Une unité de
