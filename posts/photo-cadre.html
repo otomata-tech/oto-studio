@@ -41,11 +41,15 @@
      proportions, et le cadre en inline-block l'épouse. Aucun calcul en JavaScript — un
      dimensionnement fait après le décodage de l'image arrivait parfois après la capture,
      et le rendu variait de quelques pixels d'une fois sur l'autre. */
+  /* La scène occupe tout l'espace entre le haut et le pied, et CENTRE mention + photo : une
+     photo paysage dans un format 4:5 laisse ~450 px libres, qui doivent se répartir dessus et
+     dessous — posée en haut, elle laissait un trou béant au-dessus du pied. */
+  .scene { z-index:1; flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; }
   .photo { z-index:1; margin:26px 0 0; text-align:center; }
   .photo .cadre { display:inline-block; border:3px solid var(--ink); box-shadow:16px 16px 0 rgba(44,33,18,.88); }
   .photo img { display:block; max-width:1024px; max-height:1190px; width:auto; height:auto; }
 
-  footer { z-index:1; margin-top:auto; padding-top:26px; border-top:3px solid var(--ink);
+  footer { z-index:1; margin-top:34px; padding-top:26px; border-top:3px solid var(--ink);
     display:flex; align-items:center; gap:28px; }
   footer .sign { display:flex; align-items:center; gap:18px; }
   footer .pmk { width:66px; height:66px; flex:none; }
@@ -58,8 +62,10 @@
 </style>
 </head>
 <body>
-<div class="mention mono" id="mention"></div>
-<div class="photo" id="photo"><div class="cadre"><img id="img" alt=""></div></div>
+<div class="scene">
+  <div class="mention mono" id="mention"></div>
+  <div class="photo" id="photo"><div class="cadre"><img id="img" alt=""></div></div>
+</div>
 <footer>
   <div class="sign">
     <div class="pmk"><!--__MARK__--></div>

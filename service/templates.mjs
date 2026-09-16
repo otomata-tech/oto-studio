@@ -389,7 +389,7 @@ const photoCadre = {
   fields: [
     { key: 'photo', label: 'Photo', type: 'image', required: true,
       hint: 'jpeg, png ou webp, 12 Mo maximum. Le gabarit la pose telle quelle : pour la recadrer '
-        + 'ou la retoucher, passer par POST /api/uploads/{id}/derivees (bouton « Retoucher » dans l\'IHM).' },
+        + 'ou la retoucher, passer par POST /api/uploads/{id}/derivees (dans l\'IHM, l\'atelier s\'ouvre au dépôt de la photo).' },
     { key: 'mention', label: 'Mention', type: 'text', required: false,
       hint: 'la ligne mono au-dessus de la photo — ex. « Le Grand Bain · 14 septembre 2026 · Palais du Pharo »' },
     { key: 'decor', label: 'Décor', type: 'enum', options: ['registration', 'plat'], required: false,

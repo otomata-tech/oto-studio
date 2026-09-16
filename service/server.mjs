@@ -270,7 +270,9 @@ const routes = [
 function serveWeb(name, res) {
   const p = join(DIR, 'web', basename(name));
   if (!existsSync(p)) throw Object.assign(new Error('introuvable'), { status: 404 });
-  res.writeHead(200, { 'Content-Type': MIME[extname(p)] || 'text/plain' });
+  // `no-cache` : l'IHM change à chaque déploiement, et un onglet ou un cache resté sur
+  // l'ancienne page masque les nouveaux outils (vécu : l'atelier photo « introuvable »).
+  res.writeHead(200, { 'Content-Type': MIME[extname(p)] || 'text/plain', 'Cache-Control': 'no-cache' });
   res.end(readFileSync(p));
 }
 
