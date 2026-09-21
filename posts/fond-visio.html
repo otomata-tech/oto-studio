@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>/* __FONTS__ */</style>
+<style>
+  /* Fond de visio (Meet, Zoom, Teams) — 1920×1080, boucle parfaite de 12 s.
+
+     La contrainte qui décide de tout : on est ASSIS AU MILIEU. Le centre reste donc
+     calme et clair — rien qui bouge derrière la tête, sinon le détourage de la visio
+     hésite sur les contours et le fond « bave ». La marque vit dans les marges : le nom
+     en haut à gauche, l'adresse en bas à gauche, le mark en grand qui déborde à droite.
+
+     L'animation est lente par principe : un fond qui s'agite pendant une réunion,
+     c'est l'autre qui regarde le fond. Une seule chose bouge vraiment — l'anneau saffran
+     du mark qui dérive autour du disque, comme une couche d'impression mal calée — et
+     le halo derrière lui respire. Toutes les périodes divisent 12 s : la boucle ne
+     saute pas. */
+  :root { --bg:#fefcf5; --ink:#2c2112; --mute:#6c5e44; --primary:#f0b41e; --hair:#dccfa8; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; }
+  body { position:relative; background:var(--bg); color:var(--ink);
+    background-image:
+      linear-gradient(to right, rgba(44,33,18,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(44,33,18,.035) 1px, transparent 1px);
+    background-size:64px 64px; }
+  .grain { position:absolute; inset:0; z-index:40; pointer-events:none; opacity:.07; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)' opacity='0.55'/></svg>"); }
+  .mono { font-family:"JetBrains Mono",monospace; text-transform:uppercase; letter-spacing:.18em; }
+
+  .sun { position:absolute; left:1080px; top:-280px; width:1500px; height:1500px; border-radius:50%;
+    background:radial-gradient(closest-side, rgba(240,180,30,.30), rgba(240,180,30,.09) 58%, transparent 74%); }
+
+  /* Le grand mark, coupé par le bord : une matière, pas un tampon. Ses trois couches sont
+     séparées pour que l'anneau puisse bouger ; l'ordre de dessin reste celui du mark. */
+  .mk { position:absolute; left:1440px; top:190px; width:820px; height:820px; }
+  .mk svg { width:100%; height:100%; display:block; overflow:visible; }
+
+  /* Traits de coupe aux quatre coins : le vocabulaire de l'imprimerie, et un cadre qui
+     tient la composition sans rien poser au centre. */
+  .coupe { position:absolute; width:34px; height:34px; border-color:var(--hair); border-style:solid; border-width:0; }
+  .coupe.hg { left:40px; top:40px; border-left-width:2px; border-top-width:2px; }
+  .coupe.hd { right:40px; top:40px; border-right-width:2px; border-top-width:2px; }
+  .coupe.bg { left:40px; bottom:40px; border-left-width:2px; border-bottom-width:2px; }
+  .coupe.bd { right:40px; bottom:40px; border-right-width:2px; border-bottom-width:2px; }
+
+  .sign { position:absolute; left:88px; top:84px; display:flex; align-items:center; gap:20px; z-index:2; }
+  .sign .pmk { width:74px; height:74px; }
+  .sign .pmk svg { width:100%; height:100%; display:block; }
+  .sign .mot { font-family:"Bricolage Grotesque",sans-serif; font-variation-settings:"wdth" 90;
+    font-weight:600; font-size:58px; letter-spacing:-.035em; line-height:.9;
+    text-shadow:4px 4px 0 var(--primary); }
+  .sign .sig { font-size:14px; color:var(--mute); margin-top:10px; }
+
+  .url { position:absolute; left:90px; bottom:86px; font-size:17px; color:var(--mute); z-index:2; }
+
+  /* Trois pastilles qui flottent en bas à gauche — loin du visage, et assez lentes
+     pour qu'on ne les remarque qu'en y faisant attention. */
+  .bulle { position:absolute; border-radius:50%; z-index:1; }
+  .bulle.b1 { width:22px; height:22px; background:var(--primary); border:2.5px solid var(--ink); }
+  .bulle.b2 { width:14px; height:14px; border:2.5px solid var(--ink); }
+  .bulle.b3 { width:30px; height:30px; border:2.5px solid var(--primary); }
+</style>
+</head>
+<body>
+<div class="sun" id="sun"></div>
+<div class="mk">
+  <svg viewBox="0 0 128 128">
+    <circle cx="66" cy="66" r="52" fill="#2c2112" opacity=".85"/>
+    <circle id="anneau" cx="54" cy="55" r="50.4" fill="none" stroke="#f0b41e" stroke-width="3.2"/>
+    <circle cx="60" cy="60" r="50.4" fill="#f0b41e" stroke="#2c2112" stroke-width="3.2"/>
+  </svg>
+</div>
+<div class="coupe hg"></div><div class="coupe hd"></div><div class="coupe bg"></div><div class="coupe bd"></div>
+<div class="sign">
+  <div class="pmk"><!--__MARK__--></div>
+  <div>
+    <div class="mot">OTOMATA</div>
+    <div class="sig mono">Studio IA · Marseille</div>
+  </div>
+</div>
+<div class="bulle b1" id="b1"></div><div class="bulle b2" id="b2"></div><div class="bulle b3" id="b3"></div>
+<div class="url mono">otomata.tech</div>
+<div class="grain"></div>
+<script>
+  const LOOP = 12000, TAU = Math.PI * 2;
+  window.__DURATION = LOOP;
+  window.__STILL = 0;               // l'image fixe : l'anneau à sa place de repos
+  const $ = id => document.getElementById(id);
+  const anneau = $('anneau');
+  const BULLES = [
+    { el: $('b1'), x: 250, y: 760, ax: 14, ay: 22, k: 1, ph: 0 },
+    { el: $('b2'), x: 330, y: 840, ax: 10, ay: 16, k: 2, ph: 1.7 },
+    { el: $('b3'), x: 190, y: 880, ax: 18, ay: 12, k: 1, ph: 3.1 },
+  ];
+
+  function render(t) {
+    const a = TAU * ((t % LOOP) / LOOP);
+    // L'anneau part de sa position de repos (54, 55) et y revient : un petit cercle
+    // autour du décalage d'origine, jamais assez pour qu'on lise un autre mark.
+    anneau.setAttribute('cx', (54 + 3.2 * (Math.cos(a) - 1)).toFixed(3));
+    anneau.setAttribute('cy', (55 + 3.2 * Math.sin(a)).toFixed(3));
+    $('sun').style.transform = `scale(${1 + 0.035 * Math.sin(a)})`;
+    for (const b of BULLES) {
+      const x = b.x + b.ax * Math.sin(b.k * a + b.ph), y = b.y + b.ay * Math.cos(b.k * a + b.ph);
+      b.el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+    }
+  }
+  window.__seek = render;
+  render(0);
+
+  if (new URLSearchParams(location.search).get('capture') !== '1') {
+    const t0 = performance.now();
+    const boucle = () => { render(performance.now() - t0); requestAnimationFrame(boucle); };
+    requestAnimationFrame(boucle);
+  }
+</script>
+</body>
+</html>

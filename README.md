@@ -236,6 +236,8 @@ répond 503 avec le motif au lieu d'échouer obscurément.
 ## Exports
 Les exports sortent dans `out/<famille>/` — `out/cards/`, `out/posts/`, `out/plaquettes/`, `out/articles/<slug>/` (illustrations statiques d'articles, sources dans `article-<slug>/`). Les scripts créent leur sous-dossier eux-mêmes. LinkedIn : préférer le **MP4** (le GIF natif y est souvent rendu statique).
 
+**Fond de visio** — `node posts/build-fond-visio.mjs` → `out/visio/fond-visio-otomata.{mp4,png}` (1920×1080, boucle de 12 s). ⚠️ **Google Meet n'accepte qu'une image fixe** en fond personnalisé (ses fonds animés sont ceux de Google) : le PNG pour Meet, le MP4 pour Zoom et Teams, ou pour Meet via une caméra virtuelle (OBS). Le centre reste vide et immobile — c'est là qu'on est assis, et un fond qui bouge derrière la tête fait hésiter le détourage.
+
 ## Gotchas (rendu Chrome headless, cet environnement)
 - **Toujours** lancer Chrome avec un `--user-data-dir` **isolé** (ex. `/tmp/oto-build-chrome`). Sans ça, il partage le profil par défaut du navigateur GUI → ferme les fenêtres de l'utilisateur **et** fait échouer le rendu.
 - `Target.createTarget` : **ne pas** passer `width`/`height` (erreur « Target position can only be set for new windows » avec un profil isolé). Fixer la taille via `Emulation.setDeviceMetricsOverride`.
