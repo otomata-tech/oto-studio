@@ -1,0 +1,192 @@
+<!doctype html>
+<!-- Visuels de la section « cas d'usage » d'oto.cx. Un seul fichier, quatre rendus choisis par ?v= :
+     og-index, og-btp (1200×630), hero-index, hero-btp (héros de colonne, fond transparent).
+     &t=encre : variante des héros pour une section sur fond encre (trait crème, mêmes accents).
+     Charte du SITE (crème, minuscules, hairlines, squiggle), pas la riso des posts.
+     Règles : aucun logo ni nom de client, aucun chiffre de gain. Rendu : build.sh. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../assets/fonts.css">
+<style>
+  :root {
+    --bg: #fefcf5; --paper-2: #f4ecd2; --surface: #ffffff;
+    --ink: #2c2112; --ink-soft: #4a3a23; --mute: #6c5e44; --faint: #a89a78; --hair: #dccfa8;
+    --saffron: #f0b41e; --saffron-soft: #fbe7a8; --saffron-ink: #5a3b03;
+    --terra: #d63d0a; --terra-soft: #f7cdbb; --terra-ink: #5a1804;
+    --olive: #8aa620; --olive-soft: #e6eec0; --olive-ink: #3e4c0c;
+    --cobalt: #1f6dba; --cobalt-soft: #c4dcf0; --cobalt-ink: #0b2e54;
+    --display: "Bricolage Grotesque", sans-serif; --sans: "Hanken Grotesk", sans-serif; --mono: "JetBrains Mono", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: transparent; color: var(--ink); font-family: var(--sans); }
+  .v { display: none; position: relative; overflow: hidden; }
+  body[data-v="og-index"] #og-index, body[data-v="og-btp"] #og-btp,
+  body[data-v="hero-index"] #hero-index, body[data-v="hero-btp"] #hero-btp { display: block; }
+
+  /* ---- OG 1200×630, repris de og-oto.jpg ---- */
+  .og { width: 1200px; height: 630px; background: var(--bg); padding: 72px 72px 0; }
+  .wordmark { font-family: var(--display); font-weight: 700; font-size: 30px; font-variation-settings: "wdth" 90; letter-spacing: -0.01em; }
+  .wordmark b { color: var(--terra); }
+  .kicker { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terra); }
+  .og h1 { font-family: var(--display); font-weight: 700; font-variation-settings: "wdth" 90; letter-spacing: -0.025em; line-height: 1.02; }
+  .sq { position: relative; color: var(--terra); white-space: nowrap; }
+  .sq svg { position: absolute; left: -2%; width: 104%; bottom: -0.16em; height: 0.26em; overflow: visible; }
+  .pills { position: absolute; left: 72px; bottom: 64px; display: flex; gap: 12px; }
+  .pill { font-family: var(--mono); font-size: 17px; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--hair); background: var(--paper-2); color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
+  .pill i { width: 10px; height: 10px; display: inline-block; }
+  .url { position: absolute; right: 72px; bottom: 76px; font-family: var(--mono); font-size: 18px; color: var(--mute); }
+
+  #og-index h1 { font-size: 84px; margin-top: 64px; max-width: 1000px; }
+  #og-index .sub { font-size: 27px; color: var(--ink-soft); margin-top: 40px; }
+  #og-btp .kicker { margin-top: 44px; }
+  #og-btp h1 { font-size: 76px; margin-top: 20px; width: 600px; }
+  #og-btp .sub { font-size: 25px; line-height: 1.4; color: var(--ink-soft); margin-top: 30px; width: 560px; }
+  #og-btp .roof { position: absolute; right: 30px; top: 150px; width: 480px; }
+
+  /* ---- héros : fond transparent, posés sur la section ---- */
+  #hero-index { width: 560px; height: 520px; }
+  #hero-btp { width: 560px; height: 580px; }
+
+  .card { position: absolute; width: 272px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 22px 22px; }
+  .card .top { display: flex; align-items: center; justify-content: space-between; }
+  .card .sect { margin-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+  .badge { white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 999px; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .badge i { width: 7px; height: 7px; display: inline-block; }
+  .card h3 { font-family: var(--display); font-variation-settings: "wdth" 90; font-weight: 700; font-size: 22px; line-height: 1.1; letter-spacing: -0.015em; margin-top: 16px; }
+  .card .lines { margin-top: 16px; display: grid; gap: 8px; }
+  .card .lines span { display: block; height: 7px; border-radius: 4px; background: var(--paper-2); }
+  .under { position: absolute; border-radius: 14px; background: var(--saffron); }
+
+  .devis { position: absolute; left: 150px; top: 330px; width: 390px; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px; padding: 18px 22px 16px; }
+  .devis .head { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+  .row { display: grid; grid-template-columns: 1fr 70px 76px; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--paper-2); font-size: 16px; color: var(--ink); }
+  .row:last-child { border-bottom: 0; }
+  .row .q { height: 7px; border-radius: 4px; background: var(--paper-2); }
+  .tag { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: right; }
+  .tag.m { color: var(--ink); } .tag.d { color: #b07d04; }
+</style>
+</head>
+<body>
+
+<!-- ======== OG index ======== -->
+<div class="v og" id="og-index">
+  <div class="wordmark">oto<b>.</b>cx</div>
+  <h1>ce qu'un agent fait <span class="sq">vraiment<svg viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M2 12 Q 27 2 52 11 T 102 11 T 152 11 T 198 9" fill="none" stroke="#f0b41e" stroke-width="5" stroke-linecap="round"/></svg></span> dans votre entreprise.</h1>
+  <p class="sub">chaque cas dit sa maturité, telle qu'elle est.</p>
+  <div class="pills" id="pills-maturite"></div>
+  <div class="url">oto.cx/cas-usage</div>
+</div>
+
+<!-- ======== OG BTP ======== -->
+<div class="v og" id="og-btp">
+  <div class="wordmark">oto<b>.</b>cx</div>
+  <p class="kicker">cas d'usage · btp</p>
+  <h1>le chiffrage devient une <span class="sq">relecture<svg viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M2 12 Q 27 2 52 11 T 102 11 T 152 11 T 198 9" fill="none" stroke="#f0b41e" stroke-width="5" stroke-linecap="round"/></svg></span>.</h1>
+  <p class="sub">quelques cotes relevées sur le toit, l'agent déduit le reste et prépare le devis.</p>
+  <div class="roof" data-roof="og"></div>
+  <div class="url">oto.cx/cas-usage/btp</div>
+</div>
+
+<!-- ======== héros index : quatre fiches, les quatre maturités ======== -->
+<div class="v" id="hero-index"></div>
+
+<!-- ======== héros BTP : relevé → devis ======== -->
+<div class="v" id="hero-btp">
+  <div data-roof="hero" style="position:absolute; left:0; top:0; width:560px;"></div>
+  <svg style="position:absolute; left:0; top:0" width="560" height="580" viewBox="0 0 560 580">
+    <path d="M60 276 C 60 346, 80 366, 136 366" fill="none" stroke="#f0b41e" stroke-width="3" stroke-linecap="round"/>
+    <path d="M126 356 L 138 366 L 126 376" fill="none" stroke="#f0b41e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div class="devis" style="top:316px">
+    <div class="head"><span>devis · à importer</span><span>statut</span></div>
+    <div class="row"><span>couverture tuile</span><span class="q"></span><span class="tag d">déduit</span></div>
+    <div class="row"><span>faîtage</span><span class="q"></span><span class="tag m">mesuré</span></div>
+    <div class="row"><span>rives</span><span class="q"></span><span class="tag d">déduit</span></div>
+    <div class="row"><span>égout</span><span class="q"></span><span class="tag d">déduit</span></div>
+    <div class="row"><span>échafaudage</span><span class="q"></span><span class="tag d">déduit</span></div>
+  </div>
+</div>
+
+<script>
+const MATURITES = [
+  { key: 'en_prod', label: 'en production', accent: 'olive' },
+  { key: 'pilote', label: 'pilote', accent: 'saffron' },
+  { key: 'faisable', label: 'faisable', accent: 'cobalt' },
+  { key: 'a_construire', label: 'à construire', accent: 'terra' },
+];
+const byKey = Object.fromEntries(MATURITES.map(m => [m.key, m]));
+const badge = k => { const m = byKey[k]; return `<span class="badge" style="background:var(--${m.accent}-soft);color:var(--${m.accent}-ink)"><i style="background:var(--${m.accent})"></i>${m.label}</span>`; };
+
+document.getElementById('pills-maturite').innerHTML = MATURITES
+  .map(m => `<span class="pill"><i style="background:var(--${m.accent})"></i>${m.label}</span>`).join('');
+
+// Quatre vraies fiches du site, une par maturité (titres raccourcis) — éventail.
+const FICHES = [
+  { sect: 'édition',       titre: "enrichir une base de prospection",          mat: 'en_prod', x: 6,   y: 22,  r: -3 },
+  { sect: 'btp',           titre: "fiche de visite depuis l'enregistrement",  mat: 'pilote',  x: 272, y: 64,  r: 2.5 },
+  { sect: 'conseil',       titre: "préparation d'un rendez-vous client",       mat: 'faisable', x: 18,  y: 250, r: 2 },
+  { sect: 'btp',           titre: "planning de chantiers et d'équipes",       mat: 'a_construire', x: 280, y: 292, r: -2.5 },
+];
+document.getElementById('hero-index').innerHTML = FICHES.map((f, i) => `
+  ${i === 1 ? `<div class="under" style="left:${f.x + 9}px;top:${f.y + 9}px;width:272px;height:188px;transform:rotate(${f.r}deg)"></div>` : ''}
+  <div class="card" style="left:${f.x}px;top:${f.y}px;transform:rotate(${f.r}deg);height:188px">
+    ${badge(f.mat)}
+    <h3>${f.titre}</h3>
+    <div class="lines"><span style="width:92%"></span></div>
+    <div class="sect">${f.sect}</div>
+  </div>`).join('');
+
+// Le toit : pan avant, pignon, lucarne. Cotes mesurées en encre pleine, déduites en saffron pointillé.
+const ENCRE = new URLSearchParams(location.search).get('t') === 'encre';
+function roof(mode) {
+  // sur fond encre, le trait passe en crème ; le saffran reste l'accent du « déduit »
+  const [ink, hair, saf, safInk, paper, gable] = ENCRE
+    ? ['#fefcf5', 'rgba(254,252,245,.28)', '#f0b41e', '#f0b41e', '#2c2112', 'rgba(254,252,245,.10)']
+    : ['#2c2112', '#a89a78', '#f0b41e', '#b07d04', '#fefcf5', '#f4ecd2'];
+  const fs = mode === 'og' ? 15 : 13;
+  const lab = (x, y, t, c, anchor = 'middle', rot = 0) =>
+    `<text x="${x}" y="${y}" fill="${c}" font-family="JetBrains Mono" font-size="${fs}" font-weight="700" letter-spacing="1.4" text-anchor="${anchor}" ${rot ? `transform="rotate(${rot} ${x} ${y})"` : ''}>${t}</text>`;
+  const cote = (x1, y1, x2, y2, c, dash) => {
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), nx = -dy / L * 7, ny = dx / L * 7;
+    const d = dash ? 'stroke-dasharray="6 5"' : '';
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="2.2" ${d}/>
+      <line x1="${x1 - nx}" y1="${y1 - ny}" x2="${x1 + nx}" y2="${y1 + ny}" stroke="${c}" stroke-width="2.2"/>
+      <line x1="${x2 - nx}" y1="${y2 - ny}" x2="${x2 + nx}" y2="${y2 + ny}" stroke="${c}" stroke-width="2.2"/>`;
+  };
+  // géométrie (viewBox 560×340)
+  const A = [70, 250], B = [370, 250], C = [420, 110], D = [120, 110], E = [480, 250];
+  const pt = p => p.join(',');
+  const lucarne = `
+    <path d="M205 230 L205 180 L233 158 L261 180 L261 230" fill="${paper}" stroke="${ink}" stroke-width="2"/>
+    <rect x="218" y="192" width="30" height="30" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
+  // tuiles : fines lignes parallèles à l'égout
+  let rangs = '';
+  for (let i = 1; i < 7; i++) {
+    const t = i / 7, y = 250 - 140 * t, xl = 70 + 50 * t, xr = 370 + 50 * t;
+    rangs += `<line x1="${xl}" y1="${y}" x2="${xr}" y2="${y}" stroke="${hair}" stroke-width="1"/>`;
+  }
+  return `<svg viewBox="-92 50 712 325" width="100%" style="display:block; overflow:visible">
+    <polygon points="${pt(A)} ${pt(B)} ${pt(C)} ${pt(D)}" fill="${saf}" fill-opacity="0.16"/>
+    ${rangs}
+    <polygon points="${pt(A)} ${pt(B)} ${pt(C)} ${pt(D)}" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/>
+    <polygon points="${pt(B)} ${pt(C)} ${pt(E)}" fill="${gable}" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M70 250 L70 320 M370 250 L370 320 M480 250 L480 320" stroke="${ink}" stroke-width="2.4"/>
+    <line x1="40" y1="320" x2="520" y2="320" stroke="${ink}" stroke-width="1.2"/>
+    ${lucarne}
+    <!-- mesuré : faîtage, rive droite, hauteur d'égout, lucarne -->
+    ${cote(120, 84, 420, 84, ink)}           ${lab(270, 72, 'faîtage · mesuré', ink)}
+    ${cote(443, 100, 503, 240, ink)}         ${lab(486, 150, 'rive · mesurée', ink, 'start')}
+    ${cote(44, 250, 44, 320, ink)}           ${lab(28, 305, 'égout h. · mesuré', ink, 'middle', -90)}
+    <!-- déduit : égout, rive gauche, surface -->
+    ${cote(70, 338, 370, 338, saf, true)}    ${lab(220, 360, 'égout · déduit', safInk)}
+    ${cote(96, 110, 46, 250, saf, true)}     ${lab(58, 170, 'rive · déduite', safInk, 'end')}
+    ${lab(310, 150, 'surface · déduite', safInk)}
+  </svg>`;
+}
+document.querySelectorAll('[data-roof]').forEach(el => el.innerHTML = roof(el.dataset.roof));
+
+document.body.dataset.v = new URLSearchParams(location.search).get('v') || 'og-index';
+</script>
+</body>
+</html>

@@ -11,6 +11,7 @@ service/      # LE service web : API REST + IHM à gabarits (hébergé, cf. § S
 cards/        # générateur de cartes cas d'usage (studio + batch)
 posts/        # affiches riso animées, une par post produit
 plaquettes/   # one-pagers imprimables (plaquette commerciale)
+site/         # visuels du site oto.cx (OG, héros, pictos)
 banners/      # bannières statiques (couvertures de profil / page)
 assets/       # fonts.css, icons.json, logos/ (marques tierces)
 tools/        # publication (publer_schedule.py)
@@ -115,6 +116,21 @@ les côtés — d'où le groupe centré et l'URL rapatriée dans le bloc de text
 ⚠️ `avatar` porte un **`O` en réserve dans le disque**. Ce mark n'existe pas dans `brand/` :
 c'est une création de ce kit, à y ranger s'il est adopté — et à ne pas confondre avec l'« open O »
 saffran, qui est le mark du **produit** oto.
+
+## Visuels du site — section cas d'usage d'oto.cx (`site/cas-usage/`)
+
+Images de la section `/cas-usage` d'oto.cx, dans la charte **du site** (crème, minuscules, hairlines, squiggle, 4 accents),
+pas dans la riso des posts. Un seul fichier `visuels.html`, dont le rendu est choisi par `?v=` : `og-index`, `og-btp`
+(1200×630), `hero-index`, `hero-btp` (héros de colonne, fond transparent). `&t=encre` donne la variante des héros pour un fond encre.
+
+```bash
+site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage   # rend, puis dépose dans le site (chemin absolu)
+```
+
+- Les OG sortent en JPEG 1200×630, les héros en WebP 2×, les pictos de secteur (`pictos/*.svg`) en `currentColor`, à inliner.
+- Les héros sont des images et pas des SVG, parce qu'un SVG chargé en `<img>` n'a pas accès aux polices de la page.
+- Les badges de maturité reprennent le code du site : olive = en production, saffron = pilote, cobalt = faisable, terra = à construire.
+- ⚠️ Aucun logo ni nom de client, aucun chiffre de gain. La réalisation BTP se cite dans le texte de la page, jamais dans l'image.
 
 ## Bannières (`banners/`) — couvertures statiques
 
