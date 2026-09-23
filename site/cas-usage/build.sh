@@ -1,33 +1,56 @@
 #!/usr/bin/env bash
 # Rend les visuels « cas d'usage » d'oto.cx → out/site/cas-usage/ (PNG 2×), puis les formats du site :
-# OG en JPEG 1200×630 (l'aperçu de lien n'a que faire du 2×), héros en WebP 2× à fond transparent,
-# chacun en deux variantes : fond clair (sans suffixe) et fond encre (-encre).
-# Pictos de secteur (pictos/*.svg) : dessinés à la main, copiés tels quels.
-# Usage : site/cas-usage/build.sh [dossier-de-dépôt]   (ex. ../oto-website/web/public/cas-usage)
+#   visuels.html : images de partage (JPEG 1200×630) et héros historiques (index, btp) ;
+#   moments.html : les scènes de scenes.js — moments du récit, héros de secteur, en-tête de l'explorateur
+#                  (WebP 2×, fond transparent) ;
+#   pictos/      : dessinés à la main, copiés tels quels.
+# Usage : site/cas-usage/build.sh [dossier-de-dépôt]   (chemin ABSOLU : le script change de dossier)
+#         ex. site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 OUT=out/site/cas-usage; mkdir -p "$OUT"
-shot() { # <nom> <largeur,hauteur> <requête>
+SECTEURS="btp saas edition conseil"
+declare -A NB_MOMENTS=( [btp]=5 [saas]=5 [edition]=3 [conseil]=5 )
+
+shot() { # <nom> <largeur,hauteur> <requête> [source, défaut visuels]
   google-chrome-stable --headless=new --disable-gpu --hide-scrollbars --no-first-run \
     --user-data-dir="$(mktemp -d)" --virtual-time-budget=8000 --default-background-color=00000000 \
     --force-device-scale-factor=2 --window-size="$2" \
-    --screenshot="$OUT/$1.png" "file://$PWD/site/cas-usage/visuels.html?$3" 2>/dev/null
+    --screenshot="$OUT/$1.png" "file://$PWD/site/cas-usage/${4:-visuels}.html?$3" 2>/dev/null
 }
-for v in og-index og-btp; do
+webp() { ffmpeg -loglevel error -y -i "$OUT/$1.png" -c:v libwebp -q:v 88 "$OUT/$1.webp"; }
+
+# images de partage
+for v in og-index $(printf 'og-%s ' $SECTEURS); do
   shot "$v" 1200,630 "v=$v"
   ffmpeg -loglevel error -y -i "$OUT/$v.png" -vf scale=1200:630:flags=lanczos -q:v 2 "$OUT/$v.jpg"
 done
+# héros historiques (visuels.html) : index et btp, clair et encre
 declare -A HERO=( [hero-index]=560,520 [hero-btp]=560,580 )
 for v in "${!HERO[@]}"; do
-  shot "$v" "${HERO[$v]}" "v=$v"; shot "$v-encre" "${HERO[$v]}" "v=$v&t=encre"
-  for f in "$v" "$v-encre"; do ffmpeg -loglevel error -y -i "$OUT/$f.png" -c:v libwebp -q:v 88 "$OUT/$f.webp"; done
+  shot "$v" "${HERO[$v]}" "v=$v"; shot "$v-encre" "${HERO[$v]}" "v=$v&t=encre"; webp "$v"; webp "$v-encre"
 done
+# scènes : moments, héros de secteur (fond encre), en-tête de l'explorateur
+for s in $SECTEURS; do
+  for n in $(seq -w 1 "${NB_MOMENTS[$s]}"); do n=$(printf %02d "$n"); shot "$s-$n" 560,320 "v=$s-$n" moments; webp "$s-$n"; done
+done
+for s in saas edition conseil; do shot "hero-$s-encre" 560,580 "v=hero-$s&t=encre" moments; webp "hero-$s-encre"; done
+shot hero-explorateur 520,420 v=hero-explorateur moments; webp hero-explorateur
+
 if [ -n "${1:-}" ]; then
-  mkdir -p "$1"
-  cp "$OUT/og-index.jpg" "$1/og-cas-usage.jpg"; cp "$OUT/og-btp.jpg" "$1/og-btp.jpg"
-  for t in "" -encre; do
-    cp "$OUT/hero-index$t.webp" "$1/hero-cas-usage$t.webp"; cp "$OUT/hero-btp$t.webp" "$1/hero-btp$t.webp"
+  # seuls les visuels que le site sert ; les autres restent dans out/
+  mkdir -p "$1/moments" "$1/pictos" "$1/fonctions"
+  cp "$OUT/og-index.jpg" "$1/og-cas-usage.jpg"
+  for s in $SECTEURS; do
+    cp "$OUT/og-$s.jpg" "$OUT/hero-$s-encre.webp" "$1/"
+    # un moment déjà publié ne se remplace pas en silence : le supprimer d'abord pour le redéposer
+    for n in $(seq 1 "${NB_MOMENTS[$s]}"); do
+      f="$s-$(printf %02d "$n").webp"
+      if [ -e "$1/moments/$f" ]; then echo "moments/$f déjà publié, laissé tel quel"; else cp "$OUT/$f" "$1/moments/"; fi
+    done
   done
-  # pictos de secteur : SVG en currentColor, à inliner (la couleur vient du texte qui les porte)
-  mkdir -p "$1/pictos"; cp site/cas-usage/pictos/*.svg "$1/pictos/"
+  cp "$OUT/hero-explorateur.webp" "$1/"
+  # pictos : SVG en currentColor, à inliner (la couleur vient du texte qui les porte)
+  cp site/cas-usage/pictos/*.svg "$1/pictos/"
+  cp site/cas-usage/pictos/fonctions/*.svg "$1/fonctions/"
 fi

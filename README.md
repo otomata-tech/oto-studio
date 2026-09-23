@@ -120,17 +120,26 @@ saffran, qui est le mark du **produit** oto.
 ## Visuels du site — section cas d'usage d'oto.cx (`site/cas-usage/`)
 
 Images de la section `/cas-usage` d'oto.cx, dans la charte **du site** (crème, minuscules, hairlines, squiggle, 4 accents),
-pas dans la riso des posts. Un seul fichier `visuels.html`, dont le rendu est choisi par `?v=` : `og-index`, `og-btp`
-(1200×630), `hero-index`, `hero-btp` (héros de colonne, fond transparent). `&t=encre` donne la variante des héros pour un fond encre.
+pas dans la riso des posts. **Une règle de lecture commune** : trait plein encre pour ce qui est mesuré ou connu, saffran
+pointillé pour ce que l'agent déduit ou produit.
+
+| fichier | rôle |
+|---|---|
+| `commun.js` | le vocabulaire : palette (claire, ou encre avec `&t=encre`), étiquettes, cotes, cadres, tableau, icônes, le toit |
+| `scenes.js` | les scènes : moments du récit par secteur (560×320), héros de secteur (560×580), en-tête de l'explorateur. Les moments communs à plusieurs secteurs (trouver, vendre, encaisser, se faire connaître) sont des **scènes paramétrées** : un nouveau secteur réutilise le motif et change le vocabulaire |
+| `moments.html` | rend une scène : `?v=<secteur>-NN`, `hero-<secteur>`, `hero-explorateur` |
+| `visuels.html` | images de partage (`og-index`, `og-<secteur>`, 1200×630) et les premiers héros (index, btp) |
+| `pictos/`, `pictos/fonctions/` | secteurs et fonctions, SVG `currentColor` (viewBox 32, trait 2), à inliner |
 
 ```bash
-site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage   # rend, puis dépose dans le site (chemin absolu)
+site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage   # rend tout, puis dépose (chemin absolu)
 ```
 
-- Les OG sortent en JPEG 1200×630, les héros en WebP 2×, les pictos de secteur (`pictos/*.svg`) en `currentColor`, à inliner.
-- Les héros sont des images et pas des SVG, parce qu'un SVG chargé en `<img>` n'a pas accès aux polices de la page.
-- Les badges de maturité reprennent le code du site : olive = en production, saffron = pilote, cobalt = faisable, terra = à construire.
-- ⚠️ Aucun logo ni nom de client, aucun chiffre de gain. La réalisation BTP se cite dans le texte de la page, jamais dans l'image.
+- Le dépôt ne pose que ce que le site sert. **Un moment déjà publié n'est jamais remplacé** : le supprimer du site d'abord
+  pour le redéposer (les moments BTP publiés datent d'avant la factorisation dans `commun.js`, leurs barres de valeur diffèrent de quelques pixels).
+- Les héros sont des images et pas des SVG : un SVG chargé en `<img>` n'a pas accès aux polices de la page.
+- Ajouter un secteur : ses moments dans `SCENES`, son dessin dans `HAUTS`, son image de partage dans `OG_SECTEURS`, son nombre de moments dans `build.sh`.
+- ⚠️ Aucun logo ni nom de client, aucun chiffre de gain. Une réalisation se cite dans le texte de la page, jamais dans l'image.
 
 ## Bannières (`banners/`) — couvertures statiques
 
