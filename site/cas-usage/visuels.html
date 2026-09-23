@@ -71,17 +71,10 @@
 <body>
 
 <!-- ======== OG index ======== -->
-<div class="v og" id="og-index">
-  <div class="wordmark">oto<b>.</b>cx</div>
-  <h1>ce qu'un agent fait <span class="sq">vraiment<svg viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M2 12 Q 27 2 52 11 T 102 11 T 152 11 T 198 9" fill="none" stroke="#f0b41e" stroke-width="5" stroke-linecap="round"/></svg></span> dans votre entreprise.</h1>
-  <p class="sub">par secteur, de la première demande jusqu'au paiement.</p>
-  <div class="pills" id="pills-secteurs"></div>
-  <div class="url">oto.cx/cas-usage</div>
-</div>
+<div class="v og" id="og-index"></div>
 
 <!-- ======== OG secteur (og-btp, og-saas, og-edition, og-conseil) : rempli depuis OG_SECTEURS ======== -->
 <div class="v og" id="og-secteur"></div>
-</div>
 
 <!-- ======== héros index : quatre fiches, les quatre maturités ======== -->
 <div class="v" id="hero-index"></div>
@@ -93,17 +86,11 @@
     <path d="M60 276 C 60 346, 80 366, 136 366" fill="none" stroke="#f0b41e" stroke-width="3" stroke-linecap="round"/>
     <path d="M126 356 L 138 366 L 126 376" fill="none" stroke="#f0b41e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
-  <div class="devis" style="top:316px">
-    <div class="head"><span>devis · à importer</span><span>statut</span></div>
-    <div class="row"><span>couverture tuile</span><span class="q"></span><span class="tag d">déduit</span></div>
-    <div class="row"><span>faîtage</span><span class="q"></span><span class="tag m">mesuré</span></div>
-    <div class="row"><span>rives</span><span class="q"></span><span class="tag d">déduit</span></div>
-    <div class="row"><span>égout</span><span class="q"></span><span class="tag d">déduit</span></div>
-    <div class="row"><span>échafaudage</span><span class="q"></span><span class="tag d">déduit</span></div>
-  </div>
+  <div class="devis" style="top:316px" id="devis-btp"></div>
 </div>
 
 <script src="commun.js"></script>
+<script src="i18n.js"></script>
 <script src="scenes.js"></script>
 <script>
 const MATURITES = [
@@ -117,8 +104,7 @@ const badge = k => { const m = byKey[k]; return `<span class="badge" style="back
 
 // Les pictos de secteur sont lus tels quels (currentColor) : le rendu passe --allow-file-access-from-files.
 const picto = s => { const x = new XMLHttpRequest(); x.open('GET', `pictos/${s}.svg`, false); x.send(); return x.responseText; };
-document.getElementById('pills-secteurs').innerHTML = [['btp', 'btp'], ['saas', 'saas'], ['edition', 'édition et culture'], ['conseil', 'conseil']]
-  .map(([s, l]) => `<span class="pill"><span class="pic">${picto(s)}</span>${l}</span>`).join('');
+
 
 // Quatre vraies fiches du site, une par maturité (titres raccourcis) — éventail.
 const FICHES = [
@@ -139,26 +125,56 @@ document.getElementById('hero-index').innerHTML = FICHES.map((f, i) => `
 // Le toit vient de commun.js ; les OG le portent avec des étiquettes plus grandes.
 const roof = mode => `<svg viewBox="-92 50 712 325" width="100%" style="display:block; overflow:visible">${toit({ fs: mode === 'og' ? 15 : 13 })}</svg>`;
 
-// Images de partage des secteurs : une phrase, un mot souligné, et le dessin du héros du secteur.
+// Images de partage : des phrases entières par langue (le mot souligné compris), pas des mots traduits un à un.
 const SQ = mot => `<span class="sq">${mot}<svg viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M2 12 Q 27 2 52 11 T 102 11 T 152 11 T 198 9" fill="none" stroke="#f0b41e" stroke-width="5" stroke-linecap="round"/></svg></span>`;
 const haut = s => `<svg viewBox="0 0 560 280" width="100%" style="display:block; overflow:visible">${HAUTS[s]()}</svg>`;
-const OG_SECTEURS = {
-  btp: { h1: `le chiffrage devient une ${SQ('relecture')}.`, sub: "quelques cotes relevées sur le toit, l'agent déduit le reste et prépare le devis.", dessin: roof('og') },
-  saas: { h1: `chaque compte a sa ligne de ${SQ('suivi')}.`, sub: "des comptes à trouver aux prélèvements échoués&nbsp;: l'agent tient le suivi, vous décidez.", dessin: haut('saas') },
-  edition: { h1: `une parution, et tous ceux qui doivent le ${SQ('savoir')}.`, sub: "l'agent trouve les structures actives, fait connaître vos dates et suit ce qui doit rentrer.", dessin: haut('edition'), fs: 64 },
-  conseil: { h1: `chaque réunion finit en ${SQ('actions')}.`, sub: "l'agent repère les missions, prépare vos rendez-vous et tient le dossier client.", dessin: haut('conseil') },
-};
+const TEXTES = {
+  fr: {
+    url: 'oto.cx/cas-usage', kicker: "cas d'usage",
+    court: { btp: 'btp', saas: 'saas', edition: 'édition et culture', conseil: 'conseil' },
+    index: { h1: `ce qu'un agent fait ${SQ('vraiment')} dans votre entreprise.`, sub: "par secteur, de la première demande jusqu'au paiement." },
+    btp: { h1: `le chiffrage devient une ${SQ('relecture')}.`, sub: "quelques cotes relevées sur le toit, l'agent déduit le reste et prépare le devis." },
+    saas: { h1: `chaque compte a sa ligne de ${SQ('suivi')}.`, sub: "des comptes à trouver aux prélèvements échoués&nbsp;: l'agent tient le suivi, vous décidez." },
+    edition: { h1: `une parution, et tous ceux qui doivent le ${SQ('savoir')}.`, sub: "l'agent trouve les structures actives, fait connaître vos dates et suit ce qui doit rentrer.", fs: 64 },
+    conseil: { h1: `chaque réunion finit en ${SQ('actions')}.`, sub: "l'agent repère les missions, prépare vos rendez-vous et tient le dossier client." },
+  },
+  en: {
+    url: 'oto.cx/en/use-cases', kicker: 'use cases',
+    court: { btp: 'construction', saas: 'saas', edition: 'publishing & culture', conseil: 'consulting' },
+    index: { h1: `what an agent ${SQ('actually')} does in your business.`, sub: 'by sector, from the first request to getting paid.' },
+    btp: { h1: `quoting becomes a ${SQ('review')}.`, sub: 'a few measurements taken on the roof; the agent derives the rest and prepares the quote.' },
+    saas: { h1: `every account gets its own ${SQ('follow-up')}.`, sub: 'from finding accounts to failed direct debits: the agent keeps track, you decide.' },
+    edition: { h1: `a release, and everyone who needs to ${SQ('know')}.`, sub: 'the agent finds active organizations, spreads the word on your dates and tracks the money due.', fs: 64 },
+    conseil: { h1: `every meeting ends in ${SQ('actions')}.`, sub: 'the agent spots engagements, prepares your meetings and keeps the client file up to date.' },
+  },
+}[LANGUE];
+if (!TEXTES) throw new Error(`langue sans textes : ${LANGUE}`);
+const DESSINS = { btp: () => roof('og'), saas: () => haut('saas'), edition: () => haut('edition'), conseil: () => haut('conseil') };
+
+document.getElementById('og-index').innerHTML = `
+  <div class="wordmark">oto<b>.</b>cx</div>
+  <h1>${TEXTES.index.h1}</h1>
+  <p class="sub">${TEXTES.index.sub}</p>
+  <div class="pills">${Object.entries(TEXTES.court).map(([s, l]) => `<span class="pill"><span class="pic">${picto(s)}</span>${l}</span>`).join('')}</div>
+  <div class="url">${TEXTES.url}</div>`;
+
+// Le devis du héros BTP, libellés traduits par T().
+document.getElementById('devis-btp').innerHTML = `
+  <div class="head"><span>${T('devis · à importer')}</span><span>${T('statut')}</span></div>
+  ${[['couverture tuile', 'déduit'], ['faîtage', 'mesuré'], ['rives', 'déduit'], ['égout', 'déduit'], ['échafaudage', 'déduit']]
+    .map(([l, st]) => `<div class="row"><span>${T(l)}</span><span class="q"></span><span class="tag ${st === 'mesuré' ? 'm' : 'd'}">${T(st)}</span></div>`).join('')}`;
+
 let v = Q.get('v') || 'og-index';
-const sect = v.startsWith('og-') && OG_SECTEURS[v.slice(3)] ? v.slice(3) : null;
+const sect = v.startsWith('og-') && TEXTES[v.slice(3)] && v !== 'og-index' ? v.slice(3) : null;
 if (sect) {
-  const o = OG_SECTEURS[sect];
+  const o = TEXTES[sect];
   document.getElementById('og-secteur').innerHTML = `
     <div class="wordmark">oto<b>.</b>cx</div>
-    <p class="kicker">cas d'usage · ${sect === 'edition' ? 'édition et culture' : sect}</p>
+    <p class="kicker">${TEXTES.kicker} · ${TEXTES.court[sect]}</p>
     <h1 style="${o.fs ? `font-size:${o.fs}px` : ''}">${o.h1}</h1>
     <p class="sub">${o.sub}</p>
-    <div class="dessin">${o.dessin}</div>
-    <div class="url">oto.cx/cas-usage/${sect}</div>`;
+    <div class="dessin">${DESSINS[sect]()}</div>
+    <div class="url">${TEXTES.url}/${sect}</div>`;
   v = 'og-secteur';
 }
 document.querySelectorAll('[data-roof]').forEach(el => el.innerHTML = roof(el.dataset.roof));

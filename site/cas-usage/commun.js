@@ -13,7 +13,7 @@ const DASH = 'stroke-dasharray="6 5"';
 // Étiquette en mono (défaut) ou en display.
 function lab(x, y, t, { c = P.ink, fs = 13, anchor = 'middle', rot = 0, w = 700, font = 'JetBrains Mono', ls = 1.2 } = {}) {
   const r = rot ? `transform="rotate(${rot} ${x} ${y})"` : '';
-  return `<text x="${x}" y="${y}" fill="${c}" font-family="${font}" font-size="${fs}" font-weight="${w}" letter-spacing="${ls}" text-anchor="${anchor}" ${r}>${t}</text>`;
+  return `<text x="${x}" y="${y}" fill="${c}" font-family="${font}" font-size="${fs}" font-weight="${w}" letter-spacing="${ls}" text-anchor="${anchor}" ${r}>${T(t)}</text>`;
 }
 // Titre de document, en display.
 const titre = (x, y, t, o = {}) => lab(x, y, t, { font: 'Bricolage Grotesque', w: 700, ls: -0.2, fs: 17, anchor: 'start', ...o });
@@ -65,7 +65,7 @@ function toit({ fs = 13, labels = true, mesures = true, deduits = true } = {}) {
     <rect x="218" y="192" width="30" height="30" fill="none" stroke="${ink}" stroke-width="1.5"/>
     ${mesures ? `
     ${cote(120, 84, 420, 84, ink)}   ${L(270, 72, 'faîtage · mesuré', ink)}
-    ${cote(443, 100, 503, 240, ink)} ${L(486, 150, 'rive · mesurée', ink, 'start')}
+    ${cote(443, 100, 503, 240, ink)} ${L(486 - Math.max(0, T('rive · mesurée').length - 14) * 9.2, 150, 'rive · mesurée', ink, 'start')}
     ${cote(44, 250, 44, 320, ink)}   ${L(28, 305, 'égout h. · mesuré', ink, 'middle', -90)}` : ''}
     ${deduits ? `
     ${cote(70, 338, 370, 338, saf, true)} ${L(220, 360, 'égout · déduit', safInk)}
@@ -92,7 +92,7 @@ function tableau(x, y, w, lignes, { agent = true, entete = '', connus = ['mesur�
     ${lignes.map(([l, st], i) => {
       const yy = y + 64 + i * pas, alerte = ALERTES.includes(st);
       // la valeur fantôme se range juste avant le statut, quelle que soit sa longueur (mono 10 px ≈ 7,2 px/car.)
-      const fin = st ? x + w - 16 - st.length * 7.2 - 14 : x + w - 18;
+      const fin = st ? x + w - 16 - T(st).length * 7.2 - 14 : x + w - 18;
       return `${txt(x + 16, yy, l)}
         ${valeurs ? `<line x1="${fin - 28}" y1="${yy - 5}" x2="${fin}" y2="${yy - 5}" stroke="${P.hairSoft}" stroke-width="6" stroke-linecap="round"/>` : ''}
         ${st ? lab(x + w - 16, yy, st, { fs: 10, anchor: 'end', c: alerte ? P.terra : connus.includes(st) ? P.ink : P.safInk, ls: 1.2 }) : ''}`;

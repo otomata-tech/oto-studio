@@ -56,7 +56,9 @@ const C = {
     ${entrees([['pdf', 'tarifs reçus'], ['tableur', 'catalogue']])}
     ${sortie('tarifs · écarts', [['tuile terre cuite', 'hausse'], ['liteau', 'stable'], ['écran', 'hausse'], ['fichier', 'à importer']], { connus: ['stable'] })}`,
   'planning-chantiers': () => {
-    const j = ['l', 'm', 'm', 'j', 'v'], x0 = CX + 60, cw = 32;
+    // la colonne des équipes s'élargit si la langue allonge leur nom ; les jours se resserrent d'autant
+    const plus = Math.max(0, T('éq. 1').length - 5) * 8.6;
+    const j = ['lu', 'ma', 'me', 'je', 've'], x0 = CX + 60 + plus, cw = 32 - plus / 5;
     const bloc = (r, j0, n, agent) => `<rect x="${x0 + j0 * cw + 3}" y="${118 + r * 58}" width="${n * cw - 6}" height="40" rx="6" fill="${agent ? saf : paper2}" fill-opacity="${agent ? .18 : 1}" stroke="${agent ? saf : ink}" stroke-width="2" ${agent ? DASH : ''}/>`;
     return `
       ${entrees([['agenda', "l'agenda"], ['meteo', 'la météo'], ['mail', 'une livraison']])}
