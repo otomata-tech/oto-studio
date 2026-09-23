@@ -35,6 +35,7 @@
   .pills { position: absolute; left: 72px; bottom: 64px; display: flex; gap: 12px; }
   .pill { font-family: var(--mono); font-size: 17px; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--hair); background: var(--paper-2); color: var(--ink-soft); display: inline-flex; align-items: center; gap: 10px; }
   .pill i { width: 10px; height: 10px; display: inline-block; }
+  .pill .pic svg { width: 22px; height: 22px; display: block; color: var(--ink); }
   .url { position: absolute; right: 72px; bottom: 76px; font-family: var(--mono); font-size: 18px; color: var(--mute); }
 
   #og-index h1 { font-size: 84px; margin-top: 64px; max-width: 1000px; }
@@ -73,8 +74,8 @@
 <div class="v og" id="og-index">
   <div class="wordmark">oto<b>.</b>cx</div>
   <h1>ce qu'un agent fait <span class="sq">vraiment<svg viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M2 12 Q 27 2 52 11 T 102 11 T 152 11 T 198 9" fill="none" stroke="#f0b41e" stroke-width="5" stroke-linecap="round"/></svg></span> dans votre entreprise.</h1>
-  <p class="sub">chaque cas dit sa maturité, telle qu'elle est.</p>
-  <div class="pills" id="pills-maturite"></div>
+  <p class="sub">par secteur, de la première demande jusqu'au paiement.</p>
+  <div class="pills" id="pills-secteurs"></div>
   <div class="url">oto.cx/cas-usage</div>
 </div>
 
@@ -114,8 +115,10 @@ const MATURITES = [
 const byKey = Object.fromEntries(MATURITES.map(m => [m.key, m]));
 const badge = k => { const m = byKey[k]; return `<span class="badge" style="background:var(--${m.accent}-soft);color:var(--${m.accent}-ink)"><i style="background:var(--${m.accent})"></i>${m.label}</span>`; };
 
-document.getElementById('pills-maturite').innerHTML = MATURITES
-  .map(m => `<span class="pill"><i style="background:var(--${m.accent})"></i>${m.label}</span>`).join('');
+// Les pictos de secteur sont lus tels quels (currentColor) : le rendu passe --allow-file-access-from-files.
+const picto = s => { const x = new XMLHttpRequest(); x.open('GET', `pictos/${s}.svg`, false); x.send(); return x.responseText; };
+document.getElementById('pills-secteurs').innerHTML = [['btp', 'btp'], ['saas', 'saas'], ['edition', 'édition et culture'], ['conseil', 'conseil']]
+  .map(([s, l]) => `<span class="pill"><span class="pic">${picto(s)}</span>${l}</span>`).join('');
 
 // Quatre vraies fiches du site, une par maturité (titres raccourcis) — éventail.
 const FICHES = [

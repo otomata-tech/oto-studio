@@ -15,7 +15,7 @@ declare -A NB_MOMENTS=( [btp]=5 [saas]=5 [edition]=3 [conseil]=5 )
 
 shot() { # <nom> <largeur,hauteur> <requête> [source, défaut visuels]
   google-chrome-stable --headless=new --disable-gpu --hide-scrollbars --no-first-run \
-    --user-data-dir="$(mktemp -d)" --virtual-time-budget=8000 --default-background-color=00000000 \
+    --user-data-dir="$(mktemp -d)" --allow-file-access-from-files --virtual-time-budget=8000 --default-background-color=00000000 \
     --force-device-scale-factor=2 --window-size="$2" \
     --screenshot="$OUT/$1.png" "file://$PWD/site/cas-usage/${4:-visuels}.html?$3" 2>/dev/null
 }
@@ -44,7 +44,7 @@ for c in $CAS; do shot "cas-$c" 480,300 "v=cas-$c" moments; webp "cas-$c"; done
 if [ -n "${1:-}" ]; then
   # seuls les visuels que le site sert ; les autres restent dans out/
   mkdir -p "$1/moments" "$1/pictos" "$1/fonctions"
-  cp "$OUT/og-index.jpg" "$1/og-cas-usage.jpg"
+  cp "$OUT/og-index.jpg" "$1/og-cas-usage-v2.jpg"   # v2 : sans maturité (retirée du site le 24/09/2026)
   for s in $SECTEURS; do
     cp "$OUT/og-$s.jpg" "$OUT/hero-$s-encre.webp" "$1/"
     # un moment déjà publié ne se remplace pas en silence : le supprimer d'abord pour le redéposer
