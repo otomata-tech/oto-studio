@@ -127,7 +127,8 @@ pointillé pour ce que l'agent déduit ou produit.
 |---|---|
 | `commun.js` | le vocabulaire : palette (claire, ou encre avec `&t=encre`), étiquettes, cotes, cadres, tableau, icônes, le toit |
 | `scenes.js` | les scènes : moments du récit par secteur (560×320), héros de secteur (560×580), en-tête de l'explorateur. Les moments communs à plusieurs secteurs (trouver, vendre, encaisser, se faire connaître) sont des **scènes paramétrées** : un nouveau secteur réutilise le motif et change le vocabulaire |
-| `moments.html` | rend une scène : `?v=<secteur>-NN`, `hero-<secteur>`, `hero-explorateur` |
+| `cas.js` | une illustration par cas d'usage (480×300) : les entrées du client à gauche, la sortie de l'agent à droite. Un cas valable pour plusieurs secteurs reste **neutre** ; seuls les cas propres au BTP parlent chantier |
+| `moments.html` | rend une scène : `?v=<secteur>-NN`, `hero-<secteur>`, `hero-explorateur`, `cas-<slug>` |
 | `visuels.html` | images de partage (`og-index`, `og-<secteur>`, 1200×630) et les premiers héros (index, btp) |
 | `pictos/`, `pictos/fonctions/` | secteurs et fonctions, SVG `currentColor` (viewBox 32, trait 2), à inliner |
 
@@ -135,11 +136,11 @@ pointillé pour ce que l'agent déduit ou produit.
 site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage   # rend tout, puis dépose (chemin absolu)
 ```
 
-- Le dépôt ne pose que ce que le site sert. **Un moment déjà publié n'est jamais remplacé** : le supprimer du site d'abord
+- Le dépôt ne pose que ce que le site sert. **Un moment ou un cas déjà publié n'est jamais remplacé** : le supprimer du site d'abord
   pour le redéposer (les moments BTP publiés datent d'avant la factorisation dans `commun.js`, leurs barres de valeur diffèrent de quelques pixels).
 - Les héros sont des images et pas des SVG : un SVG chargé en `<img>` n'a pas accès aux polices de la page.
 - Ajouter un secteur : ses moments dans `SCENES`, son dessin dans `HAUTS`, son image de partage dans `OG_SECTEURS`, son nombre de moments dans `build.sh`.
-- ⚠️ Aucun logo ni nom de client, aucun chiffre de gain. Une réalisation se cite dans le texte de la page, jamais dans l'image.
+- ⚠️ Aucun logo ni nom de client, aucun chiffre de gain, **aucune mention de maturité** (retirée du site le 24/09/2026). Une réalisation se cite dans le texte de la page, jamais dans l'image.
 
 ## Bannières (`banners/`) — couvertures statiques
 

@@ -3,6 +3,7 @@
 #   visuels.html : images de partage (JPEG 1200×630) et héros historiques (index, btp) ;
 #   moments.html : les scènes de scenes.js — moments du récit, héros de secteur, en-tête de l'explorateur
 #                  (WebP 2×, fond transparent) ;
+#   (cas.js, via moments.html : une illustration par cas d'usage, 480×300)
 #   pictos/      : dessinés à la main, copiés tels quels.
 # Usage : site/cas-usage/build.sh [dossier-de-dépôt]   (chemin ABSOLU : le script change de dossier)
 #         ex. site/cas-usage/build.sh /data/oto/oto-website/web/public/cas-usage
@@ -36,6 +37,9 @@ for s in $SECTEURS; do
 done
 for s in saas edition conseil; do shot "hero-$s-encre" 560,580 "v=hero-$s&t=encre" moments; webp "hero-$s-encre"; done
 shot hero-explorateur 520,420 v=hero-explorateur moments; webp hero-explorateur
+# une illustration par cas d'usage : les clés de cas.js
+CAS=$(grep -oE "^  '[a-z0-9-]+': \(\)" site/cas-usage/cas.js | cut -d"'" -f2)
+for c in $CAS; do shot "cas-$c" 480,300 "v=cas-$c" moments; webp "cas-$c"; done
 
 if [ -n "${1:-}" ]; then
   # seuls les visuels que le site sert ; les autres restent dans out/
@@ -50,6 +54,10 @@ if [ -n "${1:-}" ]; then
     done
   done
   cp "$OUT/hero-explorateur.webp" "$1/"
+  mkdir -p "$1/cas"
+  for c in $CAS; do
+    if [ -e "$1/cas/$c.webp" ]; then echo "cas/$c.webp déjà publié, laissé tel quel"; else cp "$OUT/cas-$c.webp" "$1/cas/$c.webp"; fi
+  done
   # pictos : SVG en currentColor, à inliner (la couleur vient du texte qui les porte)
   cp site/cas-usage/pictos/*.svg "$1/pictos/"
   cp site/cas-usage/pictos/fonctions/*.svg "$1/fonctions/"

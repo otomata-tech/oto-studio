@@ -1,6 +1,7 @@
 <!doctype html>
 <!-- Rend une scène de scenes.js, choisie par ?v= : <secteur>-NN (moments du récit, 560×320), hero-<secteur>
-     (héros de secteur, 560×580, à rendre avec &t=encre) et hero-explorateur (520×420). Fond transparent.
+     (héros de secteur, 560×580, à rendre avec &t=encre), hero-explorateur (520×420) et cas-<slug> (cas.js,
+     480×300). Fond transparent.
      Aucun nom de client, aucun chiffre de gain. Rendu : build.sh. -->
 <html lang="fr">
 <head>
@@ -15,8 +16,9 @@
 <body>
 <script src="commun.js"></script>
 <script src="scenes.js"></script>
+<script src="cas.js"></script>
 <script>
-const [w, h, dessin] = SCENES[Q.get('v') || 'btp-01'];
+const [w, h, dessin] = { ...SCENES, ...CAS }[Q.get('v') || 'btp-01'];
 document.body.innerHTML = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${dessin()}</svg>`;
 </script>
 </body>

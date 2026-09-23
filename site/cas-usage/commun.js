@@ -80,19 +80,21 @@ const txt = (x, y, t, o = {}) => lab(x, y, t, { font: 'Hanken Grotesk', w: 500, 
 // Le toit réduit, sans étiquettes, placé par translate/scale.
 const toitReduit = (x, y, k, o) => `<g transform="translate(${x + 92 * k} ${y - 50 * k}) scale(${k})">${toit({ labels: false, ...o })}</g>`;
 
+// Statuts d'alerte, en terra : ce qui bloque ou manque.
+const ALERTES = ['échoué', 'en retard', 'manque', 'à lire', 'à appeler'];
 // Un tableau de lignes : en-tête, libellé + valeur fantôme + statut. Un statut listé dans `connus` s'écrit
 // en encre (mesuré, payé…) ; les autres sont des notes de l'agent, en saffran.
-function tableau(x, y, w, lignes, { agent = true, entete = '', connus = ['mesuré', 'payé', 'à jour'], pas = 30 } = {}) {
+function tableau(x, y, w, lignes, { agent = true, entete = '', connus = ['mesuré', 'payé', 'à jour'], pas = 30, valeurs = true } = {}) {
   const h = 46 + lignes.length * pas;
   return `${cadre(x, y, w, h, { agent })}
     ${m(x + 16, y + 27, entete)}
     <line x1="${x + 16}" y1="${y + 40}" x2="${x + w - 16}" y2="${y + 40}" stroke="${P.hairSoft}" stroke-width="1"/>
     ${lignes.map(([l, st], i) => {
-      const yy = y + 64 + i * pas, alerte = ['échoué', 'en retard'].includes(st);
+      const yy = y + 64 + i * pas, alerte = ALERTES.includes(st);
       // la valeur fantôme se range juste avant le statut, quelle que soit sa longueur (mono 10 px ≈ 7,2 px/car.)
       const fin = st ? x + w - 16 - st.length * 7.2 - 14 : x + w - 18;
       return `${txt(x + 16, yy, l)}
-        <line x1="${fin - 28}" y1="${yy - 5}" x2="${fin}" y2="${yy - 5}" stroke="${P.hairSoft}" stroke-width="6" stroke-linecap="round"/>
+        ${valeurs ? `<line x1="${fin - 28}" y1="${yy - 5}" x2="${fin}" y2="${yy - 5}" stroke="${P.hairSoft}" stroke-width="6" stroke-linecap="round"/>` : ''}
         ${st ? lab(x + w - 16, yy, st, { fs: 10, anchor: 'end', c: alerte ? P.terra : connus.includes(st) ? P.ink : P.safInk, ls: 1.2 }) : ''}`;
     }).join('')}`;
 }
@@ -107,4 +109,13 @@ const ICO = {
   bulle: (x, y) => `<path d="M${x} ${y - 12} h32 v19 h-20 l-7 6 v-6 h-5 z" fill="none" stroke="${P.ink}" stroke-width="2" stroke-linejoin="round"/>`,
   livre: (x, y) => `<path d="M${x + 4} ${y - 15} h22 v30 h-22 z M${x + 9} ${y - 15} v30" fill="none" stroke="${P.ink}" stroke-width="2" stroke-linejoin="round"/>`,
   appli: (x, y) => `<rect x="${x}" y="${y - 13}" width="32" height="26" rx="3" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x} ${y - 6} h32" stroke="${P.ink}" stroke-width="2"/>`,
+  tableur: (x, y) => `<rect x="${x}" y="${y - 13}" width="32" height="26" rx="2" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x} ${y - 4} h32 M${x} ${y + 5} h32 M${x + 11} ${y - 13} v26" stroke="${P.ink}" stroke-width="1.6"/>`,
+  agenda: (x, y) => `<rect x="${x}" y="${y - 11}" width="32" height="26" rx="3" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x} ${y - 3} h32 M${x + 9} ${y - 16} v8 M${x + 23} ${y - 16} v8" stroke="${P.ink}" stroke-width="2" stroke-linecap="round"/><rect x="${x + 19}" y="${y + 3}" width="7" height="6" fill="${P.ink}"/>`,
+  public: (x, y) => `<path d="M${x} ${y - 6} L${x + 16} ${y - 16} L${x + 32} ${y - 6} Z M${x + 5} ${y - 2} v12 M${x + 12} ${y - 2} v12 M${x + 20} ${y - 2} v12 M${x + 27} ${y - 2} v12 M${x} ${y + 14} h32" fill="none" stroke="${P.ink}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`,
+  banque: (x, y) => `<rect x="${x}" y="${y - 11}" width="32" height="22" rx="3" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x} ${y - 4} h32" stroke="${P.ink}" stroke-width="3"/><path d="M${x + 5} ${y + 5} h8" stroke="${P.ink}" stroke-width="2" stroke-linecap="round"/>`,
+  loupe: (x, y) => `<circle cx="${x + 13}" cy="${y - 3}" r="9" fill="none" stroke="${P.ink}" stroke-width="2.2"/><path d="M${x + 20} ${y + 4} l9 9" stroke="${P.ink}" stroke-width="2.6" stroke-linecap="round"/>`,
+  personne: (x, y) => `<circle cx="${x + 16}" cy="${y - 7}" r="6" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x + 5} ${y + 14} a11 10 0 0 1 22 0" fill="none" stroke="${P.ink}" stroke-width="2"/>`,
+  meteo: (x, y) => `<path d="M${x + 3} ${y + 4} a7 7 0 0 1 3 -13 a9 9 0 0 1 17 -1 a6 6 0 0 1 6 14 z" fill="none" stroke="${P.ink}" stroke-width="2" stroke-linejoin="round"/>${[8, 16, 24].map(d => `<line x1="${x + d}" y1="${y + 9}" x2="${x + d - 3}" y2="${y + 15}" stroke="${P.ink}" stroke-width="2" stroke-linecap="round"/>`).join('')}`,
+  etoiles: (x, y) => [0, 1, 2].map(i => `<path d="M${x + 5 + i * 11} ${y - 6} l2 4 4.4 .5 -3.3 3 .9 4.3 -4 -2.2 -4 2.2 .9 -4.3 -3.3 -3 4.4 -.5z" fill="none" stroke="${P.ink}" stroke-width="1.4" stroke-linejoin="round"/>`).join(''),
+  telephone: (x, y) => `<rect x="${x + 8}" y="${y - 16}" width="17" height="32" rx="4" fill="none" stroke="${P.ink}" stroke-width="2"/><path d="M${x + 13} ${y - 11} h7" stroke="${P.ink}" stroke-width="2" stroke-linecap="round"/>`,
 };
